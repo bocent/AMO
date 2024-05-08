@@ -1,0 +1,563 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Unity Projects\\AMO\\AMO\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|d:\\unity projects\\amo\\amo\\assets\\scripts\\level.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\level.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\character.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\character.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\characterselection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\characterselection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\selectedcharacter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\selectedcharacter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\characteritem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\characteritem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\userdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\userdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\avatar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\avatar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|d:\\unity projects\\amo\\amo\\assets\\scripts\\alarmcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\alarmcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\alarm\\alarmcreator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\alarm\\alarmcreator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|d:\\unity projects\\amo\\amo\\assets\\scripts\\alarm\\alarmitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\alarm\\alarmitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|d:\\unity projects\\amo\\amo\\assets\\scripts\\alarm\\alarmpopup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\alarm\\alarmpopup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\accessorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\accessorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\alarmui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\alarmui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\alarm\\dayitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\alarm\\dayitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\accessory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\accessory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\samples\\5 - streaming\\streamingsamplemic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\samples\\5 - streaming\\streamingsamplemic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\alarm\\hour.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\alarm\\hour.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\alarm\\minute.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\alarm\\minute.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25988B79-B5A4-8CEA-7D55-F2101B1D6C84}|com.whisper.unity.csproj|D:\\Unity Projects\\AMO\\AMO\\packages\\com.whisper.unity\\runtime\\utils\\microphonerecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{25988B79-B5A4-8CEA-7D55-F2101B1D6C84}|com.whisper.unity.csproj|solutionrelative:packages\\com.whisper.unity\\runtime\\utils\\microphonerecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\itemlibrary.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\itemlibrary.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\maxstar\\script\\wrapper\\abstractarmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\maxstar\\script\\wrapper\\abstractarmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\qrscanner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\qrscanner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\maxstarsamples\\scripts\\codescansample.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\maxstarsamples\\scripts\\codescansample.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\maxstar\\script\\wrapper\\abstractcamerabackgroundbehaviour.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\maxstar\\script\\wrapper\\abstractcamerabackgroundbehaviour.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\maxstar\\script\\camerabackgroundbehaviour.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\maxstar\\script\\camerabackgroundbehaviour.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\maxstarsamples\\scripts\\scenestackmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\maxstarsamples\\scripts\\scenestackmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4F9E1E1-FD67-9DC4-19DE-FFF9045EF7DD}|Assembly-CSharp-Editor.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\editor\\migration\\maxstarmigration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F4F9E1E1-FD67-9DC4-19DE-FFF9045EF7DD}|Assembly-CSharp-Editor.csproj|solutionrelative:assets\\editor\\migration\\maxstarmigration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\coins.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\coins.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\maxstar\\script\\armanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\maxstar\\script\\armanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\item.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\item.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\characteranimation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\characteranimation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|D:\\Unity Projects\\AMO\\AMO\\assets\\scripts\\utils\\conts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82B9A604-143D-DDC7-42A1-C50AEAFD9801}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\utils\\conts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 25,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Accessory.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Accessory.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Accessory.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Accessory.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Accessory.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-30T10:03:31.745Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Level.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Level.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Level.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Level.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Level.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAgwBIAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-06T10:01:39.47Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "AlarmItem.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Alarm\\AlarmItem.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Alarm\\AlarmItem.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Alarm\\AlarmItem.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Alarm\\AlarmItem.cs",
+              "ViewState": "AQIAAFEAAAAAAAAAAAAYwF4AAAAuAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-06T08:03:24.577Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "AlarmPopup.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Alarm\\AlarmPopup.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Alarm\\AlarmPopup.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Alarm\\AlarmPopup.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Alarm\\AlarmPopup.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB8AAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-06T07:34:06.474Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "DayItem.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Alarm\\DayItem.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Alarm\\DayItem.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Alarm\\DayItem.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Alarm\\DayItem.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAABoAAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-03T08:57:58.727Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "AlarmCreator.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Alarm\\AlarmCreator.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Alarm\\AlarmCreator.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Alarm\\AlarmCreator.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Alarm\\AlarmCreator.cs",
+              "ViewState": "AQIAAEcAAAAAAAAAAAA9wFcAAAA0AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-03T07:52:55.361Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Minute.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Alarm\\Minute.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Alarm\\Minute.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Alarm\\Minute.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Alarm\\Minute.cs",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAAwB0AAAAjAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-03T04:06:07.659Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Hour.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Alarm\\Hour.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Alarm\\Hour.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Alarm\\Hour.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Alarm\\Hour.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAAAgAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-03T03:56:51.084Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "AlarmUI.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\AlarmUI.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\AlarmUI.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\AlarmUI.cs",
+              "RelativeToolTip": "Assets\\Scripts\\AlarmUI.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAgAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-03T02:11:46.641Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AlarmController.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\AlarmController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\AlarmController.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\AlarmController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\AlarmController.cs",
+              "ViewState": "AQIAALIAAAAAAAAAAADwv70AAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-03T02:16:19.982Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "StreamingSampleMic.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Samples\\5 - Streaming\\StreamingSampleMic.cs",
+              "RelativeDocumentMoniker": "Assets\\Samples\\5 - Streaming\\StreamingSampleMic.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Samples\\5 - Streaming\\StreamingSampleMic.cs",
+              "RelativeToolTip": "Assets\\Samples\\5 - Streaming\\StreamingSampleMic.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAdAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-03T01:55:50.244Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "MicrophoneRecord.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Packages\\com.whisper.unity\\Runtime\\Utils\\MicrophoneRecord.cs",
+              "RelativeDocumentMoniker": "Packages\\com.whisper.unity\\Runtime\\Utils\\MicrophoneRecord.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Packages\\com.whisper.unity\\Runtime\\Utils\\MicrophoneRecord.cs",
+              "RelativeToolTip": "Packages\\com.whisper.unity\\Runtime\\Utils\\MicrophoneRecord.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-03T01:55:49.429Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SelectedCharacter.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\SelectedCharacter.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\SelectedCharacter.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\SelectedCharacter.cs",
+              "RelativeToolTip": "Assets\\Scripts\\SelectedCharacter.cs",
+              "ViewState": "AQIAAFsAAAAAAAAAAAAqwCUBAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-02T08:01:42.664Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CharacterItem.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\CharacterItem.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\CharacterItem.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\CharacterItem.cs",
+              "RelativeToolTip": "Assets\\Scripts\\CharacterItem.cs",
+              "ViewState": "AQIAABsAAAAAAAAAAAAMwCoAAAAkAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-02T07:59:57.879Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "QRScanner.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\QRScanner.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\QRScanner.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\QRScanner.cs",
+              "RelativeToolTip": "Assets\\Scripts\\QRScanner.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACEAAAAnAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-02T04:51:30.465Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "CodeScanSample.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\MaxstARSamples\\Scripts\\CodeScanSample.cs",
+              "RelativeDocumentMoniker": "Assets\\MaxstARSamples\\Scripts\\CodeScanSample.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\MaxstARSamples\\Scripts\\CodeScanSample.cs",
+              "RelativeToolTip": "Assets\\MaxstARSamples\\Scripts\\CodeScanSample.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAvwDwAAAADAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-02T04:49:42.531Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "MaxstARMigration.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Editor\\Migration\\MaxstARMigration.cs",
+              "RelativeDocumentMoniker": "Assets\\Editor\\Migration\\MaxstARMigration.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Editor\\Migration\\MaxstARMigration.cs",
+              "RelativeToolTip": "Assets\\Editor\\Migration\\MaxstARMigration.cs",
+              "ViewState": "AQIAACMAAAAAAAAAAAAawEsAAABMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-02T04:39:17.556Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "SceneStackManager.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\MaxstARSamples\\Scripts\\SceneStackManager.cs",
+              "RelativeDocumentMoniker": "Assets\\MaxstARSamples\\Scripts\\SceneStackManager.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\MaxstARSamples\\Scripts\\SceneStackManager.cs",
+              "RelativeToolTip": "Assets\\MaxstARSamples\\Scripts\\SceneStackManager.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-02T04:28:01.882Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "AbstractARManager.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\MaxstAR\\Script\\Wrapper\\AbstractARManager.cs",
+              "RelativeDocumentMoniker": "Assets\\MaxstAR\\Script\\Wrapper\\AbstractARManager.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\MaxstAR\\Script\\Wrapper\\AbstractARManager.cs",
+              "RelativeToolTip": "Assets\\MaxstAR\\Script\\Wrapper\\AbstractARManager.cs",
+              "ViewState": "AQIAABMAAAAAAAAAAAAQwCgAAAATAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-02T04:23:00.148Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "AbstractCameraBackgroundBehaviour.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\MaxstAR\\Script\\Wrapper\\AbstractCameraBackgroundBehaviour.cs",
+              "RelativeDocumentMoniker": "Assets\\MaxstAR\\Script\\Wrapper\\AbstractCameraBackgroundBehaviour.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\MaxstAR\\Script\\Wrapper\\AbstractCameraBackgroundBehaviour.cs",
+              "RelativeToolTip": "Assets\\MaxstAR\\Script\\Wrapper\\AbstractCameraBackgroundBehaviour.cs",
+              "ViewState": "AQIAAI8AAAAAAAAAAAAkwG8AAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-02T04:17:41.086Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "CameraBackgroundBehaviour.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\MaxstAR\\Script\\CameraBackgroundBehaviour.cs",
+              "RelativeDocumentMoniker": "Assets\\MaxstAR\\Script\\CameraBackgroundBehaviour.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\MaxstAR\\Script\\CameraBackgroundBehaviour.cs",
+              "RelativeToolTip": "Assets\\MaxstAR\\Script\\CameraBackgroundBehaviour.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAABOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-02T04:17:38.139Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "ARManager.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\MaxstAR\\Script\\ARManager.cs",
+              "RelativeDocumentMoniker": "Assets\\MaxstAR\\Script\\ARManager.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\MaxstAR\\Script\\ARManager.cs",
+              "RelativeToolTip": "Assets\\MaxstAR\\Script\\ARManager.cs",
+              "ViewState": "AQIAAAIAAAAAAAAAAAAAwA8AAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-02T04:11:41.385Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CharacterSelection.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\CharacterSelection.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\CharacterSelection.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\CharacterSelection.cs",
+              "RelativeToolTip": "Assets\\Scripts\\CharacterSelection.cs",
+              "ViewState": "AQIAAAcAAAAAAAAAAAAMwBYAAAAZAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-01T09:40:32.782Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "UserData.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\UserData.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UserData.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\UserData.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UserData.cs",
+              "ViewState": "AQIAAAoAAAAAAAAAAAAMwBwAAAAXAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-01T09:24:25.753Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "ItemLibrary.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\ItemLibrary.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\ItemLibrary.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\ItemLibrary.cs",
+              "RelativeToolTip": "Assets\\Scripts\\ItemLibrary.cs",
+              "ViewState": "AQIAAFsAAAAAAAAAAAAuwG0AAAAHAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-01T07:36:43.04Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\HomeController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\HomeController.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\HomeController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\HomeController.cs",
+              "ViewState": "AQIAAE4AAAAAAAAAAAD4v1wAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-01T08:41:38.29Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "CharacterAnimation.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\CharacterAnimation.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\CharacterAnimation.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\CharacterAnimation.cs",
+              "RelativeToolTip": "Assets\\Scripts\\CharacterAnimation.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAA6AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-01T08:14:36.96Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Avatar.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Avatar.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Avatar.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Avatar.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Avatar.cs",
+              "ViewState": "AQIAABcAAAAAAAAAAAAAwDgAAAAuAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-01T07:23:34.292Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "Item.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Item.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Item.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Item.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Item.cs",
+              "ViewState": "AQIAAAEAAAAAAAAAAAAYwBEAAAAuAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-01T07:16:47.278Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Character.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Character.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Character.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Character.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Character.cs",
+              "ViewState": "AQIAAC4AAAAAAAAAAAAswDQAAAA1AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-29T04:01:16.733Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "AccessoryController.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\AccessoryController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\AccessoryController.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\AccessoryController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\AccessoryController.cs",
+              "ViewState": "AQIAAB8AAAAAAAAAAIA4wCUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-30T07:54:37.192Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "Coins.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Coins.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Coins.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Coins.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Coins.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-29T03:54:22.236Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "Conts.cs",
+              "DocumentMoniker": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Utils\\Conts.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Utils\\Conts.cs",
+              "ToolTip": "D:\\Unity Projects\\AMO\\AMO\\Assets\\Scripts\\Utils\\Conts.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Utils\\Conts.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-29T03:42:30.247Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
