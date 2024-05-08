@@ -25,15 +25,14 @@ public class CharacterItem : MonoBehaviour
         characterImage.sprite = info.avatarSprite;
         characterNameText.text = info.avatarName;
 
-
         if (!toggle)
         {
             toggle = GetComponent<Toggle>();
             toggle.onValueChanged.RemoveAllListeners();
             toggle.onValueChanged.AddListener(OnSelected);
+            toggle.group = toggleGroup;
+            toggle.isOn = info.avatarId == Character.Instance.SelectedAvatarId;
         }
-        toggle.group = toggleGroup;
-
     }
 
     private void OnSelected(bool isOn)
@@ -41,6 +40,8 @@ public class CharacterItem : MonoBehaviour
         if ((isOn))
         {
             HomeController.Instance.SelectCharacter(Info);
+            UserData.SetAvatarName(Info);
+            Character.Instance.UpdateSelectedAvatar();
         }
     }
 }

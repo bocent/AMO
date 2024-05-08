@@ -36,9 +36,9 @@ public class AvatarInfo
 
 public class Avatar : MonoBehaviour
 {
-    public Image avatarPanel;
-    public Image avatarImage;
-    public TMP_Text avatarNameText;
+    [SerializeField] private Image avatarPanel;
+    [SerializeField] private Image avatarImage;
+    [SerializeField] private TMP_Text avatarNameText;
 
     private Button switchCharacterButton;
 

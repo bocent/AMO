@@ -96,16 +96,19 @@ public class SelectedCharacter : MonoBehaviour
     public void PlayIdleAnimation()
     {
         string conditionName = "Idle";
-        Debug.LogError("character anim : " + characterAnimation, gameObject);
-        characterAnimation.SetAnimationCondition(conditionName);
-        foreach (GameObject equippedAccessory in equippedAccessories)
+        if (characterAnimation)
         {
-            CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
-            if (characterAnim) characterAnim.SetAnimationCondition(conditionName);
-            CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
-            foreach (CharacterAnimation animation in animations)
+            Debug.LogError("character anim : " + characterAnimation, gameObject);
+            characterAnimation.SetAnimationCondition(conditionName);
+            foreach (GameObject equippedAccessory in equippedAccessories)
             {
-                animation.SetAnimationCondition(conditionName);
+                CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
+                if (characterAnim) characterAnim.SetAnimationCondition(conditionName);
+                CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
+                foreach (CharacterAnimation animation in animations)
+                {
+                    animation.SetAnimationCondition(conditionName);
+                }
             }
         }
     }
@@ -113,15 +116,18 @@ public class SelectedCharacter : MonoBehaviour
     public void PlayChoosenAnimation()
     {
         string conditionName = "Choose";
-        characterAnimation.SetAnimationCondition(conditionName, true);
-        foreach (GameObject equippedAccessory in equippedAccessories)
+        if (characterAnimation)
         {
-            CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
-            if (characterAnim) characterAnim.SetAnimationCondition(conditionName);
-            CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
-            foreach (CharacterAnimation animation in animations)
+            characterAnimation.SetAnimationCondition(conditionName, true);
+            foreach (GameObject equippedAccessory in equippedAccessories)
             {
-                animation.SetAnimationCondition(conditionName);
+                CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
+                if (characterAnim) characterAnim.SetAnimationCondition(conditionName);
+                CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
+                foreach (CharacterAnimation animation in animations)
+                {
+                    animation.SetAnimationCondition(conditionName);
+                }
             }
         }
     }

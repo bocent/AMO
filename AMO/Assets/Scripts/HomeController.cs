@@ -48,6 +48,7 @@ public class HomeController : MonoBehaviour
     {
         DateTime dateTime = DateTime.Now;
         startTimeInSecond = dateTime.Second + dateTime.Minute * 60 + dateTime.Hour * 3600 + dateTime.DayOfYear * 86400;
+        characterSelection.Init();
     }
 
     private void Update()
@@ -56,7 +57,6 @@ public class HomeController : MonoBehaviour
         elapsedTimeInSecond = Mathf.FloorToInt(elapsedTime);
 
         inGameEnergyConsumed = elapsedTime / energyToSecond;
-
 
         AvatarInfo info = character.GetCurrentAvatarInfo();
         energyController.SetEnergy(info.energy - inGameEnergyConsumed);
@@ -87,10 +87,10 @@ public class HomeController : MonoBehaviour
         selectedCharacter.Init(info);
         selectedCharacter.PlayChoosenAnimation();
 
-        avatar.avatarImage.sprite = info.avatarSprite;
-
         int[] levels = UserData.GetLevel(1, info.exp);
         level.SetLevel(levels[0], levels[1], levels[2]);
+
+        avatar.SetAvatar(info);
     }
 
     public void ShowHUD(bool value)

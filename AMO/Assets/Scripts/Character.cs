@@ -9,11 +9,11 @@ public class Character : MonoBehaviour
     [SerializeField] private Transform characterParent;
 
     private List<SelectedCharacter> characterList = new List<SelectedCharacter>();
-    private string selectedAvatarId;
 
     public GameObject unlockCharacterPopup;
 
     public SelectedCharacter currentCharacter;
+    public string SelectedAvatarId { get; private set; }
 
     public static Character Instance { get; private set; }
 
@@ -25,8 +25,15 @@ public class Character : MonoBehaviour
     private void Start()
     {
         LoadAllCharacter();
-        selectedAvatarId = "Mochi_1";
-        LoadCharacter(selectedAvatarId);
+        UpdateSelectedAvatar();
+        LoadCharacter(SelectedAvatarId);
+        
+    }
+
+    public void UpdateSelectedAvatar()
+    {
+        AvatarInfo info = GetLastStageAvatar(UserData.GetAvatarName());
+        SelectedAvatarId = info.avatarId;
     }
 
     private void LoadAllCharacter()
@@ -38,7 +45,6 @@ public class Character : MonoBehaviour
             character.Init(info);
             charObj.SetActive(false);
             characterList.Add(character);
-            Debug.LogError("av id : " + info.avatarId);
         }
     }
 
@@ -49,11 +55,17 @@ public class Character : MonoBehaviour
             if (character.Info.avatarId == avatarId)
             {
                 currentCharacter = character;
-                HomeController.Instance.selectedCharacter = character;
-                character.gameObject.SetActive(true);
+                //HomeController.Instance.selectedCharacter = character;
+                //character.gameObject.SetActive(true);
+                HomeController.Instance.SelectCharacter(character.info);
                 break;
             }
         }
+    }
+
+    private AvatarInfo GetLastStageAvatar(string avatarName)
+    {
+        return avatarInfoList.Where(x => x.avatarName == avatarName && x.isUnlocked).FirstOrDefault();
     }
 
     public SelectedCharacter SwitchCharacter(string avatarId)
@@ -62,14 +74,12 @@ public class Character : MonoBehaviour
         {
             if (character.Info.avatarId == avatarId)
             {
-                Debug.LogError("avatarId : " + avatarId);
                 currentCharacter = character;
                 character.gameObject.SetActive(true);
             }
             else
             {
                 character.gameObject.SetActive(false);
-                Debug.LogError("else avatarId : " + character.Info.avatarId, character);
             }
         }
 
@@ -78,7 +88,7 @@ public class Character : MonoBehaviour
 
     public AvatarInfo GetCurrentAvatarInfo()
     {
-        var result = avatarInfoList.Where(x => x.avatarId == selectedAvatarId).FirstOrDefault();
+        var result = avatarInfoList.Where(x => x.avatarId == SelectedAvatarId).FirstOrDefault();
         return result;
     }
 

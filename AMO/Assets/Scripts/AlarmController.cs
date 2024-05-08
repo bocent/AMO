@@ -125,8 +125,8 @@ public class AlarmController : MonoBehaviour
     {
         int hourNow = DateTime.Now.Hour;
         int minuteNow = DateTime.Now.Minute;
-
-        int currentTimeInSeconds = hourNow * 3600 + minuteNow * 60;
+        int secondNow = DateTime.Now.Second;
+        int currentTimeInSeconds = hourNow * 3600 + minuteNow * 60 + secondNow;
         DayOfWeek today = DateTime.Now.DayOfWeek;
 
         foreach (AlarmInfo info in alarmInfoList)
@@ -140,14 +140,14 @@ public class AlarmController : MonoBehaviour
                     int minute = int.Parse(times[1]);
                     int totalInSeconds = hour * 3600 + minute * 60;
 
-                    if (totalInSeconds == currentTimeInSeconds)
+                    if (currentTimeInSeconds >= totalInSeconds && currentTimeInSeconds < totalInSeconds + 1)
                     {
                         BuzzOnAlarm(info);
                     }
                 }
             }
-            }
         }
+    }
 
     private void BuzzOnAlarm(AlarmInfo info)
     {

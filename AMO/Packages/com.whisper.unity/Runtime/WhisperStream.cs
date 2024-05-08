@@ -365,6 +365,5 @@ namespace Whisper
         {
             StopStream();
         }
-
     }
 }
