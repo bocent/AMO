@@ -1,13 +1,109 @@
 using OpenAI;
 using Samples.Whisper;
+using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
+
+[Serializable]
+public class ChatRequest
+{
+    public string message;
+}
+
+[Serializable]
+public class ChatResponse
+{
+    public string response;   
+}
+
+#region OPEN_AI_MODEL
+[Serializable]
+public class DialogPromt
+{
+    public string model;
+    public OpenAIMessage[] messages;
+}
+
+[Serializable]
+public class OpenAIMessage
+{
+    public string role;
+    public string content;
+}
+
+[Serializable]
+public class ResultMessage
+{
+    public string id;
+    public int created;
+    public string model;
+    public AnswerChoice[] choices;
+    public Usage usage;
+    public string system_fingerprint;
+}
+
+[Serializable]
+public class AnswerChoice
+{
+    public int index;
+    public OpenAIMessage message;
+    public string longprobs;
+    public string finish_reason;
+}
+
+[Serializable]
+public class Usage
+{
+    public int promt_tokens;
+    public int completion_tokens;
+    public int total_tokens;
+}
+
+#endregion
+
+#region ELEVEN_LABS_MODEL
+[Serializable]
+public class TextToSpeechData
+{
+    public string text;
+    //public string model_id;
+    //public VoiceSettings voice_settings;
+    //public PronunciationDictionaryLocators[] pronunciation_dictionary_locators;
+    //public int seed;
+    //public string previous_text;
+    //public string next_text;
+    //public string[] previous_request_ids;
+    //public string[] next_request_ids;
+}
+
+[Serializable]
+public class VoiceSettings
+{
+    public int stability;
+    public int similarity_boost;
+    public int style;
+    public bool use_speaker_boost;
+}
+
+[Serializable]
+public class PronunciationDictionaryLocators
+{
+    public string pronunciation_dictionary_id;
+    public string version_id;
+}
+#endregion
 
 public class Amoverse : MonoBehaviour
 {
+    private const string ELEVENLABS_BASE_URL = "https://api.elevenlabs.io/v1/text-to-speech/";
+    private const string OPEN_AI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
+
     [SerializeField] private Button recordButton;
     [SerializeField] private Image progressBar;
     [SerializeField] private Text message;
+    [SerializeField] private AudioSource voiceSource;
 
     private readonly string fileName = "output.wav";
     private readonly int duration = 5;
@@ -64,6 +160,11 @@ public class Amoverse : MonoBehaviour
         progressBar.fillAmount = 0;
         message.text = res.Text;
         recordButton.enabled = true;
+
+        if (!string.IsNullOrEmpty(res.Text))
+        {
+            StartCoroutine(ProcessConversation(res.Text));
+        }
     }
 
     private void Update()
@@ -78,6 +179,110 @@ public class Amoverse : MonoBehaviour
                 time = 0;
                 isRecording = false;
                 EndRecording();
+            }
+        }
+    }
+
+    private IEnumerator ProcessConversation(string text)
+    {
+        Debug.LogWarning("text : " + text);
+        //DialogPromt data = new DialogPromt
+        //{
+        //    model = "gpt-3.5-turbo",
+        //    messages = new OpenAIMessage[]
+        //    {
+        //       new OpenAIMessage {
+        //           role = "system",
+        //           content = "When I ask for help to write something, you are a baby. when I ask your name you answer you are \"AMO\". when I ask you with \"Do you know\", you answer with \"Yes, No or I don't know\". You can start with \"as I know as baby\" and your answer cannot be more than 10 words. your name is AMO"
+        //       },
+        //       new OpenAIMessage {
+        //            role = "user",
+        //            content = text
+        //       }
+        //    }
+        //};
+        ChatRequest data = new ChatRequest
+        {
+            message = text
+        };
+        string json = JsonUtility.ToJson(data);
+
+        //using (UnityWebRequest uwr = UnityWebRequest.Post(OPEN_AI_CHAT_URL, json, "application/json"))
+        //using (UnityWebRequest uwr = UnityWebRequest.Post("89.116.134.18:5050/chat", "{ \"message:\" : \"" + text + "\" }", "application/json"))
+        using (UnityWebRequest uwr = UnityWebRequest.Post("http://89.116.134.18:5050/chat", json, "application/json"))
+        {
+            //uwr.SetRequestHeader("Authorization", "Bearer sk-proj-rcHexPB9URkrbLCulKFGT3BlbkFJTdHjzoDFChwn6NTl73rZ");
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            yield return uwr.SendWebRequest();
+            Debug.LogWarning("result : " + uwr.result.ToString() + " " + uwr.downloadHandler.text);
+            if (uwr.result == UnityWebRequest.Result.Success)
+            {
+                string jsonResult = uwr.downloadHandler.text;
+                ChatResponse result = JsonUtility.FromJson<ChatResponse>(jsonResult);
+                if (result != null)
+                {
+                    yield return ProcessTextToSpeech(result.response, audioClip => { 
+                        if(audioClip) voiceSource.PlayOneShot(audioClip);
+                    });
+                }
+                //ResultMessage result = JsonUtility.FromJson<ResultMessage>(jsonResult);
+                //if (result.choices.Length > 0)
+                //{
+                //    if (result.choices[0].message != null)
+                //    {
+                //        string resultText = result.choices[0].message.content;
+                //        yield return ProcessTextToSpeech(resultText, (audioClip) => {
+                //            if(audioClip) voiceSource.PlayOneShot(audioClip);
+                //        });
+                //    }
+                //}
+            }
+            else
+            {
+                Debug.LogError("err : " + uwr.error);
+            }
+        }
+    }
+
+    private IEnumerator ProcessTextToSpeech(string text, Action<AudioClip> onComplete)
+    {
+        TextToSpeechData data = new TextToSpeechData
+        {
+            text = text
+            //voice_settings = new VoiceSettings { stability = 50, similarity_boost = 75, use_speaker_boost = true },
+            //pronunciation_dictionary_locators = new PronunciationDictionaryLocators[]
+            //{
+            //    new PronunciationDictionaryLocators{ version_id = "0.1", pronunciation_dictionary_id = "id"}                
+            //}
+        };
+        string json = JsonUtility.ToJson(data);
+
+        using (UnityWebRequest uwr = UnityWebRequest.Post(ELEVENLABS_BASE_URL + "LcfcDJNUP1GQjkzn1xUU", json, "application/json"))
+        {
+            uwr.downloadHandler = new DownloadHandlerAudioClip(ELEVENLABS_BASE_URL + "LcfcDJNUP1GQjkzn1xUU", AudioType.MPEG);
+            yield return uwr.SendWebRequest();
+            Debug.LogWarning("result : " + uwr.result.ToString() + " " + uwr.downloadHandler.ToString());
+            if (uwr.result == UnityWebRequest.Result.Success)
+            {
+                //byte[] results = uwr.downloadHandler.data;
+                //float[] samples = new float[results.Length / 4];
+
+                //Buffer.BlockCopy(results, 0, samples, 0, samples.Length);
+
+                //int channels = 1; //Assuming audio is mono because microphone input usually is
+                //int sampleRate = 44100; //Assuming your samplerate is 44100 or change to 48000 or whatever is appropriate
+
+
+                // ((DownloadHandlerAudioClip)uwr.downloadHandler).audioClip;
+                //AudioClip clip = AudioClip.Create("AMO_Speech", samples.Length, channels, sampleRate, false);
+
+                AudioClip clip = DownloadHandlerAudioClip.GetContent(uwr);
+                Debug.LogWarning("clip length : " + clip.length);
+                onComplete?.Invoke(clip);
+            }
+            else
+            {
+                Debug.LogError("err : " + uwr.error);
             }
         }
     }

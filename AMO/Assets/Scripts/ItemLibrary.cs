@@ -66,7 +66,17 @@ public class ItemLibrary : MonoBehaviour
         {
             if (info.hasOwned && info.avatarName == HomeController.Instance.selectedCharacter.Info.avatarName && info.accessoryType == accessoryType)
             {
-                GetItem(info);
+                GameObject go = GetItem(info);
+                //if (accessoryType == SelectedCharacter.AccessoryType.Outfit)
+                //{
+                //    go.GetComponent<Item>().SetToggle(info.accessoryId == Character.Instance.GetCurrentAvatarInfo().outfitId);
+                //    Debug.LogWarning("acc id : " + info.accessoryId + " " + Character.Instance.GetCurrentAvatarInfo().helmetId + " " + (info.accessoryId == Character.Instance.GetCurrentAvatarInfo().outfitId));
+                //}
+                //else
+                //{
+                //    go.GetComponent<Item>().SetToggle(info.accessoryId == Character.Instance.GetCurrentAvatarInfo().helmetId);
+                //    Debug.LogWarning("acc id : " + info.accessoryId + " " + Character.Instance.GetCurrentAvatarInfo().helmetId + " " + (info.accessoryId == Character.Instance.GetCurrentAvatarInfo().helmetId));
+                //}
                 itemCount += 1;
             }
         }
@@ -75,6 +85,24 @@ public class ItemLibrary : MonoBehaviour
             for (int i = itemCount; i < 9; i++)
             {
                 GetItem(null);
+            }
+        }
+
+        for (int i = 0; i < itemList.Count; i++)
+        {
+            Item item = itemList[i].GetComponent<Item>();
+            if (item.Info == null)
+            {
+                item.SetToggle(false); return;
+            }
+
+            if (accessoryType == SelectedCharacter.AccessoryType.Outfit)
+            {
+                item.SetToggle(item.Info.accessoryId == Character.Instance.GetCurrentAvatarInfo().outfitId);
+            }
+            else
+            {
+                item.SetToggle(item.Info.accessoryId == Character.Instance.GetCurrentAvatarInfo().helmetId);
             }
         }
     }
@@ -115,11 +143,17 @@ public class ItemLibrary : MonoBehaviour
 
     private void ShowOutfitList(bool value)
     {
-        Init(SelectedCharacter.AccessoryType.Outfit);
+        if (value)
+        {
+            Init(SelectedCharacter.AccessoryType.Outfit);
+        }
     }
 
     private void ShowHelmetList(bool value)
     {
-        Init(SelectedCharacter.AccessoryType.Helmet);
+        if (value)
+        {
+            Init(SelectedCharacter.AccessoryType.Helmet);
+        }
     }
 }

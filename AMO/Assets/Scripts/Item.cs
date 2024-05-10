@@ -31,6 +31,11 @@ public class Item : MonoBehaviour
         toggle.group = toggleGroup;
     }
 
+    public void SetToggle(bool value)
+    {
+        toggle.isOn = value;
+    }
+
     public void SelectItem(bool isOn)
     {
         if(isOn) HomeController.Instance.selectedCharacter.AddAccessory(Info.accessoryId);
