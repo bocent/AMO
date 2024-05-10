@@ -98,7 +98,7 @@ public class PronunciationDictionaryLocators
 public class Amoverse : MonoBehaviour
 {
     private const string ELEVENLABS_BASE_URL = "https://api.elevenlabs.io/v1/text-to-speech/";
-    private const string OPEN_AI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
+    //private const string OPEN_AI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
 
     [SerializeField] private Button recordButton;
     [SerializeField] private Image progressBar;
