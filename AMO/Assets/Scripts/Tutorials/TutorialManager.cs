@@ -8,6 +8,9 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using Unity.Android.Types;
+using DG.Tweening.Plugins;
+using static UnityEngine.UI.CanvasScaler;
+using System.Linq.Expressions;
 
 [Serializable]
 public class TutorialInfo
@@ -17,12 +20,16 @@ public class TutorialInfo
     public bool isMessageTriggerEvent;
     public bool isShowPointer;
     public UnityEvent targetEvent;
+    public UnityEvent currentEvent;
     public GameObject targetClone;
     public string nextTutorialId;
+    public bool isCompleted;
 }
 
 public class TutorialManager : MonoBehaviour
 {
+    private const string TUTORIAL_KEY = "tutorial";
+
     public List<TutorialInfo> tutorialInfoList;
 
     public GameObject container;
@@ -37,27 +44,65 @@ public class TutorialManager : MonoBehaviour
 
     private TutorialInfo currentTutorialInfo;
 
-    public static TutorialManager Instance { get; private set; } 
+    public static TutorialManager Instance { get; private set; }
 
     private IEnumerator Start()
     {
         Instance = this;
         //topMessageContainer.GetComponent<Button>().onClick.AddListener(NextTutorial);
         //bottomMessageContainer.GetComponent<Button>().onClick.AddListener(NextTutorial);
-        yield return null;
-        ShowTutorial(tutorialInfoList[0]);
+        
+        if (!PlayerPrefs.HasKey(TUTORIAL_KEY))
+        {
+            yield return ShowTutorial(tutorialInfoList[0]);
+        }
+        else
+        {
+            if (PlayerPrefs.GetString(TUTORIAL_KEY) != "Completed")
+            {
+                Init();
+                string id = PlayerPrefs.GetString(TUTORIAL_KEY);
+                if (CheckTutorial(id))
+                {
+                    TutorialInfo info = GetTutorialInfo(id);
+                    if (info != null)
+                    {
+                        OpenCurrentState(info);
+                        yield return ShowTutorial(info);
+                    }
+                }
+            }
+        }
+    }
+
+    private void Init()
+    {
+        string id = PlayerPrefs.GetString(TUTORIAL_KEY);
+        int index = tutorialInfoList.FindIndex(x => x.tutorialId == id);
+        for (int i = 0; i < index; i++)
+        {
+            tutorialInfoList[i].isCompleted = true;
+        }
+    }
+
+    private void SaveTutorial()
+    {
+        PlayerPrefs.SetString(TUTORIAL_KEY, currentTutorialInfo.tutorialId);
+        PlayerPrefs.Save();
     }
 
     private void NextTutorial()
     {
+        currentTutorialInfo.isCompleted = true;     
         if (string.IsNullOrEmpty(currentTutorialInfo.nextTutorialId))
         {
             HideTutorial();
+            PlayerPrefs.SetString(TUTORIAL_KEY, "Completed");
         }
         else
         {
             HideMessage();
-            ShowTutorial(GetTutorialInfo(currentTutorialInfo.nextTutorialId));
+            StartCoroutine(ShowTutorial(GetTutorialInfo(currentTutorialInfo.nextTutorialId)));
         }
     }
 
@@ -66,8 +111,34 @@ public class TutorialManager : MonoBehaviour
         return tutorialInfoList.Where(x => x.tutorialId == id).FirstOrDefault();
     }
 
-    public void ShowTutorial(TutorialInfo info)
+    public bool CheckTutorial(string id)
     {
+        if (!string.IsNullOrEmpty(id))
+        {
+            TutorialInfo info = GetTutorialInfo(id);
+            if (info == null)
+            {
+                return false;
+            }
+            else
+            {
+                if (info.isCompleted)
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    private void OpenCurrentState(TutorialInfo info)
+    {
+        info.currentEvent?.Invoke();
+    }
+
+    public IEnumerator ShowTutorial(TutorialInfo info)
+    {
+        if (info == null) yield break;
+        if (info.isCompleted) yield break;
+        
         currentTutorialInfo = info;
         container.SetActive(true);
         if (clone) Destroy(clone);
@@ -81,9 +152,22 @@ public class TutorialManager : MonoBehaviour
             topMessageContainer.GetComponent<Button>().onClick.RemoveAllListeners();
             bottomMessageContainer.GetComponent<Button>().onClick.RemoveAllListeners();
         }
+
+        SaveTutorial();
+        HideMessage();
+        ShowPointer(false);
+        yield return new WaitForSeconds(0.5f);
         clone = Instantiate(info.targetClone);
         clone.transform.SetParent(targetCloneParent, false);
         clone.transform.position = info.targetClone.transform.position;
+        Tweening[] tweens = clone.GetComponents<Tweening>();
+        if (tweens != null)
+        {
+            foreach (Tweening tween in tweens)
+            {
+                tween.enabled = false;
+            }
+        }
         Button button = clone.GetComponent<Button>();
         button?.onClick.AddListener(info.targetEvent.Invoke);
         button?.onClick.AddListener(NextTutorial);
@@ -94,6 +178,7 @@ public class TutorialManager : MonoBehaviour
 
         pointer.gameObject.SetActive(info.isShowPointer);
         SetText(info.message);
+        ShowPointer(true);
     }
 
     public void HideTutorial()
@@ -106,6 +191,11 @@ public class TutorialManager : MonoBehaviour
     {
         topMessageContainer.SetActive(false);
         bottomMessageContainer.SetActive(false);
+    }
+
+    private void ShowPointer(bool value)
+    {
+        pointer.gameObject.SetActive(value);
     }
 
     private void SetText(string content)

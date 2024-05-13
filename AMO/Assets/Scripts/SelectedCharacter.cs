@@ -23,6 +23,9 @@ public class SelectedCharacter : MonoBehaviour
     private List<GameObject> equippedAccessories = new List<GameObject>();
 
     private CharacterAnimation characterAnimation;
+    private const string HELMET_KEY = "helmet";
+    private const string OUTFIT_KEY = "outfit";
+
 
     private void Awake()
     {
@@ -31,8 +34,10 @@ public class SelectedCharacter : MonoBehaviour
 
     private void Start()
     {
-        AddAccessory(Info.helmetId);
-        AddAccessory(Info.outfitId);
+        string helmetId = LoadAccessory(AccessoryType.Helmet);
+        string outfitId = LoadAccessory(AccessoryType.Outfit);
+        AddAccessory(helmetId);
+        AddAccessory(outfitId);
         //SetSkin("mochi_default");
     }
 
@@ -134,7 +139,7 @@ public class SelectedCharacter : MonoBehaviour
 
     public GameObject AddAccessory(string accessoryId)
     {
-        if (!string.IsNullOrEmpty(accessoryId))
+        if (accessoryId != null)
         {
             AccessoryInfo info = AccessoryController.Instance.GetAccessoryInfo(accessoryId);
             switch (info.accessoryType)
@@ -189,8 +194,15 @@ public class SelectedCharacter : MonoBehaviour
                 helmetAccessory.Init(info);
                 Info.helmetId = info.accessoryId;
                 equippedAccessories.Add(head);
+
+                SaveAccessory(AccessoryType.Helmet, info.accessoryId);
                 PlayIdleAnimation();
                 return head;
+            }
+            else
+            {
+                Info.helmetId = info.accessoryId;
+                SaveAccessory(AccessoryType.Helmet, info.accessoryId);
             }
         }
         return null;
@@ -198,12 +210,15 @@ public class SelectedCharacter : MonoBehaviour
 
     private GameObject AddOutfitAccessory(AccessoryInfo info)
     {
+        Debug.LogWarning("outfit id : " + Info.outfitId);
         if (Info.outfitId != info.accessoryId)
         {
+            Debug.LogWarning("outfit : " + outfitAccessory);
             if (outfitAccessory != null)
             {
                 equippedAccessories.Remove(outfitAccessory.gameObject);
                 Destroy(outfitAccessory.gameObject);
+                outfitAccessory = null;
             }
             if (info.accessoryPrefab != null)
             {
@@ -213,11 +228,42 @@ public class SelectedCharacter : MonoBehaviour
                 outfitAccessory.Init(info);
                 Info.outfitId = info.accessoryId;
                 equippedAccessories.Add(body);
+                SaveAccessory(AccessoryType.Outfit, info.accessoryId);
                 PlayIdleAnimation();
                 return body;
             }
+            else
+            {
+                Info.outfitId = info.accessoryId;
+                SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+            }
         }
         return null;
+    }
+
+    private void SaveAccessory(AccessoryType accessoryType, string accesoryId)
+    {
+        if (accessoryType == AccessoryType.Helmet)
+        {
+            PlayerPrefs.SetString(HELMET_KEY + info.avatarName, accesoryId);
+        }
+        else
+        {
+            PlayerPrefs.SetString(OUTFIT_KEY + info.avatarName, accesoryId);
+        }
+        PlayerPrefs.Save();
+    }
+
+    private string LoadAccessory(AccessoryType accessoryType)
+    {
+        if (accessoryType == AccessoryType.Helmet)
+        {
+            return PlayerPrefs.HasKey(HELMET_KEY + info.avatarName) ? PlayerPrefs.GetString(HELMET_KEY + info.avatarName) : "";
+        }
+        else
+        {
+            return PlayerPrefs.HasKey(OUTFIT_KEY + info.avatarName) ? PlayerPrefs.GetString(OUTFIT_KEY + info.avatarName) : "";
+        }
     }
 
     //private GameObject AddHandAccessory(AccessoryInfo info)

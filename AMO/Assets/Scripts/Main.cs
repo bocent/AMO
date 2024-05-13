@@ -7,11 +7,9 @@ public class Main : MonoBehaviour
 {
     public static Main Instance { get; private set; }
 
-    private IEnumerator Start()
+    private void Start()
     {
         Instance = this;
-        yield return null;
-        CustomSceneManager.Instance.LoadSceneAsync("Home", null);
     }
 
     public void UnlockCharacter(string avatarId)

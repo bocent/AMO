@@ -8,6 +8,11 @@ public class SelfieCamera : MonoBehaviour
     public GameObject container;
     public RawImage rawImage;
 
+    private void Start()
+    {
+        OpenCamera();
+    }
+
     public void OpenCamera()
     {
         container.SetActive(true);
@@ -36,6 +41,9 @@ public class SelfieCamera : MonoBehaviour
             {
                 return;
             }
-        }, maxSize);
+
+            rawImage.texture = texture;
+
+        }, maxSize, true, NativeCamera.PreferredCamera.Front);
     }
 }

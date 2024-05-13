@@ -1,13 +1,51 @@
 using System;
+using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
 
 public class Utils
 {
+    public static string EncryptXOR(string text, string key)
+    {
+        byte[] textBytes = Encoding.UTF8.GetBytes(text);
+        byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+        byte[] result = new byte[textBytes.Length];
+
+        for (int i = 0; i < textBytes.Length; i++)
+        {
+            result[i] = (byte)(textBytes[i] ^ keyBytes[i % keyBytes.Length]);
+        }
+
+        // Convert encrypted data to base64 string
+        string encryptedText = Convert.ToBase64String(result);
+        return encryptedText;
+    }
+
+    public static string EncryptXOR(string text)
+    {
+        return EncryptXOR(text, "1234567890");
+    }
+
+    public static string EncryptSHA256(string text)
+    {
+        using (SHA256 sha = SHA256.Create())
+        {
+            byte[] bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(text));
+            string output = "";
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                output += bytes[i].ToString("x2");
+            }
+            Debug.LogWarning(output);
+            return output;
+        }
+    }
+
     public static IEnumerator GetSprite(string url, string path, string name, Action<Sprite> onComplete)
     {
         LoadPicture(path, name, out Sprite resultSprite);

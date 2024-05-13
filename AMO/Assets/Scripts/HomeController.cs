@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class HomeController : MonoBehaviour
 {
@@ -41,7 +42,7 @@ public class HomeController : MonoBehaviour
         Instance = this;
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
-
+        //Debug.LogWarning("result : " + Utils.EncryptXOR("hello world", "1234567890"));
     }
 
     private void Start()
@@ -69,6 +70,17 @@ public class HomeController : MonoBehaviour
         //{
         //    LoadScanScene();
         //}
+
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            int addExp = Random.Range(400,10000);
+            int[] levels = UserData.GetLevel(1, info.exp);
+            Debug.LogWarning("level start : " + levels[0]);
+            //level.SetLevel(levels[0], levels[1], levels[2]);
+            level.UpdateLevel(levels[0], levels[1], levels[2], addExp);
+            selectedCharacter.AddExp(addExp);
+            //RefreshLevel(selectedCharacter.Info);
+        }
     }
 
     public void SetEnergy(int value)
@@ -87,10 +99,15 @@ public class HomeController : MonoBehaviour
         selectedCharacter.Init(info);
         selectedCharacter.PlayChoosenAnimation();
 
-        int[] levels = UserData.GetLevel(1, info.exp);
-        level.SetLevel(levels[0], levels[1], levels[2]);
+        RefreshLevel(info);
 
         avatar.SetAvatar(info);
+    }
+
+    public void RefreshLevel(AvatarInfo info)
+    {
+        int[] levels = UserData.GetLevel(1, info.exp);
+        level.SetLevel(levels[0], levels[1], levels[2]);
     }
 
     public void ShowHUD(bool value)
