@@ -17,6 +17,7 @@ public class HomeController : MonoBehaviour
     public ToDoController toDoController;
     public NotificationController notificationController;
     public InboxController inboxController;
+    public SelfieCamera selfieCamera;
     public Level level;
     public Coins coins;
     public Character character;
@@ -128,6 +129,11 @@ public class HomeController : MonoBehaviour
     public void ShowCharacterSelectionRoom(bool value)
     {
         characterSelectionRoom.SetActive(value);
+    }
+
+    public void OpenCamera()
+    {
+        selfieCamera.OpenCamera();
     }
 
     private void LoadScanScene()

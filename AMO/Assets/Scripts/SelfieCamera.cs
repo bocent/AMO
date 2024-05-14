@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,23 +9,32 @@ public class SelfieCamera : MonoBehaviour
 {
     public GameObject container;
     public RawImage rawImage;
+    public Button backButton;
+    public Button saveButton;
+    public Button retakeButton;
+    public GameObject footer;
+
+    private Texture2D cachedPhoto;
 
     private void Start()
     {
-        OpenCamera();
+        backButton.onClick.AddListener(Back);
+        saveButton.onClick.AddListener(SaveToGallery);
+        retakeButton.onClick.AddListener(OpenCamera);
     }
 
     public void OpenCamera()
     {
+        footer.SetActive(false);
         container.SetActive(true);
+        rawImage.color = Color.black;
         if (NativeCamera.DeviceHasCamera())
         {
-           
             if (NativeCamera.IsCameraBusy())
             {
                 return;
             }
-            TakePicture(512);
+            TakePicture(1024);
         }
     }
 
@@ -35,15 +46,40 @@ public class SelfieCamera : MonoBehaviour
     private void TakePicture(int maxSize)
     {
         NativeCamera.Permission permission = NativeCamera.TakePicture((path) => 
-        { 
-            Texture2D texture = NativeCamera.LoadImageAtPath(path, maxSize);
-            if (texture == null)
+        {
+            cachedPhoto = NativeCamera.LoadImageAtPath(path, maxSize);
+            if (cachedPhoto == null)
             {
                 return;
             }
-
-            rawImage.texture = texture;
+            Debug.LogWarning("take picture : " + path);
+            footer.SetActive(true);
+            rawImage.color = Color.white;
+            rawImage.texture = cachedPhoto;
 
         }, maxSize, true, NativeCamera.PreferredCamera.Front);
+    }
+
+
+
+    private void SaveToGallery()
+    {
+        string fileName = DateTime.Now.ToString("yyyy-MM-dd_HHmmss.png");
+        byte[] bytes = cachedPhoto.EncodeToPNG();
+        string path = Application.persistentDataPath + "/Gallery/" + fileName;
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+        File.WriteAllBytes(path, bytes);
+        Back();
+        Debug.Log("photo saved");
+    }
+
+
+    private void Back()
+    {
+        rawImage.texture = cachedPhoto = null;
+        container.SetActive(false);
     }
 }

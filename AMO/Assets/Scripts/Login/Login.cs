@@ -27,10 +27,17 @@ public class Login : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(GetToken("medibgr@gmail.com", "gE8YR0RKh3bqfdC1wXAT5fNNr4E3", (token) => 
-        { 
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
             CustomSceneManager.Instance.LoadSceneAsync("Home", null);
-        }));
+        }
+        else
+        {
+            StartCoroutine(GetToken("medibgr@gmail.com", "gE8YR0RKh3bqfdC1wXAT5fNNr4E3", (token) =>
+            {
+                CustomSceneManager.Instance.LoadSceneAsync("Home", null);
+            }));
+        }
     }
 
 

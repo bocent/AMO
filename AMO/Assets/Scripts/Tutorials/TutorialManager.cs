@@ -5,12 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using UnityEngine.Events;
-using Unity.Android.Types;
-using DG.Tweening.Plugins;
-using static UnityEngine.UI.CanvasScaler;
-using System.Linq.Expressions;
 
 [Serializable]
 public class TutorialInfo
