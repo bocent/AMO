@@ -15,6 +15,6 @@ public class PlayGround : MonoBehaviour
 
     public void OnButtonClicked()
     {
-        HomeController.Instance.OpenCamera();
+        HomeController.Instance.ShowPlaygroundList(true);
     }
 }

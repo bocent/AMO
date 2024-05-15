@@ -22,7 +22,9 @@ public class HomeController : MonoBehaviour
     public Coins coins;
     public Character character;
 
-    public SelectedCharacter selectedCharacter;
+    [HideInInspector] public SelectedCharacter selectedCharacter;
+    public PlaygroundActivity playgroundActivity;
+    public PhotoGallery photoGallery;
 
     public GameObject homeHUD;
     public GameObject homeRoom;
@@ -74,7 +76,7 @@ public class HomeController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.U))
         {
-            int addExp = Random.Range(400,10000);
+            int addExp = Random.Range(400, 10000);
             int[] levels = UserData.GetLevel(1, info.exp);
             Debug.LogWarning("level start : " + levels[0]);
             //level.SetLevel(levels[0], levels[1], levels[2]);
@@ -129,6 +131,16 @@ public class HomeController : MonoBehaviour
     public void ShowCharacterSelectionRoom(bool value)
     {
         characterSelectionRoom.SetActive(value);
+    }
+
+    public void ShowPlaygroundList(bool value)
+    {
+        playgroundActivity.Show(value);
+    }
+
+    public void ShowPhotoGallery(bool value)
+    {
+        photoGallery.Show(value);
     }
 
     public void OpenCamera()

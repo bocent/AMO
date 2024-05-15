@@ -7,6 +7,12 @@ public class UserData
 {
     private const int baseExp = 100;
     private const string DEFAULT_AVATAR_NAME = "Aroha";
+    public static double  Coins { get; private set; }
+
+    public static void AddCoins(double value)
+    {
+        Coins += value;
+    }
 
     public static int GetTotalExp(int level)
     {

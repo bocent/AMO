@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Android;
 using UnityEngine.UI;
 
 public class SelfieCamera : MonoBehaviour
@@ -47,7 +48,7 @@ public class SelfieCamera : MonoBehaviour
     {
         NativeCamera.Permission permission = NativeCamera.TakePicture((path) => 
         {
-            cachedPhoto = NativeCamera.LoadImageAtPath(path, maxSize);
+            cachedPhoto = NativeCamera.LoadImageAtPath(path, maxSize, false);
             if (cachedPhoto == null)
             {
                 return;
@@ -64,12 +65,12 @@ public class SelfieCamera : MonoBehaviour
 
     private void SaveToGallery()
     {
-        string fileName = DateTime.Now.ToString("yyyy-MM-dd_HHmmss.png");
+        string fileName = DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".png";
         byte[] bytes = cachedPhoto.EncodeToPNG();
-        string path = Application.persistentDataPath + "/Gallery/" + fileName;
-        if (!Directory.Exists(path))
+        string path = Consts.GALLERY_PATH + fileName;
+        if (!Directory.Exists(Consts.GALLERY_PATH))
         {
-            Directory.CreateDirectory(path);
+            Directory.CreateDirectory(Consts.GALLERY_PATH);
         }
         File.WriteAllBytes(path, bytes);
         Back();
