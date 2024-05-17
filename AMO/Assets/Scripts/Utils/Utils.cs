@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -31,6 +32,22 @@ public class Utils
         return EncryptXOR(text, "1234567890");
     }
 
+    public static string DecryptXOR(string text, string key)
+    {
+        var decoded = Convert.FromBase64String(text);
+
+        byte[] result = new byte[decoded.Length];
+
+        for (int c = 0; c < decoded.Length; c++)
+        {
+            result[c] = (byte)((uint)decoded[c] ^ (uint)key[c % key.Length]);
+        }
+
+        string dexored = Encoding.UTF8.GetString(result);
+
+        return dexored;
+    }
+
     public static string EncryptSHA256(string text)
     {
         using (SHA256 sha = SHA256.Create())
@@ -42,8 +59,28 @@ public class Utils
                 output += bytes[i].ToString("x2");
             }
             Debug.LogWarning(output);
+
             return output;
         }
+    }
+
+    public static void WriteFile(string text)
+    {
+        byte[] bytes = Encoding.Unicode.GetBytes(text);
+        //string result = Convert.ToBase64String(bytes);
+        //bytes = Encoding.UTF8.GetBytes(result); 
+        if (!Directory.Exists(Application.persistentDataPath + "/Text/"))
+        {
+            Directory.CreateDirectory(Application.persistentDataPath + "/Text/");
+        }
+        FileStream file = File.Create(Application.persistentDataPath + "/Text/Secret.dat");
+        file.Write(bytes, 0, bytes.Length);
+        file.Close();
+    }
+
+    public static void Decrypt(string text)
+    {
+        
     }
 
     public static IEnumerator GetSprite(string url, string path, string name, Action<Sprite> onComplete)

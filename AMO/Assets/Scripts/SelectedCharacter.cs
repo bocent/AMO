@@ -139,9 +139,11 @@ public class SelectedCharacter : MonoBehaviour
 
     public GameObject AddAccessory(string accessoryId)
     {
-        if (accessoryId != null)
+        Debug.LogWarning("acc id : " + accessoryId);
+        if (!string.IsNullOrEmpty(accessoryId))
         {
             AccessoryInfo info = AccessoryController.Instance.GetAccessoryInfo(accessoryId);
+            Debug.LogWarning("acc info : " + info);
             switch (info.accessoryType)
             {
                 case AccessoryType.Helmet:
@@ -178,32 +180,29 @@ public class SelectedCharacter : MonoBehaviour
 
     private GameObject AddHelmetAccessory(AccessoryInfo info)
     {
-        if (Info.helmetId != info.accessoryId)
+        Debug.LogError("helmet acc : " + helmetAccessory);
+        if (helmetAccessory != null)
         {
-            Debug.LogError("helmet acc : " + helmetAccessory);
-            if (helmetAccessory != null)
-            {
-                equippedAccessories.Remove(helmetAccessory.gameObject);
-                Destroy(helmetAccessory.gameObject);
-            }
-            if (info.accessoryPrefab != null)
-            {
-                GameObject head = Instantiate(info.accessoryPrefab, transform, false);
-                head.transform.localEulerAngles = Vector3.zero;
-                helmetAccessory = head.GetComponent<Accessory>();
-                helmetAccessory.Init(info);
-                Info.helmetId = info.accessoryId;
-                equippedAccessories.Add(head);
+            equippedAccessories.Remove(helmetAccessory.gameObject);
+            Destroy(helmetAccessory.gameObject);
+        }
+        if (info.accessoryPrefab != null)
+        {
+            GameObject head = Instantiate(info.accessoryPrefab, transform, false);
+            head.transform.localEulerAngles = Vector3.zero;
+            helmetAccessory = head.GetComponent<Accessory>();
+            helmetAccessory.Init(info);
+            Info.helmetId = info.accessoryId;
+            equippedAccessories.Add(head);
 
-                SaveAccessory(AccessoryType.Helmet, info.accessoryId);
-                PlayIdleAnimation();
-                return head;
-            }
-            else
-            {
-                Info.helmetId = info.accessoryId;
-                SaveAccessory(AccessoryType.Helmet, info.accessoryId);
-            }
+            SaveAccessory(AccessoryType.Helmet, info.accessoryId);
+            PlayIdleAnimation();
+            return head;
+        }
+        else
+        {
+            Info.helmetId = info.accessoryId;
+            SaveAccessory(AccessoryType.Helmet, info.accessoryId);
         }
         return null;
     }
@@ -211,32 +210,30 @@ public class SelectedCharacter : MonoBehaviour
     private GameObject AddOutfitAccessory(AccessoryInfo info)
     {
         Debug.LogWarning("outfit id : " + Info.outfitId);
-        if (Info.outfitId != info.accessoryId)
+        
+        Debug.LogWarning("outfit : " + outfitAccessory);
+        if (outfitAccessory != null)
         {
-            Debug.LogWarning("outfit : " + outfitAccessory);
-            if (outfitAccessory != null)
-            {
-                equippedAccessories.Remove(outfitAccessory.gameObject);
-                Destroy(outfitAccessory.gameObject);
-                outfitAccessory = null;
-            }
-            if (info.accessoryPrefab != null)
-            {
-                GameObject body = Instantiate(info.accessoryPrefab, transform, false);
-                body.transform.localEulerAngles = Vector3.zero;
-                outfitAccessory = body.GetComponent<Accessory>();
-                outfitAccessory.Init(info);
-                Info.outfitId = info.accessoryId;
-                equippedAccessories.Add(body);
-                SaveAccessory(AccessoryType.Outfit, info.accessoryId);
-                PlayIdleAnimation();
-                return body;
-            }
-            else
-            {
-                Info.outfitId = info.accessoryId;
-                SaveAccessory(AccessoryType.Outfit, info.accessoryId);
-            }
+            equippedAccessories.Remove(outfitAccessory.gameObject);
+            Destroy(outfitAccessory.gameObject);
+            outfitAccessory = null;
+        }
+        if (info.accessoryPrefab != null)
+        {
+            GameObject body = Instantiate(info.accessoryPrefab, transform, false);
+            body.transform.localEulerAngles = Vector3.zero;
+            outfitAccessory = body.GetComponent<Accessory>();
+            outfitAccessory.Init(info);
+            Info.outfitId = info.accessoryId;
+            equippedAccessories.Add(body);
+            SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+            PlayIdleAnimation();
+            return body;
+        }
+        else
+        {
+            Info.outfitId = info.accessoryId;
+            SaveAccessory(AccessoryType.Outfit, info.accessoryId);
         }
         return null;
     }
@@ -258,11 +255,11 @@ public class SelectedCharacter : MonoBehaviour
     {
         if (accessoryType == AccessoryType.Helmet)
         {
-            return PlayerPrefs.HasKey(HELMET_KEY + info.avatarName) ? PlayerPrefs.GetString(HELMET_KEY + info.avatarName) : "";
+            return PlayerPrefs.HasKey(HELMET_KEY + info.avatarName) ? PlayerPrefs.GetString(HELMET_KEY + info.avatarName) : info.helmetId;
         }
         else
         {
-            return PlayerPrefs.HasKey(OUTFIT_KEY + info.avatarName) ? PlayerPrefs.GetString(OUTFIT_KEY + info.avatarName) : "";
+            return PlayerPrefs.HasKey(OUTFIT_KEY + info.avatarName) ? PlayerPrefs.GetString(OUTFIT_KEY + info.avatarName) : info.outfitId;
         }
     }
 

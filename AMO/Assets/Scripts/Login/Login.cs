@@ -25,19 +25,17 @@ public class Login : MonoBehaviour
     private const string BASE_URL = "https://dev.amoevo.my.id/";
     private const string GET_TOKEN_URL = "get_token";
 
-    private void Start()
+    private IEnumerator Start()
     {
-        if (Application.internetReachability == NetworkReachability.NotReachable)
-        {
-            CustomSceneManager.Instance.LoadSceneAsync("Home", null);
-        }
-        else
-        {
-            StartCoroutine(GetToken("medibgr@gmail.com", "gE8YR0RKh3bqfdC1wXAT5fNNr4E3", (token) =>
-            {
-                CustomSceneManager.Instance.LoadSceneAsync("Home", null);
-            }));
-        }
+        yield return null;
+        CustomSceneManager.Instance.LoadSceneAsync("Home", null);
+        //else
+        //{
+        //    StartCoroutine(GetToken("medibgr@gmail.com", "gE8YR0RKh3bqfdC1wXAT5fNNr4E3", (token) =>
+        //    {
+        //        CustomSceneManager.Instance.LoadSceneAsync("Home", null);
+        //    }));
+        //}
     }
 
 

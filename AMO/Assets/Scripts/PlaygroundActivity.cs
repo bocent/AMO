@@ -7,12 +7,14 @@ public class PlaygroundActivity : MonoBehaviour
 {
     public GameObject container;
     public Button backButton;
+    public Button scanButton;
     public Button photoButton;
     public Button galleryButton;
 
     private void Start()
     {
         backButton.onClick.AddListener(Hide);
+        scanButton.onClick.AddListener(OpenScanCamera);
         photoButton.onClick.AddListener(OpenCamera);
         galleryButton.onClick.AddListener(ShowGallery);
     }
@@ -30,6 +32,11 @@ public class PlaygroundActivity : MonoBehaviour
     public void Hide()
     {
         container?.SetActive(false);
+    }
+
+    private void OpenScanCamera()
+    {
+        HomeController.Instance.LoadScanScene();
     }
 
     private void OpenCamera()

@@ -2,6 +2,7 @@ using OpenAI;
 using Samples.Whisper;
 using System;
 using System.Collections;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -95,6 +96,13 @@ public class PronunciationDictionaryLocators
 }
 #endregion
 
+[Serializable]
+public class OpenAISecretKey
+{
+    public string apiKey;
+    public string organization;
+}
+
 public class Amoverse : MonoBehaviour
 {
     private const string ELEVENLABS_BASE_URL = "https://api.elevenlabs.io/v1/text-to-speech/";
@@ -111,10 +119,38 @@ public class Amoverse : MonoBehaviour
     private AudioClip clip;
     private bool isRecording;
     private float time;
-    private OpenAIApi openai = new OpenAIApi();
+    private OpenAIApi openai;
+    private OpenAISecretKey openAISecretKey;
+    public TextAsset text;
+
+
+    private void RequestOpenAISecretKey()
+    {
+        if (text)
+        {
+            Debug.LogWarning("text : " + text.ToString().Trim(' '));
+            string result = Utils.DecryptXOR(text.text, "amoverse");
+            Debug.LogWarning("result : " + result);
+            openAISecretKey = JsonUtility.FromJson<OpenAISecretKey>(result);
+        }
+        //openAISecretKey = new OpenAISecretKey
+        //{
+        //    apiKey = "sk-proj-79onAQqUEAGGgWfUMdk7T3BlbkFJ73jWQl0nCPKm4aUBmSsy",
+        //    organization = "org-cGPsbYflW34h5iD4eoYgVmJI"
+        //};
+
+        //Debug.LogWarning(Utils.EncryptXOR(JsonUtility.ToJson(openAISecretKey), "amoverse"));
+
+        openai = new OpenAIApi(openAISecretKey.apiKey, openAISecretKey.organization);
+    }
 
     private void Start()
     {
+        //string encrypted = Utils.EncryptXOR("\"{ \\\"apiKey\\\" : \\\"sk-proj-79onAQqUEAGGgWfUMdk7T3BlbkFJ73jWQl0nCPKm4aUBmSsy\\\", \\\"organization\\\" : \\\"org-cGPsbYflW34h5iD4eoYgVmJI\\\" }\"", "amoverse");
+        //Utils.WriteFile(encrypted);
+        //Debug.LogWarning(encrypted);
+        //Debug.LogWarning(Utils.DecryptXOR(encrypted, "amoverse"));
+        RequestOpenAISecretKey();
         recordButton.onClick.AddListener(StartRecording);
 
         var index = PlayerPrefs.HasKey("user-mic-device-index") ? PlayerPrefs.GetInt("user-mic-device-index") : 0;

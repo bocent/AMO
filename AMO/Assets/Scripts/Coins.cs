@@ -9,6 +9,17 @@ public class Coins : MonoBehaviour
     public Image coinIcon;
     public Image coinPanel;
     public TMP_Text coinText;
+    public Button purchaseButton;
+
+    private void Start()
+    {
+        purchaseButton.onClick.AddListener(OpenInAppPurchase);
+    }
+
+    private void OpenInAppPurchase()
+    {
+        HomeController.Instance.ShowIAP(true);
+    }
 
     public void SetCoin(string coin)
     {

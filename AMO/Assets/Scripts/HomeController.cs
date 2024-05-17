@@ -25,11 +25,16 @@ public class HomeController : MonoBehaviour
     [HideInInspector] public SelectedCharacter selectedCharacter;
     public PlaygroundActivity playgroundActivity;
     public PhotoGallery photoGallery;
+    public Inventory inventory;
+    public IAP iapPage;
 
     public GameObject homeHUD;
     public GameObject homeRoom;
     public GameObject fittingRoom;
     public GameObject characterSelectionRoom;
+    public GameObject chargeRoom;
+
+    public GameObject chargingStation;
 
     private float elapsedTime = 0;
     private DateTime dateTimeStart;
@@ -37,6 +42,8 @@ public class HomeController : MonoBehaviour
     public int elapsedTimeInSecond;
     public float energyToSecond = 60f;
     public float inGameEnergyConsumed;
+
+    private bool isCharging = false;
 
     public static HomeController Instance { get; private set; }
 
@@ -50,6 +57,7 @@ public class HomeController : MonoBehaviour
 
     private void Start()
     {
+        UserData.SetEnergy(100);
         DateTime dateTime = DateTime.Now;
         startTimeInSecond = dateTime.Second + dateTime.Minute * 60 + dateTime.Hour * 3600 + dateTime.DayOfYear * 86400;
         characterSelection.Init();
@@ -60,10 +68,12 @@ public class HomeController : MonoBehaviour
         elapsedTime += Time.deltaTime;
         elapsedTimeInSecond = Mathf.FloorToInt(elapsedTime);
 
-        inGameEnergyConsumed = elapsedTime / energyToSecond;
+        inGameEnergyConsumed = energyToSecond / 60;
 
         AvatarInfo info = character.GetCurrentAvatarInfo();
-        energyController.SetEnergy(info.energy - inGameEnergyConsumed);
+        UserData.UseEnergy(inGameEnergyConsumed);
+        Debug.LogError("energy : " + UserData.Energy);
+        energyController.SetEnergy(UserData.Energy);
 
         //if (Input.GetKeyDown(KeyCode.E))
         //{
@@ -84,6 +94,33 @@ public class HomeController : MonoBehaviour
             selectedCharacter.AddExp(addExp);
             //RefreshLevel(selectedCharacter.Info);
         }
+
+        if (SystemInfo.batteryStatus == BatteryStatus.Charging)
+        {
+            if (!isCharging)
+            {
+                Charging();
+            }
+        }
+        else if (SystemInfo.batteryStatus == BatteryStatus.Discharging || SystemInfo.batteryStatus == BatteryStatus.NotCharging)
+        {
+            if (isCharging)
+            {
+                Discharging();
+            }
+        }
+    }
+
+    private void Charging()
+    {
+        isCharging = true;
+        chargingStation.SetActive(true);
+    }
+
+    private void Discharging()
+    {
+        isCharging = false;
+        chargingStation.GetComponent<ChargingStation>().Hide();
     }
 
     public void SetEnergy(int value)
@@ -94,6 +131,11 @@ public class HomeController : MonoBehaviour
     public void ShowCharacterSelection(bool value)
     {
         characterSelection.Show(value);
+    }
+
+    public void ShowInventory(bool value)
+    {
+        inventory.Show(value);
     }
 
     public void SelectCharacter(AvatarInfo info)
@@ -133,6 +175,11 @@ public class HomeController : MonoBehaviour
         characterSelectionRoom.SetActive(value);
     }
 
+    public void ShowChargingRoom(bool value)
+    {
+        chargeRoom.SetActive(value);
+    }
+
     public void ShowPlaygroundList(bool value)
     {
         playgroundActivity.Show(value);
@@ -143,12 +190,17 @@ public class HomeController : MonoBehaviour
         photoGallery.Show(value);
     }
 
+    public void ShowIAP(bool value)
+    {
+        iapPage.Show(value);
+    }
+
     public void OpenCamera()
     {
         selfieCamera.OpenCamera();
     }
 
-    private void LoadScanScene()
+    public void LoadScanScene()
     {
         SceneStackManager.Instance.LoadScene("Home", "CodeReader");
         //SceneManager.LoadSceneAsync("CodeReader", LoadSceneMode.Single);

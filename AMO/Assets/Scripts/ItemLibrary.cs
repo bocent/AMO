@@ -56,6 +56,7 @@ public class ItemLibrary : MonoBehaviour
 
     public void Init(SelectedCharacter.AccessoryType accessoryType)
     {
+        toggleGroup.allowSwitchOff = true;
         foreach (GameObject go in itemList)
         {
             go.SetActive(false);
@@ -93,18 +94,21 @@ public class ItemLibrary : MonoBehaviour
             Item item = itemList[i].GetComponent<Item>();
             if (item.Info == null)
             {
-                item.SetToggle(false); return;
-            }
-
-            if (accessoryType == SelectedCharacter.AccessoryType.Outfit)
-            {
-                item.SetToggle(item.Info.accessoryId == Character.Instance.GetCurrentAvatarInfo().outfitId);
+                item.SetToggle(false);
             }
             else
             {
-                item.SetToggle(item.Info.accessoryId == Character.Instance.GetCurrentAvatarInfo().helmetId);
+                if (accessoryType == SelectedCharacter.AccessoryType.Outfit)
+                {
+                    item.SetToggle(item.Info.accessoryId == Character.Instance.GetCurrentAvatarInfo().outfitId);
+                }
+                else
+                {
+                    item.SetToggle(item.Info.accessoryId == Character.Instance.GetCurrentAvatarInfo().helmetId);
+                }
             }
         }
+        toggleGroup.allowSwitchOff = false;
     }
 
     private GameObject SpawnItem(AccessoryInfo info)

@@ -29,11 +29,13 @@ public class Item : MonoBehaviour
             image.sprite = Info.accessorySprite;
         }
         toggle.group = toggleGroup;
+        toggle.isOn = false;
     }
 
     public void SetToggle(bool value)
     {
         toggle.isOn = value;
+        Debug.LogWarning("settoggle " + value, this);
     }
 
     public void SelectItem(bool isOn)

@@ -30,11 +30,13 @@ namespace Samples.Purchasing.Core.BuyingConsumables
         {
             var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
 
-            //Add products that will be purchasable and indicate its type.
-            builder.AddProduct(goldProductId, ProductType.Consumable);
-            builder.AddProduct(diamondProductId, ProductType.Consumable);
+            ////Add products that will be purchasable and indicate its type.
+            //builder.AddProduct(goldProductId, ProductType.Consumable);
+            //builder.AddProduct(diamondProductId, ProductType.Consumable);
 
+            Debug.LogWarning("initializing");
             UnityPurchasing.Initialize(this, builder);
+            Debug.LogWarning("initialized");
         }
 
         public void BuyGold()

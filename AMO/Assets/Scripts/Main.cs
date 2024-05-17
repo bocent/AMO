@@ -10,6 +10,7 @@ public class Main : MonoBehaviour
     private void Start()
     {
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void UnlockCharacter(string avatarId)
