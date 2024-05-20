@@ -1,18 +1,32 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class UserData
 {
     private const int baseExp = 100;
     private const string DEFAULT_AVATAR_NAME = "Aroha";
-    public static double  Coins { get; private set; }
+    
+    private static List<int> requirementTypeList;
+    
+    public static double Coins { get; private set; }
     public static float Energy { get; private set; }
+
+    public readonly string[] moodString = { "Happy", "Slightly Tired", "Bad Mood", "Broken" };
+
+    public static Main.MoodStage Mood { get; private set; }
 
     public static void AddCoins(double value)
     {
         Coins += value;
+    }
+
+    public static void AddCoins(double value, Action onComplete)
+    {
+        Coins += value;
+        onComplete?.Invoke();
     }
 
     public static void SetEnergy(int value)
@@ -30,6 +44,27 @@ public class UserData
     {
         Energy -= value;
         if(Energy < 0) Energy = 0;
+    }
+
+    public static void SetMood(Main.MoodStage mood)
+    {
+        Mood = mood;
+    }
+
+    public static void SetRequirementList(List<int> newRequirements)
+    {
+        requirementTypeList = new List<int>(newRequirements);
+        Debug.LogError("requirement count : " + requirementTypeList.Count);
+    }
+
+    public static void RemoveRequirement(int requirement)
+    {
+        if(requirementTypeList.Contains(requirement)) requirementTypeList.Remove(requirement);
+    }
+
+    public static List<int> GetRequirementList()
+    {
+        return requirementTypeList;
     }
 
     public static int GetTotalExp(int level)

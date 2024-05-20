@@ -126,18 +126,19 @@ public class Amoverse : MonoBehaviour
 
     private void RequestOpenAISecretKey()
     {
-        if (text)
-        {
-            Debug.LogWarning("text : " + text.ToString().Trim(' '));
-            string result = Utils.DecryptXOR(text.text, "amoverse");
-            Debug.LogWarning("result : " + result);
-            openAISecretKey = JsonUtility.FromJson<OpenAISecretKey>(result);
-        }
-        //openAISecretKey = new OpenAISecretKey
+        //if (text)
         //{
-        //    apiKey = "sk-proj-79onAQqUEAGGgWfUMdk7T3BlbkFJ73jWQl0nCPKm4aUBmSsy",
-        //    organization = "org-cGPsbYflW34h5iD4eoYgVmJI"
-        //};
+        //    Debug.LogWarning("text : " + text.ToString().Trim(' '));
+        //    string result = Utils.DecryptXOR(text.text, "amoverse");
+        //    Debug.LogWarning("result : " + result);
+        //    openAISecretKey = JsonUtility.FromJson<OpenAISecretKey>(result);
+        //}
+
+        openAISecretKey = new OpenAISecretKey
+        {
+            apiKey = "sk-proj-DCCUc77LIw91XV2kABBdT3BlbkFJzFkXsJNxOsoPhDKRTZJj",
+            organization = "org-cGPsbYflW34h5iD4eoYgVmJI"
+        };
 
         //Debug.LogWarning(Utils.EncryptXOR(JsonUtility.ToJson(openAISecretKey), "amoverse"));
 
@@ -296,8 +297,10 @@ public class Amoverse : MonoBehaviour
         using (UnityWebRequest uwr = UnityWebRequest.Post(ELEVENLABS_BASE_URL + "LcfcDJNUP1GQjkzn1xUU", json, "application/json"))
         {
             uwr.downloadHandler = new DownloadHandlerAudioClip(ELEVENLABS_BASE_URL + "LcfcDJNUP1GQjkzn1xUU", AudioType.MPEG);
+            uwr.SetRequestHeader("xi-api-key", "8aa43492d63d668ca76746e8e41825f4");
+            Debug.LogError("header : " + uwr.GetRequestHeader("xi-api-key"));
             yield return uwr.SendWebRequest();
-            Debug.LogWarning("result : " + uwr.result.ToString() + " " + uwr.downloadHandler.ToString());
+            Debug.LogError("result : " + uwr.result.ToString() + " " + uwr.downloadHandler.ToString());
             if (uwr.result == UnityWebRequest.Result.Success)
             {
                 //byte[] results = uwr.downloadHandler.data;

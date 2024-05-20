@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -14,6 +15,13 @@ public class Coins : MonoBehaviour
     private void Start()
     {
         purchaseButton.onClick.AddListener(OpenInAppPurchase);
+        PlayCoinAnimation();
+        
+    }
+
+    private void PlayCoinAnimation()
+    {
+        coinIcon.transform.DOPunchScale(new Vector3(2, 2, 2), 1f, 5, 0.1f).SetDelay(3f).Play().OnComplete(PlayCoinAnimation);
     }
 
     private void OpenInAppPurchase()
@@ -23,7 +31,7 @@ public class Coins : MonoBehaviour
 
     public void SetCoin(string coin)
     {
-        coinText.text = coin;
+        coinText.text = coin + " COINS";
     }
 
     public void SetCoin(int coin)

@@ -142,7 +142,7 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
 
         InAppProduct iap = iapList.Where(x => x.productId == args.purchasedProduct.definition.id).FirstOrDefault();
 
-        UserData.AddCoins(iap.quantity);
+        UserData.AddCoins(iap.quantity, HomeController.Instance.RefreshCoins);
         UpdateCoin();
         //We return Complete, informing IAP that the processing on our side is done and the transaction can be closed.
         return PurchaseProcessingResult.Complete;

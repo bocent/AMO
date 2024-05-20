@@ -36,14 +36,20 @@ public class HomeController : MonoBehaviour
 
     public GameObject chargingStation;
 
+    public GameObject glitchParticle;
+
     private float elapsedTime = 0;
     private DateTime dateTimeStart;
     public int startTimeInSecond;
     public int elapsedTimeInSecond;
     public float energyToSecond = 60f;
     public float inGameEnergyConsumed;
+    
+    [HideInInspector]
+    public Limitation currentLimitation;
 
     private bool isCharging = false;
+
 
     public static HomeController Instance { get; private set; }
 
@@ -61,6 +67,7 @@ public class HomeController : MonoBehaviour
         DateTime dateTime = DateTime.Now;
         startTimeInSecond = dateTime.Second + dateTime.Minute * 60 + dateTime.Hour * 3600 + dateTime.DayOfYear * 86400;
         characterSelection.Init();
+        coins.SetCoin(UserData.Coins.ToString());
     }
 
     private void Update()
@@ -68,12 +75,18 @@ public class HomeController : MonoBehaviour
         elapsedTime += Time.deltaTime;
         elapsedTimeInSecond = Mathf.FloorToInt(elapsedTime);
 
-        inGameEnergyConsumed = energyToSecond / 60;
+        inGameEnergyConsumed = energyToSecond * Time.deltaTime;
 
         AvatarInfo info = character.GetCurrentAvatarInfo();
         UserData.UseEnergy(inGameEnergyConsumed);
-        Debug.LogError("energy : " + UserData.Energy);
-        energyController.SetEnergy(UserData.Energy);
+        Debug.LogWarning("energy : " + UserData.Energy);
+        currentLimitation = Main.Instance.GetFeatureLimitation(Mathf.RoundToInt(UserData.Energy));
+        if ((int)UserData.Mood != currentLimitation.mood)
+        {
+            UserData.SetMood((Main.MoodStage)currentLimitation.mood);
+            UserData.SetRequirementList(currentLimitation.requirementList);
+            glitchParticle.SetActive(UserData.Mood == Main.MoodStage.BROKEN);
+        }
 
         //if (Input.GetKeyDown(KeyCode.E))
         //{
@@ -147,6 +160,11 @@ public class HomeController : MonoBehaviour
         RefreshLevel(info);
 
         avatar.SetAvatar(info);
+    }
+
+    public void RefreshCoins()
+    {
+        coins.SetCoin(UserData.Coins.ToString());
     }
 
     public void RefreshLevel(AvatarInfo info)

@@ -36,6 +36,15 @@ public class ItemLibrary : MonoBehaviour
         SetEquippedAccesories();
     }
 
+    private void Update()
+    {
+        Limitation limitation = HomeController.Instance.currentLimitation;
+        if (limitation.dessing == 2)
+        {
+            button.interactable = false;
+        }
+    }
+
     private void SetEquippedAccesories()
     {
         foreach (GameObject go in itemList)

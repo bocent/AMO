@@ -111,8 +111,23 @@ public class Inventory : MonoBehaviour
             if (info.itemCount > 0)
             {
                 //Request API
-                info.itemCount -= 1;
-                UserData.AddEnergy(info.energy);
+                if (info.itemId == "repair")
+                {
+                    UserData.RemoveRequirement((int)Main.RequirementType.NEED_FIX_UP);
+                    info.itemCount -= 1;
+                }
+                else
+                {
+                    if (UserData.GetRequirementList().Contains((int)Main.RequirementType.NEED_FIX_UP))
+                    {
+                        PopupManager.Instance.ShowPopupMessage("err", "UNABLE TO FEED AMO", "AMO need to be fixed first", new ButtonInfo { content = "OK" });
+                    }
+                    else
+                    {
+                        UserData.AddEnergy(info.energy);
+                        info.itemCount -= 1;
+                    }
+                }
             }
         }
     }
