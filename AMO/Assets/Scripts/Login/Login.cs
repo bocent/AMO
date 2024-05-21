@@ -25,10 +25,14 @@ public class Login : MonoBehaviour
     private const string BASE_URL = "https://dev.amoevo.my.id/";
     private const string GET_TOKEN_URL = "get_token";
 
+    public GameObject loginPage;
+    public GameObject registrationPage;
+    public TweenColor backgroundTweenColor;
+
     private IEnumerator Start()
     {
         yield return null;
-        CustomSceneManager.Instance.LoadSceneAsync("Home", null);
+        //CustomSceneManager.Instance.LoadSceneAsync("Home", null);
         //else
         //{
         //    StartCoroutine(GetToken("medibgr@gmail.com", "gE8YR0RKh3bqfdC1wXAT5fNNr4E3", (token) =>
@@ -36,6 +40,26 @@ public class Login : MonoBehaviour
         //        CustomSceneManager.Instance.LoadSceneAsync("Home", null);
         //    }));
         //}
+    }
+
+    public void ShowLoginPage(bool value = true)
+    {
+        loginPage.SetActive(value);
+        registrationPage.SetActive(!value);
+        if (value)
+            backgroundTweenColor.PlayBackward(null);
+        else
+            backgroundTweenColor.Play();
+    }
+
+    public void ShowRegistrationPage(bool value = true)
+    {
+        loginPage.SetActive(!value);
+        registrationPage.SetActive(value);
+        if (value)
+            backgroundTweenColor.Play();
+        else
+            backgroundTweenColor.PlayBackward(null);
     }
 
 
@@ -69,7 +93,12 @@ public class Login : MonoBehaviour
         }
     }
 
-    public IEnumerator Register(string email, string password)
+    public IEnumerator Register(string email, string password, Action onSuccess, Action<string> onFailed)
+    {
+        yield return null;
+    }
+
+    public IEnumerator CheckLogin(string username, string password, Action onSuccess, Action<string> onFailed)
     {
         yield return null;
     }

@@ -12,6 +12,8 @@ public class AlarmPopup : MonoBehaviour
     public TMP_Text timeText;
     public GameObject container;
 
+    private AlarmInfo info;
+
     private AlarmController controller;
 
     private void Start()
@@ -22,8 +24,10 @@ public class AlarmPopup : MonoBehaviour
     public void Init(AlarmController controller, AlarmInfo info)
     {
         this.controller = controller;
+        this.info = info;
         titleText.text = info.alarmTitle;
         timeText.text = info.time;
+
     }
 
     private void StopAlarm()
@@ -35,5 +39,10 @@ public class AlarmPopup : MonoBehaviour
     public void Show(bool value)
     {
         container.SetActive(value);
+        if (info != null)
+        {
+            string text = "ingantkan saya" + info.alarmTitle;
+            StartCoroutine(HomeController.Instance.askMe.ProcessConversation(text));
+        }
     }
 }

@@ -9,7 +9,6 @@ public class AlarmUI : MonoBehaviour
     public AlarmController alarmController;
     private Button button;
 
-
     private void Start()
     {
         button = GetComponent<Button>();
@@ -19,6 +18,7 @@ public class AlarmUI : MonoBehaviour
 
     private void ShowAlarm()
     {
+        return;
         alarmController.Show();
     }
 

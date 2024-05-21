@@ -10,7 +10,8 @@ public class UserData
     private const string DEFAULT_AVATAR_NAME = "Aroha";
     
     private static List<int> requirementTypeList;
-    
+
+    public static string username;
     public static double Coins { get; private set; }
     public static float Energy { get; private set; }
 
@@ -59,7 +60,10 @@ public class UserData
 
     public static void RemoveRequirement(int requirement)
     {
-        if(requirementTypeList.Contains(requirement)) requirementTypeList.Remove(requirement);
+        if (requirementTypeList != null)
+        {
+            if (requirementTypeList.Contains(requirement)) requirementTypeList.Remove(requirement);
+        }
     }
 
     public static List<int> GetRequirementList()

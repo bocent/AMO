@@ -114,17 +114,30 @@ public class Inventory : MonoBehaviour
                 if (info.itemId == "repair")
                 {
                     UserData.RemoveRequirement((int)Main.RequirementType.NEED_FIX_UP);
+                    UserData.AddEnergy(info.energy);
+                    HomeController.Instance.ShowEatBatteryEffect();
                     info.itemCount -= 1;
                 }
                 else
                 {
-                    if (UserData.GetRequirementList().Contains((int)Main.RequirementType.NEED_FIX_UP))
+                    Debug.LogError("req : " + UserData.GetRequirementList());
+                    if (UserData.GetRequirementList() != null)
                     {
-                        PopupManager.Instance.ShowPopupMessage("err", "UNABLE TO FEED AMO", "AMO need to be fixed first", new ButtonInfo { content = "OK" });
+                        if (UserData.GetRequirementList().Contains((int)Main.RequirementType.NEED_FIX_UP))
+                        {
+                            PopupManager.Instance.ShowPopupMessage("err", "UNABLE TO FEED AMO", "AMO need to be fixed first", new ButtonInfo { content = "OK" });
+                        }
+                        else
+                        {
+                            UserData.AddEnergy(info.energy);
+                            HomeController.Instance.ShowEatBatteryEffect();
+                            info.itemCount -= 1;
+                        }
                     }
                     else
                     {
                         UserData.AddEnergy(info.energy);
+                        HomeController.Instance.ShowEatBatteryEffect();
                         info.itemCount -= 1;
                     }
                 }

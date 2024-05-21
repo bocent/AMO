@@ -351,6 +351,18 @@ public class SelectedCharacter : MonoBehaviour
             PlayChoosenAnimation();
         }
 
-        
+        string conditionName = "Mood";
+        float moodValue = ((int)UserData.Mood + 1) / 4f;
+        characterAnimation.SetAnimationCondition(conditionName, moodValue);
+        foreach (GameObject equippedAccessory in equippedAccessories)
+        {
+            CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
+            if (characterAnim) characterAnim.SetAnimationCondition(conditionName, moodValue);
+            CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
+            foreach (CharacterAnimation animation in animations)
+            {
+                animation.SetAnimationCondition(conditionName, moodValue);
+            }
+        }
     }
 }

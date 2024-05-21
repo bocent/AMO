@@ -21,6 +21,7 @@ public class HomeController : MonoBehaviour
     public Level level;
     public Coins coins;
     public Character character;
+    public AskMe askMe;
 
     [HideInInspector] public SelectedCharacter selectedCharacter;
     public PlaygroundActivity playgroundActivity;
@@ -37,6 +38,8 @@ public class HomeController : MonoBehaviour
     public GameObject chargingStation;
 
     public GameObject glitchParticle;
+    public ParticleSystem eatBatteryEffect;
+    public GameObject eatBatteryBlitzObj;
 
     private float elapsedTime = 0;
     private DateTime dateTimeStart;
@@ -63,6 +66,7 @@ public class HomeController : MonoBehaviour
 
     private void Start()
     {
+        SoundManager.instance.PlayBGM("home", true);
         UserData.SetEnergy(100);
         DateTime dateTime = DateTime.Now;
         startTimeInSecond = dateTime.Second + dateTime.Minute * 60 + dateTime.Hour * 3600 + dateTime.DayOfYear * 86400;
@@ -79,13 +83,20 @@ public class HomeController : MonoBehaviour
 
         AvatarInfo info = character.GetCurrentAvatarInfo();
         UserData.UseEnergy(inGameEnergyConsumed);
-        Debug.LogWarning("energy : " + UserData.Energy);
         currentLimitation = Main.Instance.GetFeatureLimitation(Mathf.RoundToInt(UserData.Energy));
         if ((int)UserData.Mood != currentLimitation.mood)
         {
             UserData.SetMood((Main.MoodStage)currentLimitation.mood);
             UserData.SetRequirementList(currentLimitation.requirementList);
             glitchParticle.SetActive(UserData.Mood == Main.MoodStage.BROKEN);
+            if (UserData.Mood == Main.MoodStage.BROKEN)
+            {
+                SoundManager.instance.PlayBGM("glitch", true);
+            }
+            else
+            {
+                SoundManager.instance.PlayBGM("home", true);
+            }
         }
 
         //if (Input.GetKeyDown(KeyCode.E))
@@ -220,7 +231,20 @@ public class HomeController : MonoBehaviour
 
     public void LoadScanScene()
     {
-        SceneStackManager.Instance.LoadScene("Home", "CodeReader");
+        StartCoroutine(WaitForLoadScene());
         //SceneManager.LoadSceneAsync("CodeReader", LoadSceneMode.Single);
+    }
+
+    private IEnumerator WaitForLoadScene()
+    {
+        yield return new WaitForSeconds(0.5f);
+        SceneStackManager.Instance.LoadScene("Home", "CodeReader");
+    }
+
+    public void ShowEatBatteryEffect()
+    {
+        eatBatteryEffect.gameObject.SetActive(true);
+        eatBatteryEffect.Play();
+        eatBatteryBlitzObj.SetActive(true);
     }
 }

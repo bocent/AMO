@@ -26,6 +26,7 @@ public class Coins : MonoBehaviour
 
     private void OpenInAppPurchase()
     {
+        return;
         HomeController.Instance.ShowIAP(true);
     }
 
