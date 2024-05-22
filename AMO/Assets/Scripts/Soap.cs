@@ -11,6 +11,7 @@ public class Soap : MonoBehaviour
 
     private Clean clean;
     private RectTransform rectTransform;
+    private Vector3 lastPos;
 
     public void Show(Clean clean)
     {
@@ -55,7 +56,7 @@ public class Soap : MonoBehaviour
         if (Physics.Raycast(rayPos, transform.forward, out RaycastHit hitInfo, 10f, targetLayer))
         {
             Debug.LogWarning("touch : " + hitInfo.collider.name);
-            if (hitInfo.collider != null)
+            if (hitInfo.collider != null && lastPos != transform.position)
             {
                 float value = clean.Cleaning();
                 if (value >= 1)
@@ -67,6 +68,7 @@ public class Soap : MonoBehaviour
                     PlaySoapParticle();
                 }
             }
+            lastPos = transform.position;
         }
         else
         {

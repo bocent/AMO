@@ -31,6 +31,8 @@ public class LoginUI : MonoBehaviour
             
             });
         }
+
+        CustomSceneManager.Instance.LoadScene("Home", null);
     }
 
     private bool Validate()

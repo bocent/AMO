@@ -43,14 +43,21 @@ public class Clean : ActivityTask
         }
         else
         {
+            Reset();
             HideSoap();
             ActionProgress.Instance.Hide();
             if (UserData.GetRequirementList() != null)
             {
                 UserData.RemoveRequirement((int)Main.RequirementType.NEED_CLEAN_UP);
+                NeedsController.Instance.Pop(Main.RequirementType.NEED_CLEAN_UP);
             }
         }
         return elapsedTime / maxTime;
+    }
+
+    private void Reset()
+    {
+        elapsedTime = 0;
     }
 
     public override void Close()

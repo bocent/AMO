@@ -24,7 +24,7 @@ public class Limitation
     public bool canUseReminder;
     public string hygiene;
     public int mood;
-    public int dessing;
+    public int dressing;
 
     public List<int> requirementList;
 }

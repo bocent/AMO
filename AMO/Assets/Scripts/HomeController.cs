@@ -66,6 +66,7 @@ public class HomeController : MonoBehaviour
 
     private void Start()
     {
+        UserData.Init();
         SoundManager.instance.PlayBGM("home", true);
         UserData.SetEnergy(100);
         DateTime dateTime = DateTime.Now;
@@ -88,6 +89,7 @@ public class HomeController : MonoBehaviour
         {
             UserData.SetMood((Main.MoodStage)currentLimitation.mood);
             UserData.SetRequirementList(currentLimitation.requirementList);
+            StartCoroutine(NeedsController.Instance.Init());
             glitchParticle.SetActive(UserData.Mood == Main.MoodStage.BROKEN);
             if (UserData.Mood == Main.MoodStage.BROKEN)
             {

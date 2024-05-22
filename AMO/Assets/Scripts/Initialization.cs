@@ -8,7 +8,7 @@ public class Initialization : MonoBehaviour
     private IEnumerator Start()
     {
         yield return null;
-        CustomSceneManager.Instance.LoadSceneAsync("Home", null);
+        CustomSceneManager.Instance.LoadSceneAsync("Login", null);
     }
 
 }

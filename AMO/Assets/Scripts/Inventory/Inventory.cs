@@ -113,7 +113,10 @@ public class Inventory : MonoBehaviour
                 //Request API
                 if (info.itemId == "repair")
                 {
+                    UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
                     UserData.RemoveRequirement((int)Main.RequirementType.NEED_FIX_UP);
+                    NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
+                    NeedsController.Instance.Pop(Main.RequirementType.NEED_FIX_UP);
                     UserData.AddEnergy(info.energy);
                     HomeController.Instance.ShowEatBatteryEffect();
                     info.itemCount -= 1;
@@ -129,6 +132,8 @@ public class Inventory : MonoBehaviour
                         }
                         else
                         {
+                            UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
+                            NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
                             UserData.AddEnergy(info.energy);
                             HomeController.Instance.ShowEatBatteryEffect();
                             info.itemCount -= 1;
@@ -136,6 +141,8 @@ public class Inventory : MonoBehaviour
                     }
                     else
                     {
+                        UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
+                        NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
                         UserData.AddEnergy(info.energy);
                         HomeController.Instance.ShowEatBatteryEffect();
                         info.itemCount -= 1;

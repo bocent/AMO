@@ -52,9 +52,24 @@ public class UserData
         Mood = mood;
     }
 
+    public static void Init()
+    {
+        requirementTypeList = new List<int>();
+    }
+
     public static void SetRequirementList(List<int> newRequirements)
     {
-        requirementTypeList = new List<int>(newRequirements);
+        if (newRequirements != null)
+        {
+            for (int i = 0; i < newRequirements.Count; i++)
+            {
+                if (!requirementTypeList.Contains(newRequirements[i]))
+                {
+                    requirementTypeList.Add(newRequirements[i]);
+                }
+            }
+        }
+        //requirementTypeList = new List<int>(newRequirements);
         Debug.LogError("requirement count : " + requirementTypeList.Count);
     }
 
@@ -63,6 +78,7 @@ public class UserData
         if (requirementTypeList != null)
         {
             if (requirementTypeList.Contains(requirement)) requirementTypeList.Remove(requirement);
+            Debug.LogError("req count : " + requirementTypeList.Count);
         }
     }
 
