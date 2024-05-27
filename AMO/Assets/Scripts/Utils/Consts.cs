@@ -14,6 +14,6 @@ public class Consts : MonoBehaviour
     public const string HEADER_URL = "";
     public const string FOOTER_URL = "";
 
-    public const string BASE_URL = "https://192.168.0.0/";
+    public const string BASE_URL = "https://dev.amoevo.my.id/";
     public const string MENU_URL = "menu/";
 }

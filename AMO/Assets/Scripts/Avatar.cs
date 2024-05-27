@@ -29,9 +29,25 @@ public class AvatarInfo
     public string outfitId;
 
     public string skinId;
-
+    public List<Evolution> evolutionList;
     public GameObject characterPrefab;
     public bool isUnlocked;
+}
+
+[Serializable]
+public class AvatarAsset
+{
+    public int id;
+    public Sprite sprite;
+    public GameObject prefab;
+}
+
+[Serializable]
+public class Evolution
+{
+    public int evolutionId;
+    public string evolutionName;
+    public int experienceToEvolve;
 }
 
 public class Avatar : MonoBehaviour

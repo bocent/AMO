@@ -9,6 +9,8 @@ public class UserData
     private const int baseExp = 100;
     private const string DEFAULT_AVATAR_NAME = "Aroha";
     
+    public static string token;
+
     private static List<int> requirementTypeList;
 
     public static string username;
@@ -18,6 +20,11 @@ public class UserData
     public readonly string[] moodString = { "Happy", "Slightly Tired", "Bad Mood", "Broken" };
 
     public static Main.MoodStage Mood { get; private set; }
+
+    public static void SetCoin(double value)
+    {
+        Coins = value;
+    }
 
     public static void AddCoins(double value)
     {

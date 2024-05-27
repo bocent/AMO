@@ -124,6 +124,10 @@ public class AskMe : MonoBehaviour
     public TextAsset text;
 
 
+    private const string BABY_INSTRUCTION = "kamu adalah bayi bernama \"Mochi\"." +
+        " Kamu hanya bisa menjawab dengan \"tidak tahu\"" +
+        " Kamu tidak bisa menjawab dengan lebih dari 3 kata";
+
     private void RequestOpenAISecretKey()
     {
         //if (text)
@@ -136,7 +140,7 @@ public class AskMe : MonoBehaviour
 
         openAISecretKey = new OpenAISecretKey
         {
-            apiKey = "sk-proj-N0cUxpTPRTq4xmLGrSasT3BlbkFJA0pjv95y3OtVy88VnTwM",
+            apiKey = "sk-proj-NLNutB2Zkbh70oZJ1YqhT3BlbkFJv0brv6whOGCiTcxI6X3b",
             organization = "org-cGPsbYflW34h5iD4eoYgVmJI"
         };
 
@@ -222,7 +226,7 @@ public class AskMe : MonoBehaviour
 
     public IEnumerator ProcessConversation(string text)
     {
-        Debug.LogWarning("text : " + text);
+        Debug.LogWarning("text : " + BABY_INSTRUCTION + " " + text);
         //DialogPromt data = new DialogPromt
         //{
         //    model = "gpt-3.5-turbo",
@@ -240,8 +244,9 @@ public class AskMe : MonoBehaviour
         //};
         ChatRequest data = new ChatRequest
         {
-            message = text
+            message = BABY_INSTRUCTION + ". " + text
         };
+
         string json = JsonUtility.ToJson(data);
 
         //using (UnityWebRequest uwr = UnityWebRequest.Post(OPEN_AI_CHAT_URL, json, "application/json"))

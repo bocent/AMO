@@ -22,7 +22,6 @@ public class TokenResponse
 
 public class Login : MonoBehaviour
 {
-    private const string BASE_URL = "https://dev.amoevo.my.id/";
     private const string GET_TOKEN_URL = "get_token";
 
     public GameObject loginPage;
@@ -75,7 +74,7 @@ public class Login : MonoBehaviour
         WWWForm form = new WWWForm();
         form.AddField("data", "{ \"email\": \"" + email + "\", \"uid\": \"" + uid + "\" }");
 
-        using (UnityWebRequest uwr = UnityWebRequest.Post(BASE_URL + GET_TOKEN_URL, form))
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + GET_TOKEN_URL, form))
         {
             uwr.downloadHandler = new DownloadHandlerBuffer();
             yield return uwr.SendWebRequest();
@@ -95,11 +94,48 @@ public class Login : MonoBehaviour
 
     public IEnumerator Register(string email, string password, Action onSuccess, Action<string> onFailed)
     {
-        yield return null;
+        string json = "{\"email\": \"" + email + "\", \"password\": \"" + password + "\"}";
+        WWWForm form = new WWWForm();
+        form.AddField("data", json);
+
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "registrasi", form))
+        {
+            yield return uwr.SendWebRequest();
+            if (uwr.result == UnityWebRequest.Result.Success)
+            {
+                onSuccess?.Invoke();
+            }
+            else
+            {
+                onFailed?.Invoke(uwr.error);
+                Debug.LogError("err : " + uwr.error);
+            }
+        }
     }
 
-    public IEnumerator CheckLogin(string username, string password, Action onSuccess, Action<string> onFailed)
+    public IEnumerator CheckLogin(string email, string password, Action onSuccess, Action<string> onFailed)
     {
-        yield return null;
+        string json = "{\"email\": \"" + email + "\", \"password\": \"" + password + "\"}";
+        WWWForm form = new WWWForm();
+        form.AddField("data", json);
+
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "login", form))
+        {
+            yield return uwr.SendWebRequest();
+            if (uwr.result == UnityWebRequest.Result.Success)
+            {
+                LoginResponse response = JsonUtility.FromJson<LoginResponse>(uwr.downloadHandler.text);
+                if (response != null)
+                {
+                    UserData.token = response.token;
+                    onSuccess?.Invoke();
+                }
+            }
+            else
+            {
+                onFailed?.Invoke(uwr.error);
+                Debug.LogError("err : " + uwr.error);
+            }
+        }
     }
 }

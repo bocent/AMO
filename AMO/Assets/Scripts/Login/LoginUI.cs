@@ -10,6 +10,7 @@ public class LoginUI : MonoBehaviour
     public TMP_InputField passwordInputField;
     public Button loginButton;
     public Button signUpButton;
+    public Button forgetButton;
 
     private Login login;
 
@@ -17,6 +18,7 @@ public class LoginUI : MonoBehaviour
     {
         loginButton.onClick.AddListener(Login);
         signUpButton.onClick.AddListener(SignUp);
+        forgetButton.onClick.AddListener(ForgetPassword);
         login = GetComponent<Login>();
     }
 
@@ -24,15 +26,17 @@ public class LoginUI : MonoBehaviour
     {
         if (Validate())
         {
-            login.CheckLogin(usernameInputField.text, passwordInputField.text, () => { 
-            
+            StartCoroutine(login.CheckLogin(usernameInputField.text, passwordInputField.text, () => {
+                CustomSceneManager.Instance.LoadScene("Home", null);
             },
-            (error) => { 
-            
-            });
+            (error) => {
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Login", error,
+                    new ButtonInfo { content = "Ulangi" },
+                    new ButtonInfo { content = "Keluar", onButtonClicked = Application.Quit });
+            }));
         }
 
-        CustomSceneManager.Instance.LoadScene("Home", null);
+        //CustomSceneManager.Instance.LoadScene("Home", null);
     }
 
     private bool Validate()
@@ -43,5 +47,10 @@ public class LoginUI : MonoBehaviour
     private void SignUp()
     {
         login.ShowRegistrationPage(true);
+    }
+
+    private void ForgetPassword()
+    {
+        
     }
 }
