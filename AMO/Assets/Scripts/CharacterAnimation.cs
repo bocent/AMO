@@ -21,7 +21,7 @@ public class CharacterAnimation : MonoBehaviour
     public void SetAnimationCondition(string conditionName, float value)
     {
         if (!animator) animator = GetComponent<Animator>();
-        animator.SetFloat(conditionName, value);
+        animator.SetFloat(conditionName, value, 0.2f, Time.deltaTime);
     }
 
     public void SetAnimationCondition(string conditionName, int value)

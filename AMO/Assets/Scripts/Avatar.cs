@@ -19,7 +19,8 @@ public class AvatarInfo
         Baby,
         Toddler,
         Teen,
-        Adult
+        Android,
+        Humanoid
     }
     public StageType stageType;
     public float energy;

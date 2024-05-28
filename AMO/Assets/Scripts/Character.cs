@@ -65,7 +65,7 @@ public class Character : MonoBehaviour
                 currentCharacter = character;
                 //HomeController.Instance.selectedCharacter = character;
                 //character.gameObject.SetActive(true);
-                HomeController.Instance.SelectCharacter(character.info);
+                HomeController.Instance.SelectCharacter(character.info, false);
                 break;
             }
         }

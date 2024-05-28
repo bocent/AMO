@@ -41,8 +41,9 @@ public class AlarmPopup : MonoBehaviour
         container.SetActive(value);
         if (info != null)
         {
-            string text = "ingantkan saya" + info.alarmTitle;
-            StartCoroutine(HomeController.Instance.askMe.ProcessConversation(text));
+            string instruction = "Nama saya \"Lala\"";
+            string text = "ingatkan saya" + info.alarmTitle;
+            StartCoroutine(HomeController.Instance.askMe.ProcessConversation(instruction,text));
         }
     }
 }

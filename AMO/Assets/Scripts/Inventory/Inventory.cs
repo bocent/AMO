@@ -120,6 +120,8 @@ public class Inventory : MonoBehaviour
                     UserData.AddEnergy(info.energy);
                     HomeController.Instance.ShowEatBatteryEffect();
                     info.itemCount -= 1;
+
+                    Character.Instance.currentCharacter.PlayEatAnimation();
                 }
                 else
                 {
@@ -137,6 +139,7 @@ public class Inventory : MonoBehaviour
                             UserData.AddEnergy(info.energy);
                             HomeController.Instance.ShowEatBatteryEffect();
                             info.itemCount -= 1;
+                            Character.Instance.currentCharacter.PlayEatAnimation();
                         }
                     }
                     else
@@ -146,6 +149,7 @@ public class Inventory : MonoBehaviour
                         UserData.AddEnergy(info.energy);
                         HomeController.Instance.ShowEatBatteryEffect();
                         info.itemCount -= 1;
+                        Character.Instance.currentCharacter.PlayEatAnimation();
                     }
                 }
             }

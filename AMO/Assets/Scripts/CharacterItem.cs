@@ -39,7 +39,7 @@ public class CharacterItem : MonoBehaviour
     {
         if ((isOn))
         {
-            HomeController.Instance.SelectCharacter(Info);
+            HomeController.Instance.SelectCharacter(Info, gameObject.activeInHierarchy);
             UserData.SetAvatarName(Info);
             Character.Instance.UpdateSelectedAvatar();
         }

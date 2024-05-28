@@ -118,12 +118,51 @@ public class SelectedCharacter : MonoBehaviour
         }
     }
 
+    public void PlayObtainCharacter()
+    {
+        string conditionName = "Obtained";
+        if (characterAnimation)
+        {
+            characterAnimation.SetAnimationCondition(conditionName);
+            foreach (GameObject equippedAccessory in equippedAccessories)
+            {
+                CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
+                if (characterAnim) characterAnim.SetAnimationCondition(conditionName);
+                CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
+                foreach (CharacterAnimation animation in animations)
+                {
+                    animation.SetAnimationCondition(conditionName);
+                }
+            }
+        }
+    }
+
     public void PlayChoosenAnimation()
     {
+        Debug.LogError("play choose animation ", this);
         string conditionName = "Choose";
         if (characterAnimation)
         {
-            characterAnimation.SetAnimationCondition(conditionName, true);
+            characterAnimation.SetAnimationCondition(conditionName);
+            foreach (GameObject equippedAccessory in equippedAccessories)
+            {
+                CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
+                if (characterAnim) characterAnim.SetAnimationCondition(conditionName);
+                CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
+                foreach (CharacterAnimation animation in animations)
+                {
+                    animation.SetAnimationCondition(conditionName);
+                }
+            }
+        }
+    }
+
+    public void PlayEatAnimation()
+    {
+        string conditionName = "Eat";
+        if (characterAnimation)
+        {
+            characterAnimation.SetAnimationCondition(conditionName);
             foreach (GameObject equippedAccessory in equippedAccessories)
             {
                 CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
@@ -351,17 +390,24 @@ public class SelectedCharacter : MonoBehaviour
             PlayChoosenAnimation();
         }
 
-        string conditionName = "Mood";
+        string MOOD = "Mood";
+        string ENERGY = "Energy";
         float moodValue = ((int)UserData.Mood + 1) / 4f;
-        characterAnimation.SetAnimationCondition(conditionName, moodValue);
+        characterAnimation.SetAnimationCondition(MOOD, moodValue);
+        characterAnimation.SetAnimationCondition(ENERGY, (int)UserData.Energy);
         foreach (GameObject equippedAccessory in equippedAccessories)
         {
             CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
-            if (characterAnim) characterAnim.SetAnimationCondition(conditionName, moodValue);
+            if (characterAnim)
+            {
+                characterAnim.SetAnimationCondition(MOOD, moodValue);
+                characterAnim.SetAnimationCondition(ENERGY, (int)UserData.Energy);
+            }
             CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
             foreach (CharacterAnimation animation in animations)
             {
-                animation.SetAnimationCondition(conditionName, moodValue);
+                animation.SetAnimationCondition(MOOD, moodValue);
+                animation.SetAnimationCondition(ENERGY, (int)UserData.Energy);
             }
         }
     }

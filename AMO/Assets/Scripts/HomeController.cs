@@ -110,6 +110,11 @@ public class HomeController : MonoBehaviour
         //    LoadScanScene();
         //}
 
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            selectedCharacter.PlayObtainCharacter();
+        }
+
         if (Input.GetKeyDown(KeyCode.U))
         {
             int addExp = Random.Range(400, 10000);
@@ -164,11 +169,11 @@ public class HomeController : MonoBehaviour
         inventory.Show(value);
     }
 
-    public void SelectCharacter(AvatarInfo info)
+    public void SelectCharacter(AvatarInfo info, bool playAnimation = true)
     {
         selectedCharacter = character.SwitchCharacter(info.avatarId);
         selectedCharacter.Init(info);
-        selectedCharacter.PlayChoosenAnimation();
+        if(playAnimation) selectedCharacter.PlayChoosenAnimation();
 
         RefreshLevel(info);
 

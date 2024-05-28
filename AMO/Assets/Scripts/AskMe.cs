@@ -127,6 +127,10 @@ public class AskMe : MonoBehaviour
     private const string BABY_INSTRUCTION = "kamu adalah bayi bernama \"Mochi\"." +
         " Kamu hanya bisa menjawab dengan \"tidak tahu\"" +
         " Kamu tidak bisa menjawab dengan lebih dari 3 kata";
+    private const string TODDLER_INSTRUCTION = "";
+    private const string TEEN_INSTRUCTION = "";
+    private const string ANDROID_INSTRUCTION = "";
+    private const string HUMANOID_INSTRUCTION = "";
 
     private void RequestOpenAISecretKey()
     {
@@ -140,7 +144,7 @@ public class AskMe : MonoBehaviour
 
         openAISecretKey = new OpenAISecretKey
         {
-            apiKey = "sk-proj-NLNutB2Zkbh70oZJ1YqhT3BlbkFJv0brv6whOGCiTcxI6X3b",
+            apiKey = "sk-proj-cgr9Pv8YZQQ0zuERz6BoT3BlbkFJPcnznTWTp7u9bvtsnD8u",
             organization = "org-cGPsbYflW34h5iD4eoYgVmJI"
         };
 
@@ -204,7 +208,36 @@ public class AskMe : MonoBehaviour
 
         if (!string.IsNullOrEmpty(res.Text))
         {
-            StartCoroutine(ProcessConversation(res.Text));
+            Debug.LogError("res : " + res.Text);
+            if (res.Text.ToLower().Contains("reminder") || res.Text.ToLower().Contains("pengingat"))
+            {
+                string toDoList = HomeController.Instance.toDoController.LoadNotesAsText();
+                
+                Debug.LogError("todo : " + toDoList);
+                StartCoroutine(ProcessTextToSpeech(toDoList, audioClip => {
+                    if (audioClip) voiceSource.PlayOneShot(audioClip);
+                }));
+            }
+            else
+            {
+                string instruction = "";
+                switch (Character.Instance.currentCharacter.info.stageType)
+                {
+                    case AvatarInfo.StageType.Baby:
+                        instruction = BABY_INSTRUCTION;
+                        break;
+                    case AvatarInfo.StageType.Toddler:
+                        instruction = TODDLER_INSTRUCTION;
+                        break;
+                    case AvatarInfo.StageType.Android:
+                        instruction = ANDROID_INSTRUCTION;
+                        break;
+                    case AvatarInfo.StageType.Humanoid:
+                        instruction = HUMANOID_INSTRUCTION;
+                        break;
+                }
+                StartCoroutine(ProcessConversation(instruction, res.Text));
+            }
         }
     }
 
@@ -224,9 +257,8 @@ public class AskMe : MonoBehaviour
         }
     }
 
-    public IEnumerator ProcessConversation(string text)
+    public IEnumerator ProcessConversation(string instruction, string text)
     {
-        Debug.LogWarning("text : " + BABY_INSTRUCTION + " " + text);
         //DialogPromt data = new DialogPromt
         //{
         //    model = "gpt-3.5-turbo",
@@ -244,7 +276,7 @@ public class AskMe : MonoBehaviour
         //};
         ChatRequest data = new ChatRequest
         {
-            message = BABY_INSTRUCTION + ". " + text
+            message = instruction + ". " + text
         };
 
         string json = JsonUtility.ToJson(data);
