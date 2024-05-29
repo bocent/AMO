@@ -17,9 +17,7 @@ public class ItemLibrary : MonoBehaviour
     public Button backButton;
 
     public Sprite emptyItemSprite;
-
     public ToggleGroup toggleGroup;
-
     private Button button;
 
 
@@ -58,7 +56,7 @@ public class ItemLibrary : MonoBehaviour
                     (item.Info.accessoryId == helmetId && helmetId != "") || 
                     (item.Info.accessoryId == outfitId && outfitId != "");
 
-                item.SelectItem(isEquipped);
+                //item.SelectItem(isEquipped);
             }
         }
     }
@@ -140,7 +138,6 @@ public class ItemLibrary : MonoBehaviour
                 return itemList[i];
             }
         }
-
         return SpawnItem(info);
     }
 

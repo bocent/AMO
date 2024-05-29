@@ -19,6 +19,7 @@ public class SelectedCharacter : MonoBehaviour
     //public Accessory shoesAccessory;
 
     public SkinnedMeshRenderer bodyMeshRenderer;
+    private AudioSource voiceSource;
 
     private List<GameObject> equippedAccessories = new List<GameObject>();
 
@@ -30,21 +31,17 @@ public class SelectedCharacter : MonoBehaviour
     private void Awake()
     {
         characterAnimation = GetComponent<CharacterAnimation>();
-    }
-
-    private void Start()
-    {
-        string helmetId = LoadAccessory(AccessoryType.Helmet);
-        string outfitId = LoadAccessory(AccessoryType.Outfit);
-        AddAccessory(helmetId);
-        AddAccessory(outfitId);
-        //SetSkin("mochi_default");
+        voiceSource = GetComponent<AudioSource>();
     }
 
     public void Init(AvatarInfo info)
     {
         Info = info;
         this.info = info;
+        string helmetId = LoadAccessory(AccessoryType.Helmet);
+        string outfitId = LoadAccessory(AccessoryType.Outfit);
+        AddAccessory(helmetId, false);
+        AddAccessory(outfitId, false);
     }
 
     public int GetMood()
@@ -96,6 +93,12 @@ public class SelectedCharacter : MonoBehaviour
     {
         Info.energy = value;
         characterAnimation.SetAnimationCondition("energy", Info.mood);
+    }
+
+    public void PlayVoice(AudioClip clip)
+    {
+        voiceSource.clip = clip;
+        voiceSource.Play();    
     }
 
     public void PlayIdleAnimation()
@@ -176,19 +179,61 @@ public class SelectedCharacter : MonoBehaviour
         }
     }
 
-    public GameObject AddAccessory(string accessoryId)
+    public void PlayDressUpAnimation()
+    {
+        string conditionName = "FinishDressUp";
+        if (characterAnimation)
+        {
+            characterAnimation.SetAnimationCondition(conditionName);
+            foreach (GameObject equippedAccessory in equippedAccessories)
+            {
+                CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
+                if (characterAnim) characterAnim.SetAnimationCondition(conditionName);
+                CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
+                foreach (CharacterAnimation animation in animations)
+                {
+                    animation.SetAnimationCondition(conditionName);
+                }
+            }
+        }
+    }
+
+    public void PlayCleanUpAnimation(bool value)
+    {
+        string conditionName = "CleanUp";
+        if (characterAnimation)
+        {
+            characterAnimation.SetAnimationCondition(conditionName, value);
+            foreach (GameObject equippedAccessory in equippedAccessories)
+            {
+                CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
+                if (characterAnim) characterAnim.SetAnimationCondition(conditionName, value);
+                CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
+                foreach (CharacterAnimation animation in animations)
+                {
+                    animation.SetAnimationCondition(conditionName, value);
+                }
+            }
+        }
+    }
+
+    public GameObject AddAccessory(string accessoryId, bool useAnimation = true)
     {
         Debug.LogWarning("acc id : " + accessoryId);
         if (!string.IsNullOrEmpty(accessoryId))
         {
             AccessoryInfo info = AccessoryController.Instance.GetAccessoryInfo(accessoryId);
-            Debug.LogWarning("acc info : " + info);
-            switch (info.accessoryType)
+            if (info != null)
             {
-                case AccessoryType.Helmet:
-                    return AddHelmetAccessory(info);
-                case AccessoryType.Outfit:
-                    return AddOutfitAccessory(info);
+                Debug.LogWarning("acc info : " + info);
+                switch (info.accessoryType)
+                {
+                    case AccessoryType.Helmet:
+                        return AddHelmetAccessory(info);
+                    case AccessoryType.Outfit:
+                        return AddOutfitAccessory(info);
+                }
+                if (useAnimation) PlayDressUpAnimation();
             }
         }
         return null;
@@ -268,6 +313,13 @@ public class SelectedCharacter : MonoBehaviour
             SaveAccessory(AccessoryType.Outfit, info.accessoryId);
             PlayIdleAnimation();
             return body;
+        }
+        else if (info.material != null)
+        {
+            Info.outfitId = info.accessoryId;
+            bodyMeshRenderer.material = info.material;
+            SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+            PlayIdleAnimation();
         }
         else
         {
@@ -375,8 +427,8 @@ public class SelectedCharacter : MonoBehaviour
     {
         AvatarInfo targetAvatarInfo = Character.Instance.GetAvatarInfo(avatarId);
         Debug.LogError("avatar id : " + targetAvatarInfo.avatarId + " " + targetAvatarInfo.stageType.ToString());
-        targetAvatarInfo.mood = Info.mood;
-        targetAvatarInfo.energy = Info.energy;
+        //targetAvatarInfo.mood = Info.mood;
+        //targetAvatarInfo.energy = Info.energy;
         targetAvatarInfo.level = Info.level;
         targetAvatarInfo.isUnlocked = true;
         HomeController.Instance.SelectCharacter(targetAvatarInfo);

@@ -6,6 +6,12 @@ public class Consts : MonoBehaviour
 {
     public static readonly string GALLERY_PATH = Application.persistentDataPath + "/Gallery/";
 
+    public const string MOCHI = "Mochi";
+    public const string AROHA = "Aroha";
+    public const string GILMO = "Gilmo";
+    public const string LORRY = "Lorry";
+    public const string OLGA = "Olga";
+
     public const string PICTURES_FOLDER_NAME = "/Pictures/";
     public const string THUMBNAIL_NAME = "/Thumbnail/";
     public const string IMAGE_NAME = "Image/";

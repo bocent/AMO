@@ -35,12 +35,23 @@ public class Soap : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            Touch();
+            if (UserData.GetRequirementList().Contains((int)Main.RequirementType.NEED_FIX_UP))
+            {
+                PopupManager.Instance.ShowPopupMessage("err", "UNABLE TO FEED AMO", "AMO need to be fixed first", new ButtonInfo { content = "OK" });
+                ActionProgress.Instance.Hide();
+                Character.Instance.currentCharacter.PlayCleanUpAnimation(false);
+                Hide();
+            }
+            else
+            {
+                Touch();
+            }
         }
         else if (Input.GetMouseButtonUp(0))
         {
             soapImage.enabled = false;
             StopSoapParticle();
+            Character.Instance.currentCharacter.PlayCleanUpAnimation(false);
         }
     }
 
@@ -62,17 +73,24 @@ public class Soap : MonoBehaviour
                 if (value >= 1)
                 {
                     StopSoapParticle();
+                    Character.Instance.currentCharacter.PlayCleanUpAnimation(false);
                 }
                 else
                 {
                     PlaySoapParticle();
+                    Character.Instance.currentCharacter.PlayCleanUpAnimation(true);
                 }
+            }
+            else
+            {
+                Character.Instance.currentCharacter.PlayCleanUpAnimation(false);
             }
             lastPos = transform.position;
         }
         else
         {
             StopSoapParticle();
+            Character.Instance.currentCharacter.PlayCleanUpAnimation(false);
         }
     }
 
@@ -86,5 +104,7 @@ public class Soap : MonoBehaviour
     {
         if (soapParticle.isPlaying)
             soapParticle.Stop(true);
+
+        Character.Instance.currentCharacter.PlayCleanUpAnimation(false);
     }
 }

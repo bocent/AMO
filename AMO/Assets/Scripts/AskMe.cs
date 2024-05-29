@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Text;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
@@ -101,6 +102,7 @@ public class OpenAISecretKey
 {
     public string apiKey;
     public string organization;
+    public string elevenLabs;
 }
 
 public class AskMe : MonoBehaviour
@@ -109,20 +111,29 @@ public class AskMe : MonoBehaviour
     //private const string OPEN_AI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
 
     [SerializeField] private Button recordButton;
+    [SerializeField] private EventTrigger eventTrigger;
     [SerializeField] private Image progressBar;
     [SerializeField] private Text message;
     [SerializeField] private AudioSource voiceSource;
+    [SerializeField] private AudioClip recordSFX;
+    [SerializeField] private AudioClip stopRecordSFX;
 
     private readonly string fileName = "output.wav";
-    private readonly int duration = 5;
+    private readonly float duration = 10;
 
     private AudioClip clip;
+    private bool canRecord = true;
     private bool isRecording;
     private float time;
     private OpenAIApi openai;
     private OpenAISecretKey openAISecretKey;
     public TextAsset text;
 
+    private const string MOCHI_VOICE_KEY = "jdtEogghM74T0WObHkIa";
+    private const string AROHA_VOICE_KEY = "";
+    private const string GILMO_VOICE_KEY = "";
+    private const string LORRY_VOICE_KEY = "";
+    private const string OLGA_VOICE_KEY = "";
 
     private const string BABY_INSTRUCTION = "kamu adalah bayi bernama \"Mochi\"." +
         " Kamu hanya bisa menjawab dengan \"tidak tahu\"" +
@@ -132,7 +143,7 @@ public class AskMe : MonoBehaviour
     private const string ANDROID_INSTRUCTION = "";
     private const string HUMANOID_INSTRUCTION = "";
 
-    private void RequestOpenAISecretKey()
+    private IEnumerator RequestOpenAISecretKey()
     {
         //if (text)
         //{
@@ -142,28 +153,58 @@ public class AskMe : MonoBehaviour
         //    openAISecretKey = JsonUtility.FromJson<OpenAISecretKey>(result);
         //}
 
-        openAISecretKey = new OpenAISecretKey
+        using (UnityWebRequest uwr = new UnityWebRequest("https://www.dropbox.com/scl/fi/jbcf5g8dd4gc0s9l3q7de/openAI.json?rlkey=7pjtak0azf87bfu0dodalzoeg&st=394nd3ys&dl=1"))
         {
-            apiKey = "sk-proj-cgr9Pv8YZQQ0zuERz6BoT3BlbkFJPcnznTWTp7u9bvtsnD8u",
-            organization = "org-cGPsbYflW34h5iD4eoYgVmJI"
-        };
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            yield return uwr.SendWebRequest();
+            if (uwr.result == UnityWebRequest.Result.Success)
+            {
+                string json = uwr.downloadHandler.text;
+                openAISecretKey = JsonUtility.FromJson<OpenAISecretKey>(json);
+                openai = new OpenAIApi(openAISecretKey.apiKey, openAISecretKey.organization);
+            }
+            else
+            {
+                Debug.LogError("failed to get keys : " + uwr.error);
+            }
+        }
+
+        //openAISecretKey = new OpenAISecretKey
+        //{
+        //    apiKey = "sk-proj-cgr9Pv8YZQQ0zuERz6BoT3BlbkFJPcnznTWTp7u9bvtsnD8u",
+        //    organization = "org-cGPsbYflW34h5iD4eoYgVmJI"
+        //};
 
         //Debug.LogWarning(Utils.EncryptXOR(JsonUtility.ToJson(openAISecretKey), "amoverse"));
 
-        openai = new OpenAIApi(openAISecretKey.apiKey, openAISecretKey.organization);
     }
 
     private void Start()
     {
         //string encrypted = Utils.EncryptXOR("\"{ \\\"apiKey\\\" : \\\"sk-proj-79onAQqUEAGGgWfUMdk7T3BlbkFJ73jWQl0nCPKm4aUBmSsy\\\", \\\"organization\\\" : \\\"org-cGPsbYflW34h5iD4eoYgVmJI\\\" }\"", "amoverse");
-        //Utils.WriteFile(encrypted);
-        //Debug.LogWarning(encrypted);
-        //Debug.LogWarning(Utils.DecryptXOR(encrypted, "amoverse"));
-        RequestOpenAISecretKey();
-        recordButton.onClick.AddListener(StartRecording);
+        
+        StartCoroutine(RequestOpenAISecretKey());
+        //recordButton.onClick.AddListener(StartRecording);
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerDown;
+        entry.callback.AddListener(OnRecordPressed);
+        eventTrigger.triggers.Add(entry);
+        entry.eventID = EventTriggerType.PointerUp;
+        entry.callback.AddListener(OnRecordReleased);
+        eventTrigger.triggers.Add(entry);
 
         var index = PlayerPrefs.HasKey("user-mic-device-index") ? PlayerPrefs.GetInt("user-mic-device-index") : 0;
         Debug.LogWarning("index : " + index);
+    }
+
+    private void OnRecordPressed(BaseEventData eventData)
+    {
+        StartRecording();
+    }
+
+    private void OnRecordReleased(BaseEventData eventData)
+    {
+        EndRecording();
     }
 
     private void ChangeMicrophone(int index)
@@ -173,70 +214,88 @@ public class AskMe : MonoBehaviour
 
     private void StartRecording()
     {
+        canRecord = false;
+        SoundManager.instance.PlaySFX(recordSFX);
         isRecording = true;
-        recordButton.enabled = false;
+        recordButton.interactable = false;
 
         var index = PlayerPrefs.GetInt("user-mic-device-index");
         Debug.LogWarning("index : " + index);
 #if !UNITY_WEBGL
-        clip = Microphone.Start(Microphone.devices[index].ToString(), false, duration, 44100);
+        clip = Microphone.Start(Microphone.devices[index].ToString(), false, Mathf.CeilToInt(duration), 44100);
 #endif
     }
 
     private async void EndRecording()
     {
-        message.text = "Transcripting...";
+        if (isRecording)
+        {
+            SoundManager.instance.PlaySFX(stopRecordSFX);
+            isRecording = false;
+            message.text = "Transcripting...";
 
 #if !UNITY_WEBGL
-        Microphone.End(null);
+            Microphone.End(null);
 #endif
 
-        byte[] data = SaveWav.Save(fileName, clip);
+            byte[] data = SaveWav.Save(fileName, clip);
 
-        var req = new CreateAudioTranscriptionsRequest
-        {
-            FileData = new FileData() { Data = data, Name = "audio.wav" },
-            // File = Application.persistentDataPath + "/" + fileName,
-            Model = "whisper-1",
-            Language = "id"
-        };
-        var res = await openai.CreateAudioTranscription(req);
-
-        progressBar.fillAmount = 0;
-        message.text = res.Text;
-        recordButton.enabled = true;
-
-        if (!string.IsNullOrEmpty(res.Text))
-        {
-            Debug.LogError("res : " + res.Text);
-            if (res.Text.ToLower().Contains("reminder") || res.Text.ToLower().Contains("pengingat"))
+            var req = new CreateAudioTranscriptionsRequest
             {
-                string toDoList = HomeController.Instance.toDoController.LoadNotesAsText();
-                
-                Debug.LogError("todo : " + toDoList);
-                StartCoroutine(ProcessTextToSpeech(toDoList, audioClip => {
-                    if (audioClip) voiceSource.PlayOneShot(audioClip);
-                }));
+                FileData = new FileData() { Data = data, Name = "audio.wav" },
+                // File = Application.persistentDataPath + "/" + fileName,
+                Model = "whisper-1",
+                Language = "id"
+            };
+            var res = await openai.CreateAudioTranscription(req);
+            
+            progressBar.fillAmount = 0;
+            message.text = res.Text;
+
+            if (!string.IsNullOrEmpty(res.Text))
+            {
+                Debug.LogError("res : " + res.Text);
+                if (res.Text.ToLower().Contains("reminder") || res.Text.ToLower().Contains("pengingat"))
+                {
+                    string toDoList = HomeController.Instance.toDoController.LoadNotesAsText();
+
+                    Debug.LogError("todo : " + toDoList);
+                    StartCoroutine(ProcessTextToSpeech(toDoList, audioClip =>
+                    {
+                        if (audioClip) Character.Instance.currentCharacter.PlayVoice(audioClip);
+                        recordButton.interactable = true;
+                        canRecord = true;
+                    }));
+                }
+                else
+                {
+                    string instruction = "";
+                    switch (Character.Instance.currentCharacter.info.stageType)
+                    {
+                        case AvatarInfo.StageType.Baby:
+                            instruction = BABY_INSTRUCTION;
+                            break;
+                        case AvatarInfo.StageType.Toddler:
+                            instruction = TODDLER_INSTRUCTION;
+                            break;
+                        case AvatarInfo.StageType.Teen:
+                            instruction = TEEN_INSTRUCTION;
+                            break;
+                        case AvatarInfo.StageType.Android:
+                            instruction = ANDROID_INSTRUCTION;
+                            break;
+                        case AvatarInfo.StageType.Humanoid:
+                            instruction = HUMANOID_INSTRUCTION;
+                            break;
+                    }
+                    StartCoroutine(ProcessConversation(instruction, res.Text));
+                }
             }
             else
             {
-                string instruction = "";
-                switch (Character.Instance.currentCharacter.info.stageType)
-                {
-                    case AvatarInfo.StageType.Baby:
-                        instruction = BABY_INSTRUCTION;
-                        break;
-                    case AvatarInfo.StageType.Toddler:
-                        instruction = TODDLER_INSTRUCTION;
-                        break;
-                    case AvatarInfo.StageType.Android:
-                        instruction = ANDROID_INSTRUCTION;
-                        break;
-                    case AvatarInfo.StageType.Humanoid:
-                        instruction = HUMANOID_INSTRUCTION;
-                        break;
-                }
-                StartCoroutine(ProcessConversation(instruction, res.Text));
+                Debug.LogError("err : " + res.Error);
+                recordButton.interactable = true;
+                canRecord = true;
             }
         }
     }
@@ -251,7 +310,6 @@ public class AskMe : MonoBehaviour
             if (time >= duration)
             {
                 time = 0;
-                isRecording = false;
                 EndRecording();
             }
         }
@@ -295,8 +353,8 @@ public class AskMe : MonoBehaviour
                 ChatResponse result = JsonUtility.FromJson<ChatResponse>(jsonResult);
                 if (result != null)
                 {
-                    yield return ProcessTextToSpeech(result.response, audioClip => { 
-                        if(audioClip) voiceSource.PlayOneShot(audioClip);
+                    yield return ProcessTextToSpeech(result.response, audioClip => {
+                        if (audioClip) Character.Instance.currentCharacter.PlayVoice(audioClip);//voiceSource.PlayOneShot(audioClip);
                     });
                 }
                 //ResultMessage result = JsonUtility.FromJson<ResultMessage>(jsonResult);
@@ -315,6 +373,8 @@ public class AskMe : MonoBehaviour
             {
                 Debug.LogError("err : " + uwr.error);
             }
+            recordButton.interactable = true;
+            canRecord = true;
         }
     }
 
@@ -331,11 +391,30 @@ public class AskMe : MonoBehaviour
         };
         string json = JsonUtility.ToJson(data);
 
-        using (UnityWebRequest uwr = UnityWebRequest.Post(ELEVENLABS_BASE_URL + "LcfcDJNUP1GQjkzn1xUU", json, "application/json"))
+        string voiceCharacter = "";
+        switch (Character.Instance.currentCharacter.info.avatarName)
         {
-            uwr.downloadHandler = new DownloadHandlerAudioClip(ELEVENLABS_BASE_URL + "LcfcDJNUP1GQjkzn1xUU", AudioType.MPEG);
-            uwr.SetRequestHeader("xi-api-key", "8aa43492d63d668ca76746e8e41825f4");
-            Debug.LogError("header : " + uwr.GetRequestHeader("xi-api-key"));
+            case Consts.MOCHI:
+                voiceCharacter = MOCHI_VOICE_KEY;
+                break;
+            case Consts.AROHA:
+                voiceCharacter = AROHA_VOICE_KEY;
+                break;
+            case Consts.GILMO:
+                voiceCharacter = GILMO_VOICE_KEY;
+                break;
+            case Consts.LORRY:
+                voiceCharacter = LORRY_VOICE_KEY;
+                break;
+            case Consts.OLGA:
+                voiceCharacter = OLGA_VOICE_KEY;
+                break;
+        }
+
+        using (UnityWebRequest uwr = UnityWebRequest.Post(ELEVENLABS_BASE_URL + voiceCharacter, json, "application/json"))
+        {
+            uwr.downloadHandler = new DownloadHandlerAudioClip(ELEVENLABS_BASE_URL + voiceCharacter, AudioType.MPEG);
+            uwr.SetRequestHeader("xi-api-key", openAISecretKey.elevenLabs);
             yield return uwr.SendWebRequest();
             Debug.LogError("result : " + uwr.result.ToString() + " " + uwr.downloadHandler.ToString());
             if (uwr.result == UnityWebRequest.Result.Success)
@@ -360,6 +439,8 @@ public class AskMe : MonoBehaviour
             {
                 Debug.LogError("err : " + uwr.error);
             }
+            canRecord = true;
+            recordButton.interactable = true;
         }
     }
 }

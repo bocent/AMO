@@ -19,18 +19,26 @@ public class Clean : ActivityTask
 
     private void ShowSoap()
     {
-        if (UserData.GetRequirementList() != null)
+        if (UserData.GetRequirementList().Contains((int)Main.RequirementType.NEED_FIX_UP))
         {
-            if (UserData.GetRequirementList().Contains((int)Main.RequirementType.NEED_CLEAN_UP))
+            PopupManager.Instance.ShowPopupMessage("err", "UNABLE TO FEED AMO", "AMO need to be fixed first", new ButtonInfo { content = "OK" });
+        }
+        else
+        {
+            if (UserData.GetRequirementList() != null)
             {
-                soap.Show(this);
-                ActionProgress.Instance.Show(this);
+                if (UserData.GetRequirementList().Contains((int)Main.RequirementType.NEED_CLEAN_UP))
+                {
+                    soap.Show(this);
+                    ActionProgress.Instance.Show(this);
+                }
             }
         }
     }
 
     private void HideSoap()
     {
+        Character.Instance.currentCharacter.PlayCleanUpAnimation(false);
         soap.Hide();
     }
 

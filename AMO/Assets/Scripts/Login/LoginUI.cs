@@ -26,17 +26,17 @@ public class LoginUI : MonoBehaviour
     {
         if (Validate())
         {
-            StartCoroutine(login.CheckLogin(usernameInputField.text, passwordInputField.text, () => {
-                CustomSceneManager.Instance.LoadScene("Home", null);
-            },
-            (error) => {
-                PopupManager.Instance.ShowPopupMessage("err", "Gagal Login", error,
-                    new ButtonInfo { content = "Ulangi" },
-                    new ButtonInfo { content = "Keluar", onButtonClicked = Application.Quit });
-            }));
+            //StartCoroutine(login.CheckLogin(usernameInputField.text, passwordInputField.text, () => {
+            //    CustomSceneManager.Instance.LoadScene("Home", null);
+            //},
+            //(error) => {
+            //    PopupManager.Instance.ShowPopupMessage("err", "Gagal Login", error,
+            //        new ButtonInfo { content = "Ulangi" },
+            //        new ButtonInfo { content = "Keluar", onButtonClicked = Application.Quit });
+            //}));
         }
 
-        //CustomSceneManager.Instance.LoadScene("Home", null);
+        CustomSceneManager.Instance.LoadScene("Home", null);
     }
 
     private bool Validate()

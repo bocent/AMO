@@ -30,7 +30,7 @@ public class Character : MonoBehaviour
     {
         LoadAllCharacter();
         UpdateSelectedAvatar();
-        LoadCharacter(SelectedAvatarId);
+        //LoadCharacter(SelectedAvatarId);
 
         StartCoroutine(RequestCharacters(() => StartCoroutine(RequestUserData()), (error) => { 
         

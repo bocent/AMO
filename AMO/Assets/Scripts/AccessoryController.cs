@@ -12,6 +12,7 @@ public class AccessoryInfo
     public string maskId;
     public string avatarName;
     public GameObject accessoryPrefab;
+    public Material material;
     public Sprite accessorySprite;
     public SelectedCharacter.AccessoryType accessoryType;
     public bool hasOwned;
