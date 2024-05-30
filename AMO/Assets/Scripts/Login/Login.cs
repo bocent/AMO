@@ -26,6 +26,8 @@ public class Login : MonoBehaviour
 
     public GameObject loginPage;
     public GameObject registrationPage;
+    public GameObject forgetPasswordPage;
+    public GameObject verificationPage;
     public TweenColor backgroundTweenColor;
 
     private IEnumerator Start()
@@ -39,6 +41,18 @@ public class Login : MonoBehaviour
         //        CustomSceneManager.Instance.LoadSceneAsync("Home", null);
         //    }));
         //}
+
+        if (PlayerPrefs.HasKey("email"))
+        {
+            StartCoroutine(CheckLogin(PlayerPrefs.GetString("email"), PlayerPrefs.GetString("password"), () => 
+            {
+                CustomSceneManager.Instance.LoadScene("Home", null);
+            }, (error) => 
+            {
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Login Otomatis",
+                    "Ulangi login secara manual", new ButtonInfo { content = "OK" });
+            }));
+        }
     }
 
     public void ShowLoginPage(bool value = true)
@@ -59,6 +73,22 @@ public class Login : MonoBehaviour
             backgroundTweenColor.Play();
         else
             backgroundTweenColor.PlayBackward(null);
+    }
+
+    public void ShowForgetPassword(bool value = true)
+    {
+        forgetPasswordPage.SetActive(value);
+        loginPage.SetActive(!value);
+    }
+
+    public void ShowVerification(bool value = true)
+    {
+        verificationPage.SetActive(value);
+        registrationPage.SetActive(!value);
+        if (value)
+        {
+            GetComponent<Verification>().ResetTime();
+        }
     }
 
 
@@ -83,6 +113,7 @@ public class Login : MonoBehaviour
                 string json = uwr.downloadHandler.text;
                 TokenResponse response = JsonUtility.FromJson<TokenResponse>(json);
                 Debug.LogWarning("success get token : " + response.token);
+                UserData.token = response.token;
                 onComplete?.Invoke(response.token);
             }
             else
@@ -101,14 +132,29 @@ public class Login : MonoBehaviour
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "registrasi", form))
         {
             yield return uwr.SendWebRequest();
-            if (uwr.result == UnityWebRequest.Result.Success)
+            try
             {
-                onSuccess?.Invoke();
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    Response response = JsonUtility.FromJson<Response>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        onSuccess?.Invoke();
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    Debug.LogError("err : " + uwr.error);
+                    throw new Exception("Terjadi Kesalahan");
+                }
             }
-            else
+            catch (Exception e)
             {
-                onFailed?.Invoke(uwr.error);
-                Debug.LogError("err : " + uwr.error);
+                onFailed?.Invoke(e.Message);
             }
         }
     }
@@ -125,10 +171,21 @@ public class Login : MonoBehaviour
             if (uwr.result == UnityWebRequest.Result.Success)
             {
                 LoginResponse response = JsonUtility.FromJson<LoginResponse>(uwr.downloadHandler.text);
+                Debug.Log(uwr.downloadHandler.text);
                 if (response != null)
                 {
-                    UserData.token = response.token;
-                    onSuccess?.Invoke();
+                    if (response.status.ToLower() == "ok")
+                    {
+                        UserData.token = response.token;
+                        PlayerPrefs.SetString("email", email);
+                        PlayerPrefs.SetString("password", password);
+                        PlayerPrefs.Save();
+                        onSuccess?.Invoke();
+                    }
+                    else
+                    {
+                        onFailed?.Invoke(response.msg);
+                    }
                 }
             }
             else

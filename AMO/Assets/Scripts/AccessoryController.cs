@@ -18,17 +18,21 @@ public class AccessoryInfo
     public bool hasOwned;
 }
 
-[Serializable]
-public class SkinInfo
-{
-    public string skinId;
-    public Material material;
-}
-
 public class AccessoryController : MonoBehaviour
 {
-    public List<AccessoryInfo> accessoryList;
-    public List<SkinInfo> skinInfoList;
+    [SerializeField] private List<AccessoryInfo> accessoryList;
+
+    public const string DEFAULT_AROHA_HELMET = "aroha_default_helm";
+    public const string DEFAULT_GILMO_HELMET = "gilmo_default_outfit";
+    public const string DEFAULT_LORRY_HELMET = "lorry_default_outfit";
+    public const string DEFAULT_MOCHI_HELMET = "mochi_default_outfit";
+    public const string DEFAULT_OLGA_HELMET = "olga_default_outfit";
+
+    public const string DEFAULT_AROHA_OUTFIT = "aroha_default_outfit";
+    public const string DEFAULT_GILMO_OUTFIT = "gilmo_default_outfit";
+    public const string DEFAULT_LORRY_OUTFIT = "lorry_default_outfit";
+    public const string DEFAULT_MOCHI_OUTFIT = "mochi_default_outfit";
+    public const string DEFAULT_OLGA_OUTFIT = "olga_default_outfit";
 
     public static AccessoryController Instance { get; private set; }
 
@@ -37,15 +41,14 @@ public class AccessoryController : MonoBehaviour
         Instance = this;
     }
 
+    public List<AccessoryInfo> GetAccessoryList()
+    {
+        return accessoryList;
+    }
+
     public AccessoryInfo GetAccessoryInfo(string id)
     {
         AccessoryInfo info = accessoryList.Where(x => x.accessoryId == id).FirstOrDefault();
-        return info;
-    }
-
-    public SkinInfo GetSkinInfo(string id)
-    {
-        SkinInfo info = skinInfoList.Where(x => x.skinId == id).FirstOrDefault();
         return info;
     }
 }

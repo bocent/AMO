@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using UnityEngine.Audio;
 
 public class Sound
 {
@@ -19,15 +20,18 @@ public class SoundManager : MonoBehaviour {
 
     public const string BGM = "BGM";
     public const string SFX = "SFX";
-	
+    public const string Voice = "Voice";
+
+    public AudioMixer audioMixer;
 	private AudioClip myAudio = null;
 	private AudioSource usedAudioSource;
 	
 	public string bgmPath = "Sounds/BGM/";
 	public string sfxPath = "Sounds/SFX/";
 
-	private bool isOn = true;
+	private bool isSfxOn = true;
 	private bool isBgmOn = true;
+    private bool isVoiceOn = true;
 	
 	private string audioName = "";
 
@@ -56,7 +60,8 @@ public class SoundManager : MonoBehaviour {
 	{
         audioDict = new Dictionary<string, AudioClip>();
 		isBgmOn = true;
-		isOn = true;
+		isSfxOn = true;
+        isVoiceOn = true;
 		if(PlayerPrefs.HasKey(BGM))
 		{
             isBgmOn = PlayerPrefs.GetInt(BGM) == 1 ? true : false;
@@ -70,16 +75,16 @@ public class SoundManager : MonoBehaviour {
 		{
 			if(PlayerPrefs.GetInt(SFX) == 1)
 			{
-				isOn = true;
+				isSfxOn = true;
 			}
 			else
 			{
-				isOn = false;
+				isSfxOn = false;
 			}
 		}
 		else
 		{
-			isOn = true;
+			isSfxOn = true;
 		}
 	}
 
@@ -391,7 +396,7 @@ public class SoundManager : MonoBehaviour {
                 }
             }
 
-            if (isOn)
+            if (isSfxOn)
             {
                 audio.pitch = 1;
                 audio.PlayOneShot(clip);
@@ -412,7 +417,7 @@ public class SoundManager : MonoBehaviour {
         {
             return;
         }
-        if (isOn)
+        if (isSfxOn)
         {
             audio.pitch = 1;
             audio.PlayOneShot(clip);
@@ -433,7 +438,7 @@ public class SoundManager : MonoBehaviour {
             Error("null audio clip");
             return;
         }
-        if (isOn)
+        if (isSfxOn)
         {
             float rand = Random.Range(0.9f, 1.1f);
             if (randomPitch)
@@ -464,7 +469,7 @@ public class SoundManager : MonoBehaviour {
                 Error("null audio clip");
                 return;
             }
-            if (isOn)
+            if (isSfxOn)
             {
                 float rand = Random.Range(-0.1f, 0.1f);
                 audio.pitch = randomPitch ? pitch + rand : pitch;
@@ -484,7 +489,7 @@ public class SoundManager : MonoBehaviour {
                 Error("null audio clip");
                 return;
             }
-            if (isOn)
+            if (isSfxOn)
             {
                 audio.clip = clip;
                 audio.loop = loop;
@@ -520,10 +525,44 @@ public class SoundManager : MonoBehaviour {
 	
 	public void SFXOn(bool check)
 	{
-		isOn = check;        
-		PlayerPrefs.SetInt (SFX, isOn ? 1 : 0);
+		isSfxOn = check;        
+		PlayerPrefs.SetInt (SFX, isSfxOn ? 1 : 0);
         PlayerPrefs.Save();
 	}
+
+    public void VoiceOn(bool check)
+    {
+        isVoiceOn = check;
+        PlayerPrefs.SetInt(Voice, isVoiceOn ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+
+    public void SetBgmVolume(float value)
+    {
+        PlayerPrefs.SetFloat(BGM + "volume", value);
+        PlayerPrefs.Save();
+
+        value = (value - 1) * 80;
+        audioMixer.SetFloat("bgmVol", value);
+    }
+
+    public void SetSfxVolume(float value)
+    {
+        PlayerPrefs.SetFloat(SFX + "volume", value);
+        PlayerPrefs.Save();
+
+        value = (value - 1) * 80;
+        audioMixer.SetFloat("sfxVol", value);
+    }
+
+    public void SetVoiceVolume(float value)
+    {
+        PlayerPrefs.SetFloat(Voice + "volume", value);
+        PlayerPrefs.Save();
+
+        value = (value - 1) * 80;
+        audioMixer.SetFloat("voiceVol", value);
+    }
 
 	public void FadeBGM(float from, float to, float duration, TweenCallback callback = null)
 	{
@@ -574,10 +613,42 @@ public class SoundManager : MonoBehaviour {
 
 	public bool GetSFXOn()
 	{
-		return isOn;
+		return isSfxOn;
 	}
 
-	public void StopBGM(AudioSource audio){
+    public bool GetVoiceOn()
+    {
+        return isVoiceOn;
+    }
+
+    public float GetBgmVolume()
+    {
+        if (PlayerPrefs.HasKey(BGM + "volume"))
+        {
+            return PlayerPrefs.GetFloat(BGM + "volume");
+        }
+        return 1;
+    }
+
+    public float GetSfxVolume()
+    {
+        if (PlayerPrefs.HasKey(SFX + "volume"))
+        {
+            return PlayerPrefs.GetFloat(SFX + "volume");
+        }
+        return 1;
+    }
+
+    public float GetVoiceVolume()
+    {
+        if (PlayerPrefs.HasKey(Voice + "volume"))
+        {
+            return PlayerPrefs.GetFloat(Voice + "volume");
+        }
+        return 1;
+    }
+
+    public void StopBGM(AudioSource audio){
 		audioName = "";
         if (audio == null)
             audio = bgmAudio;

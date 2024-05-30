@@ -32,8 +32,8 @@ public class Character : MonoBehaviour
         UpdateSelectedAvatar();
         //LoadCharacter(SelectedAvatarId);
 
-        StartCoroutine(RequestCharacters(() => StartCoroutine(RequestUserData()), (error) => { 
-        
+        StartCoroutine(RequestCharacters(() => StartCoroutine(RequestUserData()), (error) => {
+            Debug.LogError("err : " + error);
         }));
         
     }
@@ -127,32 +127,48 @@ public class Character : MonoBehaviour
 
     public IEnumerator RequestCharacters(Action onComplete, Action<string> onFailed)
     {
+        Debug.LogError("request character");
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"karakter_id\" : \"\" }");
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "get_karakter_data", form))
         {
-            uwr.SetRequestHeader("Authorization", UserData.token);
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
-            if (uwr.result == UnityWebRequest.Result.Success)
+            try
             {
-                CharacterResponse response = JsonUtility.FromJson<CharacterResponse>(uwr.downloadHandler.text);
-                liveAvatarInfoList = new List<AvatarInfo>();
-                for (int i = 0; i < response.karakter.Length; i++)
+                if (uwr.result == UnityWebRequest.Result.Success)
                 {
-                    AvatarAsset asset = avatarAssetList.Where(x => x.id == response.karakter[i].evolution.Where(y => y.evolution_id == x.id).FirstOrDefault().evolution_id).FirstOrDefault();
-                    liveAvatarInfoList.Add(new AvatarInfo
+                    CharacterResponse response = JsonUtility.FromJson<CharacterResponse>(uwr.downloadHandler.text);
+                    Debug.LogError("response : " + uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
                     {
-                        avatarId = response.karakter[i].karakter_id.ToString(),
-                        avatarName = response.karakter[i].nama_karakter,
-                        characterPrefab = asset.prefab, //Resources.Load<GameObject>("Prefabs/Characters/" + response.karakter[i].karakter_id)
-                        avatarSprite = asset.sprite
-                    });
+                        liveAvatarInfoList = new List<AvatarInfo>();
+                        for (int i = 0; i < response.karakter.Length; i++)
+                        {
+                            AvatarAsset asset = avatarAssetList.Where(x => x.id == response.karakter[i].evolution.Where(y => y.evolution_id == x.id).FirstOrDefault().evolution_id).FirstOrDefault();
+                            liveAvatarInfoList.Add(new AvatarInfo
+                            {
+                                avatarId = response.karakter[i].karakter_id.ToString(),
+                                avatarName = response.karakter[i].nama_karakter,
+                                characterPrefab = asset.prefab, //Resources.Load<GameObject>("Prefabs/Characters/" + response.karakter[i].karakter_id)
+                                avatarSprite = asset.sprite
+                            });
+                        }
+                        onComplete?.Invoke();
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
                 }
-                onComplete?.Invoke();
+                else
+                {
+                    onFailed?.Invoke(uwr.error);
+                }
             }
-            else
+            catch (Exception e)
             {
-                onFailed?.Invoke(uwr.error);
+                onFailed?.Invoke(e.Message);
             }
         }
     }
@@ -163,27 +179,75 @@ public class Character : MonoBehaviour
         form.AddField("data", "{\"karakter_id\" : \"\" }");
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "get_user_karakter", form))
         {
-            uwr.SetRequestHeader("Authorization", UserData.token);
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
-            if (uwr.result == UnityWebRequest.Result.Success)
+            try
             {
-                UserResponse response = JsonUtility.FromJson<UserResponse>(uwr.downloadHandler.text);
-                UserData.SetCoin(response.user_coin);
-                foreach (UserCharacter ownedCharacter in response.karakter_user)
+                if (uwr.result == UnityWebRequest.Result.Success)
                 {
-                    AvatarInfo info = avatarInfoList.Where(x => x.avatarId == ownedCharacter.karakter_id.ToString()).FirstOrDefault();
-                    if (info != null)
+                    UserResponse response = JsonUtility.FromJson<UserResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
                     {
-                        info.isUnlocked = true;
-                        info.exp = ownedCharacter.experience;
-                        UserData.SetMood((Main.MoodStage)(4 - Mathf.RoundToInt(ownedCharacter.status.happiness / 25)));
-                        UserData.SetEnergy(ownedCharacter.status.energy);
+                        UserData.SetCoin(response.user_coin);
+                        foreach (UserCharacter ownedCharacter in response.karakter_user)
+                        {
+                            AvatarInfo info = avatarInfoList.Where(x => x.avatarId == ownedCharacter.karakter_id.ToString()).FirstOrDefault();
+                            if (info != null)
+                            {
+                                info.isUnlocked = true;
+                                info.exp = ownedCharacter.experience;
+                                UserData.SetMood((Main.MoodStage)(4 - Mathf.RoundToInt(ownedCharacter.status.happiness / 25)));
+                                UserData.SetEnergy(ownedCharacter.status.energy);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+
                     }
                 }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
             }
-            else
+            catch (Exception e)
             {
+                Debug.LogError("err : " + e.Message);
+            }
+        }
+    }
 
+    public IEnumerator RequestAddExperience(int id, int experience, Action onComplete, Action<string> onFailed)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"karakter_id\" : \"" + id + "\", \"experience\" : \"" + experience + "\" }");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "add_experience", form))
+        {
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    ExperienceResponse response = JsonUtility.FromJson<ExperienceResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        onComplete?.Invoke();
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
             }
         }
     }

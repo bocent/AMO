@@ -11,7 +11,6 @@ public class SignupUI : MonoBehaviour
     private const int MAX_USERNAME_LENGTH = 24;
     private const int MIN_PASSWORD_LENGTH = 7;
     private const int MAX_PASSWORD_LENGTH = 32;
-    public TMP_InputField usernameInputField;
     public TMP_InputField emailInputField;
     public TMP_InputField passwordInputField;
     public TMP_InputField confPasswordInputField;
@@ -79,15 +78,14 @@ public class SignupUI : MonoBehaviour
 
     private bool CheckEmpty()
     {
-        return !string.IsNullOrEmpty(emailInputField.text) && !string.IsNullOrEmpty(usernameInputField.text)
-            && !string.IsNullOrEmpty(passwordInputField.text) && !string.IsNullOrEmpty(confPasswordInputField.text);
+        return !string.IsNullOrEmpty(emailInputField.text) &&
+            !string.IsNullOrEmpty(passwordInputField.text) &&
+            !string.IsNullOrEmpty(confPasswordInputField.text);
     }
 
     private bool CheckLength()
     {
         return emailInputField.text.Length > 0 
-            && usernameInputField.text.Length <= MAX_USERNAME_LENGTH 
-            && usernameInputField.text.Length > MIN_USERNAME_LENGTH 
             && passwordInputField.text.Length <= MAX_PASSWORD_LENGTH
             && passwordInputField.text.Length > MIN_PASSWORD_LENGTH; 
     }
@@ -113,8 +111,8 @@ public class SignupUI : MonoBehaviour
     {
         if (Validate())
         {
-            StartCoroutine(login.Register(emailInputField.text, passwordInputField.text, () => { 
-            
+            StartCoroutine(login.Register(emailInputField.text, passwordInputField.text, () => {
+                login.ShowVerification(true);
             }, (error) => { 
             
             }));

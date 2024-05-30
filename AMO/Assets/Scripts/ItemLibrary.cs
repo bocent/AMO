@@ -70,7 +70,7 @@ public class ItemLibrary : MonoBehaviour
         }
 
         int itemCount = 0;
-        foreach (AccessoryInfo info in AccessoryController.Instance.accessoryList)
+        foreach (AccessoryInfo info in AccessoryController.Instance.GetAccessoryList())
         {
             if (info.hasOwned && info.avatarName == HomeController.Instance.selectedCharacter.Info.avatarName && info.accessoryType == accessoryType)
             {

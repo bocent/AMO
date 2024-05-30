@@ -106,7 +106,6 @@ public class SelectedCharacter : MonoBehaviour
         string conditionName = "Idle";
         if (characterAnimation)
         {
-            Debug.LogError("character anim : " + characterAnimation, gameObject);
             characterAnimation.SetAnimationCondition(conditionName);
             foreach (GameObject equippedAccessory in equippedAccessories)
             {
@@ -383,21 +382,6 @@ public class SelectedCharacter : MonoBehaviour
     //    }
     //    return null;
     //}
-
-    public void SetSkin(string skinId)
-    {
-        Info.skinId = skinId;
-        string maskId = GetBodyMaskId();
-        if (!string.IsNullOrEmpty(GetBodyMaskId()))
-        {
-            skinId = Info.skinId + maskId;
-        }
-
-        SkinInfo skinInfo = AccessoryController.Instance.GetSkinInfo(skinId);
-
-        bodyMeshRenderer.material = skinInfo.material;
-
-    }
 
     private string GetBodyMaskId()
     {

@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LoginUI : MonoBehaviour
 {
-    public TMP_InputField usernameInputField;
+    public TMP_InputField emailInputField;
     public TMP_InputField passwordInputField;
     public Button loginButton;
     public Button signUpButton;
@@ -26,22 +27,29 @@ public class LoginUI : MonoBehaviour
     {
         if (Validate())
         {
-            //StartCoroutine(login.CheckLogin(usernameInputField.text, passwordInputField.text, () => {
-            //    CustomSceneManager.Instance.LoadScene("Home", null);
-            //},
-            //(error) => {
-            //    PopupManager.Instance.ShowPopupMessage("err", "Gagal Login", error,
-            //        new ButtonInfo { content = "Ulangi" },
-            //        new ButtonInfo { content = "Keluar", onButtonClicked = Application.Quit });
-            //}));
+            StartCoroutine(login.CheckLogin(emailInputField.text, passwordInputField.text, () =>
+            {
+                CustomSceneManager.Instance.LoadScene("Home", null);
+            },
+            (error) =>
+            {
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Login", error,
+                    new ButtonInfo { content = "Ulangi" },
+                    new ButtonInfo { content = "Keluar", onButtonClicked = Application.Quit });
+            }));
+        }
+        else
+        {
+            PopupManager.Instance.ShowPopupMessage("err", "Data Tidak Valid", "Username dan Password harus diisi",
+                    new ButtonInfo { content = "Ulangi" });
         }
 
-        CustomSceneManager.Instance.LoadScene("Home", null);
+        //CustomSceneManager.Instance.LoadScene("Home", null);
     }
 
     private bool Validate()
     {
-        return !string.IsNullOrEmpty(usernameInputField.text) && !string.IsNullOrEmpty(passwordInputField.text);
+        return !string.IsNullOrEmpty(emailInputField.text) && !string.IsNullOrEmpty(passwordInputField.text);
     }
 
     private void SignUp()
@@ -51,6 +59,6 @@ public class LoginUI : MonoBehaviour
 
     private void ForgetPassword()
     {
-        
+        login.ShowForgetPassword();
     }
 }

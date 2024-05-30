@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Consts : MonoBehaviour
+public class Consts
 {
     public static readonly string GALLERY_PATH = Application.persistentDataPath + "/Gallery/";
 
@@ -11,6 +11,10 @@ public class Consts : MonoBehaviour
     public const string GILMO = "Gilmo";
     public const string LORRY = "Lorry";
     public const string OLGA = "Olga";
+
+    public const string EXPIRED_TOKEN = "X1";
+    public const string OK = "OK";
+    public const string NOK = "NOK";
 
     public const string PICTURES_FOLDER_NAME = "/Pictures/";
     public const string THUMBNAIL_NAME = "/Thumbnail/";
