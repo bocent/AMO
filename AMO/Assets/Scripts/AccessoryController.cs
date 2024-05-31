@@ -22,11 +22,14 @@ public class AccessoryController : MonoBehaviour
 {
     [SerializeField] private List<AccessoryInfo> accessoryList;
 
+    public const string DEFAULT_HELMET = "_default_helm";
+    public const string DEFAULT_OUTFIT = "_default_outfit";
+
     public const string DEFAULT_AROHA_HELMET = "aroha_default_helm";
-    public const string DEFAULT_GILMO_HELMET = "gilmo_default_outfit";
-    public const string DEFAULT_LORRY_HELMET = "lorry_default_outfit";
-    public const string DEFAULT_MOCHI_HELMET = "mochi_default_outfit";
-    public const string DEFAULT_OLGA_HELMET = "olga_default_outfit";
+    public const string DEFAULT_GILMO_HELMET = "gilmo_default_helm";
+    public const string DEFAULT_LORRY_HELMET = "lorry_default_helm";
+    public const string DEFAULT_MOCHI_HELMET = "mochi_default_helm";
+    public const string DEFAULT_OLGA_HELMET = "olga_default_helm";
 
     public const string DEFAULT_AROHA_OUTFIT = "aroha_default_outfit";
     public const string DEFAULT_GILMO_OUTFIT = "gilmo_default_outfit";

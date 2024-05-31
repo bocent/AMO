@@ -30,6 +30,8 @@ public class CharacterSelection : MonoBehaviour
     private void Hide()
     {
         Show(false);
+
+        //Character.Instance.RequestSelectCharacter(Character.Instance.currentCharacter.);
     }
 
     public void Show(bool value)

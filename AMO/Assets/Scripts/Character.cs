@@ -17,7 +17,7 @@ public class Character : MonoBehaviour
     public GameObject unlockCharacterPopup;
 
     public SelectedCharacter currentCharacter;
-    public string SelectedAvatarId { get; private set; }
+    public int SelectedAvatarId { get; private set; }
 
     public static Character Instance { get; private set; }
 
@@ -32,9 +32,9 @@ public class Character : MonoBehaviour
         UpdateSelectedAvatar();
         //LoadCharacter(SelectedAvatarId);
 
-        StartCoroutine(RequestCharacters(() => StartCoroutine(RequestUserData()), (error) => {
-            Debug.LogError("err : " + error);
-        }));
+        //StartCoroutine(RequestCharacters(() => StartCoroutine(RequestUserData()), (error) => {
+        //    Debug.LogError("err : " + error);
+        //}));
         
     }
 
@@ -56,7 +56,7 @@ public class Character : MonoBehaviour
         }
     }
 
-    private void LoadCharacter(string avatarId)
+    private void LoadCharacter(int avatarId)
     {
         foreach (SelectedCharacter character in characterList)
         {
@@ -76,7 +76,7 @@ public class Character : MonoBehaviour
         return avatarInfoList.Where(x => x.avatarName == avatarName && x.isUnlocked).FirstOrDefault();
     }
 
-    public SelectedCharacter SwitchCharacter(string avatarId)
+    public SelectedCharacter SwitchCharacter(int avatarId)
     {
         foreach (SelectedCharacter character in characterList)
         {
@@ -100,7 +100,7 @@ public class Character : MonoBehaviour
         return result;
     }
 
-    public AvatarInfo GetAvatarInfo(string avatarId)
+    public AvatarInfo GetAvatarInfo(int avatarId)
     {
         var result = avatarInfoList.Where(x => x.avatarId == avatarId).FirstOrDefault();
         return result;
@@ -111,7 +111,7 @@ public class Character : MonoBehaviour
         return avatarInfoList;
     }
 
-    public IEnumerator UnlockCharacter(string avatarId)
+    public IEnumerator UnlockCharacter(int avatarId)
     {
         foreach (AvatarInfo info in avatarInfoList)
         {
@@ -148,7 +148,7 @@ public class Character : MonoBehaviour
                             AvatarAsset asset = avatarAssetList.Where(x => x.id == response.karakter[i].evolution.Where(y => y.evolution_id == x.id).FirstOrDefault().evolution_id).FirstOrDefault();
                             liveAvatarInfoList.Add(new AvatarInfo
                             {
-                                avatarId = response.karakter[i].karakter_id.ToString(),
+                                avatarId = response.karakter[i].karakter_id,
                                 avatarName = response.karakter[i].nama_karakter,
                                 characterPrefab = asset.prefab, //Resources.Load<GameObject>("Prefabs/Characters/" + response.karakter[i].karakter_id)
                                 avatarSprite = asset.sprite
@@ -191,7 +191,7 @@ public class Character : MonoBehaviour
                         UserData.SetCoin(response.user_coin);
                         foreach (UserCharacter ownedCharacter in response.karakter_user)
                         {
-                            AvatarInfo info = avatarInfoList.Where(x => x.avatarId == ownedCharacter.karakter_id.ToString()).FirstOrDefault();
+                            AvatarInfo info = avatarInfoList.Where(x => x.avatarId == ownedCharacter.karakter_id).FirstOrDefault();
                             if (info != null)
                             {
                                 info.isUnlocked = true;
@@ -223,6 +223,72 @@ public class Character : MonoBehaviour
     {
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"karakter_id\" : \"" + id + "\", \"experience\" : \"" + experience + "\" }");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "add_experience", form))
+        {
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    ExperienceResponse response = JsonUtility.FromJson<ExperienceResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        onComplete?.Invoke();
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
+            }
+        }
+    }
+
+    public IEnumerator RequestUpdateCharacter(int characterId, Action onComplete, Action<string> onFailed)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"karakter_id\" : \"" + characterId + "\" }");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "add_experience", form))
+        {
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    ExperienceResponse response = JsonUtility.FromJson<ExperienceResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        onComplete?.Invoke();
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
+            }
+        }
+    }
+
+    public IEnumerator RequestSelectCharacter(int characterId, Action onComplete, Action<string> onFailed)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"karakter_id\" : \"" + characterId + "\" }");
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "add_experience", form))
         {
             yield return uwr.SendWebRequest();

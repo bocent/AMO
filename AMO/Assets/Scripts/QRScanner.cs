@@ -105,7 +105,7 @@ public class QRScanner : ARBehaviour
 
     private void ScanSuccess()
     {
-        CustomSceneManager.Instance.LoadScene("Home", () => Main.Instance.UnlockCharacter("Gilmo_1"));
+        CustomSceneManager.Instance.LoadScene("Home", () => Main.Instance.UnlockCharacter(5));
     }
 
     private void BackToHome()

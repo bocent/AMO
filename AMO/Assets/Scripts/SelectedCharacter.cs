@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SelectedCharacter : MonoBehaviour
@@ -345,12 +346,23 @@ public class SelectedCharacter : MonoBehaviour
     {
         if (accessoryType == AccessoryType.Helmet)
         {
-            return PlayerPrefs.HasKey(HELMET_KEY + info.avatarName) ? PlayerPrefs.GetString(HELMET_KEY + info.avatarName) : info.helmetId;
+            string helmetId = info.helmetId == "" ? GetDefaultAccessory(accessoryType) : info.helmetId;
+            return PlayerPrefs.HasKey(HELMET_KEY + info.avatarName) ? PlayerPrefs.GetString(HELMET_KEY + info.avatarName) : helmetId;
         }
         else
         {
-            return PlayerPrefs.HasKey(OUTFIT_KEY + info.avatarName) ? PlayerPrefs.GetString(OUTFIT_KEY + info.avatarName) : info.outfitId;
+            string outfitId = info.outfitId == "" ? GetDefaultAccessory(accessoryType) : info.outfitId;
+            return PlayerPrefs.HasKey(OUTFIT_KEY + info.avatarName) ? PlayerPrefs.GetString(OUTFIT_KEY + info.avatarName) : outfitId;
         }
+    }
+
+    private string GetDefaultAccessory(AccessoryType accessoryType)
+    {
+        if (accessoryType == AccessoryType.Outfit)
+            return info.avatarName.ToLower() + AccessoryController.DEFAULT_OUTFIT + $"[{info.stageType.ToString()}]";
+        else if (accessoryType == AccessoryType.Helmet)
+            return info.avatarName.ToLower() + AccessoryController.DEFAULT_HELMET + $"[{info.stageType.ToString()}]";
+        return "";
     }
 
     //private GameObject AddHandAccessory(AccessoryInfo info)
@@ -397,17 +409,18 @@ public class SelectedCharacter : MonoBehaviour
 
     public void Evolution()
     {
-        string currentAvatarId = Info.avatarId;
-        string[] splittedAvatarId = currentAvatarId.Split("_");
-        if (int.TryParse(splittedAvatarId[1], out int avatarStageCode))
+        int currentAvatarId = Info.avatarId;
         {
-            avatarStageCode += 1;
             Info.isUnlocked = false;
-            TransferStats(splittedAvatarId[0] + "_" + avatarStageCode);
+            Evolution evolution = Info.evolutionList.Where(x => x.evolutionId == Info.nextEvolutionId).FirstOrDefault();
+            if (evolution != null)
+            {
+                TransferStats(Info.nextEvolutionId);
+            }
         }
     }
 
-    private void TransferStats(string avatarId)
+    private void TransferStats(int avatarId)
     {
         AvatarInfo targetAvatarInfo = Character.Instance.GetAvatarInfo(avatarId);
         Debug.LogError("avatar id : " + targetAvatarInfo.avatarId + " " + targetAvatarInfo.stageType.ToString());

@@ -22,7 +22,7 @@ public class Verification : MonoBehaviour
 
     private void Start()
     {
-        sendButton.onClick.AddListener(ResetTime);
+        sendButton.onClick.AddListener(SendVerification);
         backButton.onClick.AddListener(Back);
         login = GetComponent<Login>();
     }
@@ -56,6 +56,17 @@ public class Verification : MonoBehaviour
             buttonCanvasGroup.alpha = 1f;
             sendButton.interactable = true;
         }
+    }
+
+    private void SendVerification()
+    {
+        string email = PlayerPrefs.GetString("email");
+        StartCoroutine(RequestVerificationEmail(email, ResetTime, (error) => {
+            Debug.LogError("err : " + error);
+            PopupManager.Instance.ShowPopupMessage("err", "Gagal Mengirim Verifikasi",
+                "Silahkan ulangi lagi", new ButtonInfo { content = "Retry", onButtonClicked = SendVerification },
+                new ButtonInfo { content = "Batal" });
+        }));
     }
 
     private IEnumerator RequestVerificationEmail(string email, Action onComplete, Action<string> onFailed)

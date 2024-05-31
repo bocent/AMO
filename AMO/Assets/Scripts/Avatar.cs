@@ -9,7 +9,7 @@ using UnityEngine.UI;
 [Serializable]
 public class AvatarInfo
 {
-    public string avatarId;
+    public int avatarId;
     public Sprite avatarSprite;
     public string avatarName;
     public int level;
@@ -33,6 +33,7 @@ public class AvatarInfo
     public List<Evolution> evolutionList;
     public GameObject characterPrefab;
     public bool isUnlocked;
+    public int nextEvolutionId;
 }
 
 [Serializable]

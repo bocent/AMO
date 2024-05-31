@@ -1037,7 +1037,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1d2760b30d9f76a4cacd117fb2391965, type: 2}
+  - {fileID: 2100000, guid: 0a7e99b461a71344f99894349ef9334e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1553,7 +1553,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 677fd269cb58aa64591c816b9bc1f7d2, type: 2}
+  - {fileID: 2100000, guid: bb357a0045b55794b9cb2442ab636fb7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2519,7 +2519,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1d2760b30d9f76a4cacd117fb2391965, type: 2}
+  - {fileID: 2100000, guid: 7e6a2dfb75d67e3439ecd5176fbba9de, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3401,7 +3401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   info:
-    avatarId: 
+    avatarId: 0
     avatarSprite: {fileID: 0}
     avatarName: 
     level: 0
@@ -3415,6 +3415,7 @@ MonoBehaviour:
     evolutionList: []
     characterPrefab: {fileID: 0}
     isUnlocked: 0
+    nextEvolutionId: 0
   helmetAccessory: {fileID: 0}
   outfitAccessory: {fileID: 0}
   bodyMeshRenderer: {fileID: 0}
@@ -4792,7 +4793,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: eb4b3f05c2b4cda40aa8cc1f0b4b3893, type: 2}
+  - {fileID: 2100000, guid: 2a4bcd0976d6d5d42bf31bcb7be86bdb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5038,7 +5039,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: eb4b3f05c2b4cda40aa8cc1f0b4b3893, type: 2}
+  - {fileID: 2100000, guid: 2a4bcd0976d6d5d42bf31bcb7be86bdb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

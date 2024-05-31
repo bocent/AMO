@@ -59,7 +59,7 @@ public class Main : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void UnlockCharacter(string avatarId)
+    public void UnlockCharacter(int avatarId)
     {
         StartCoroutine(Character.Instance.UnlockCharacter(avatarId));
     }
