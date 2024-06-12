@@ -270,18 +270,27 @@ public class SelectedCharacter : MonoBehaviour
             equippedAccessories.Remove(helmetAccessory.gameObject);
             Destroy(helmetAccessory.gameObject);
         }
-        if (info.accessoryPrefab != null)
+        if (info.accessoryPrefabs != null)
         {
-            GameObject head = Instantiate(info.accessoryPrefab, transform, false);
-            head.transform.localEulerAngles = Vector3.zero;
-            helmetAccessory = head.GetComponent<Accessory>();
-            helmetAccessory.Init(info);
-            Info.helmetId = info.accessoryId;
-            equippedAccessories.Add(head);
+            GameObject prefab = AccessoryController.Instance.GetAccessoryPrefab(info, Info.stageType);
+            if (prefab != null)
+            {
+                GameObject head = Instantiate(prefab, transform, false);
+                head.transform.localEulerAngles = Vector3.zero;
+                helmetAccessory = head.GetComponent<Accessory>();
+                helmetAccessory.Init(info);
+                Info.helmetId = info.accessoryId;
+                equippedAccessories.Add(head);
 
-            SaveAccessory(AccessoryType.Helmet, info.accessoryId);
-            PlayIdleAnimation();
-            return head;
+                SaveAccessory(AccessoryType.Helmet, info.accessoryId);
+                PlayIdleAnimation();
+                return head;
+            }
+            else
+            {
+                Info.helmetId = info.accessoryId;
+                SaveAccessory(AccessoryType.Helmet, info.accessoryId);
+            }
         }
         else
         {
@@ -302,24 +311,58 @@ public class SelectedCharacter : MonoBehaviour
             Destroy(outfitAccessory.gameObject);
             outfitAccessory = null;
         }
-        if (info.accessoryPrefab != null)
+        if (info.accessoryPrefabs != null)
         {
-            GameObject body = Instantiate(info.accessoryPrefab, transform, false);
-            body.transform.localEulerAngles = Vector3.zero;
-            outfitAccessory = body.GetComponent<Accessory>();
-            outfitAccessory.Init(info);
-            Info.outfitId = info.accessoryId;
-            equippedAccessories.Add(body);
-            SaveAccessory(AccessoryType.Outfit, info.accessoryId);
-            PlayIdleAnimation();
-            return body;
+            GameObject prefab = AccessoryController.Instance.GetAccessoryPrefab(info, Info.stageType);
+            if (prefab != null)
+            {
+                GameObject body = Instantiate(prefab, transform, false);
+                body.transform.localEulerAngles = Vector3.zero;
+                outfitAccessory = body.GetComponent<Accessory>();
+                outfitAccessory.Init(info);
+                Info.outfitId = info.accessoryId;
+                equippedAccessories.Add(body);
+                SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+                PlayIdleAnimation();
+                return body;
+            }
+            else if (info.materials != null)
+            {
+                Material material = AccessoryController.Instance.GetAccessoryMaterial(info, Info.stageType);
+                if (material)
+                {
+                    Info.outfitId = info.accessoryId;
+                    bodyMeshRenderer.material = material;
+                    SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+                    PlayIdleAnimation();
+                }
+                else
+                {
+                    Info.outfitId = info.accessoryId;
+                    SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+                }
+            }
+            else
+            {
+                Info.outfitId = info.accessoryId;
+                SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+            }
         }
-        else if (info.material != null)
+        else if (info.materials != null)
         {
-            Info.outfitId = info.accessoryId;
-            bodyMeshRenderer.material = info.material;
-            SaveAccessory(AccessoryType.Outfit, info.accessoryId);
-            PlayIdleAnimation();
+            Material material = AccessoryController.Instance.GetAccessoryMaterial(info, Info.stageType);
+            if (material)
+            {
+                Info.outfitId = info.accessoryId;
+                bodyMeshRenderer.material = material;
+                SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+                PlayIdleAnimation();
+            }
+            else
+            {
+                Info.outfitId = info.accessoryId;
+                SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+            }
         }
         else
         {
@@ -359,9 +402,37 @@ public class SelectedCharacter : MonoBehaviour
     private string GetDefaultAccessory(AccessoryType accessoryType)
     {
         if (accessoryType == AccessoryType.Outfit)
-            return info.avatarName.ToLower() + AccessoryController.DEFAULT_OUTFIT + $"[{info.stageType.ToString()}]";
+        {
+            switch (Info.avatarName)
+            {
+                case Consts.AROHA:
+                    return AccessoryController.DEFAULT_AROHA_OUTFIT;
+                case Consts.MOCHI:
+                    return AccessoryController.DEFAULT_MOCHI_OUTFIT;
+                case Consts.GILMO:
+                    return AccessoryController.DEFAULT_GILMO_OUTFIT;
+                case Consts.OLGA:
+                    return AccessoryController.DEFAULT_OLGA_OUTFIT;
+                case Consts.LORRY:
+                    return AccessoryController.DEFAULT_LORRY_OUTFIT;
+            }
+        }
         else if (accessoryType == AccessoryType.Helmet)
-            return info.avatarName.ToLower() + AccessoryController.DEFAULT_HELMET + $"[{info.stageType.ToString()}]";
+        {
+            switch (Info.avatarName)
+            {
+                case Consts.AROHA:
+                    return AccessoryController.DEFAULT_AROHA_HELMET;
+                case Consts.MOCHI:
+                    return AccessoryController.DEFAULT_MOCHI_HELMET;
+                case Consts.GILMO:
+                    return AccessoryController.DEFAULT_GILMO_HELMET;
+                case Consts.OLGA:
+                    return AccessoryController.DEFAULT_OLGA_HELMET;
+                case Consts.LORRY:
+                    return AccessoryController.DEFAULT_LORRY_HELMET;
+            }
+        }
         return "";
     }
 
