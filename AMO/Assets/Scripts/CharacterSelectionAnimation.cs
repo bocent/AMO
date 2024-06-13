@@ -6,6 +6,7 @@ public class CharacterSelectionAnimation : MonoBehaviour
 {
     public AvatarInfo info;
     public GameObject[] equippedAccessories;
+    public int index;
     private CharacterAnimation characterAnimation;
 
     private void Start()

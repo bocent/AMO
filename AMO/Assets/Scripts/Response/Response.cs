@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 [Serializable]
@@ -52,7 +53,7 @@ public class EvolutionData
     public int end_level;
     public int experience_to_evolution;
     public int next_evolution_id;
-    public int next_evolution_name;
+    public string next_evolution_name;
 }
 
 
@@ -93,7 +94,7 @@ public class UserCharacter
     public string evolution_name;
     public string experience_to_evolution;
     public int level_to_next_evolution;
-    public int next_evolution_id;
+    public int? next_evolution_id;
     public string next_evolution_name;
     public int is_used;
     public CharacterStatus status;
@@ -115,15 +116,29 @@ public class CharacterStatus
 [Serializable]
 public class UsedAccessries
 {
-    public string helmet_items_id;
-    public string outfit_items_id;
+    public int? helmet_items_id;
+    public int? outfit_items_id;
 }
 
 [Serializable]
 public class InventoryList
 {
-    public string[] helmet;
-    public string[] outfit;
+    public AccessoryPart[] helmet;
+    public AccessoryPart[] outfit;
+}
+
+[Serializable]
+public class AccessoryPart
+{
+    public int user_invenrtory_id;
+    public int items_id;
+    public string item_name;
+    public string kategori;
+    public int karakter_id;
+    public string karakter_name;
+    public int evolution_id;
+    public string evolution_name;
+    public int is_used;
 }
 
 #endregion

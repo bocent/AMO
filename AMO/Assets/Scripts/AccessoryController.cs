@@ -37,16 +37,16 @@ public class AccessoryController : MonoBehaviour
     [SerializeField] private List<AccessoryInfo> accessoryList;
 
     public const string DEFAULT_AROHA_HELMET = "5";
-    public const string DEFAULT_GILMO_HELMET = "11";
-    public const string DEFAULT_LORRY_HELMET = "14";
-    public const string DEFAULT_MOCHI_HELMET = "17";
-    public const string DEFAULT_OLGA_HELMET = "20";
+    public const string DEFAULT_GILMO_HELMET = "23";
+    public const string DEFAULT_LORRY_HELMET = "29";
+    public const string DEFAULT_MOCHI_HELMET = "11";
+    public const string DEFAULT_OLGA_HELMET = "17";
 
     public const string DEFAULT_AROHA_OUTFIT = "6";
-    public const string DEFAULT_GILMO_OUTFIT = "gilmo_default_outfit";
-    public const string DEFAULT_LORRY_OUTFIT = "lorry_default_outfit";
-    public const string DEFAULT_MOCHI_OUTFIT = "mochi_default_outfit";
-    public const string DEFAULT_OLGA_OUTFIT = "olga_default_outfit";
+    public const string DEFAULT_GILMO_OUTFIT = "24";
+    public const string DEFAULT_LORRY_OUTFIT = "30";
+    public const string DEFAULT_MOCHI_OUTFIT = "12";
+    public const string DEFAULT_OLGA_OUTFIT = "18";
 
     public static AccessoryController Instance { get; private set; }
 
@@ -80,7 +80,9 @@ public class AccessoryController : MonoBehaviour
     {
         if (info != null)
         {
-            return info.accessoryPrefabs.Where(x => x.stageType == stageType).Select(x => x.prefab).FirstOrDefault();
+            GameObject prefab = info.accessoryPrefabs.Where(x => x.stageType == stageType).Select(x => x.prefab).FirstOrDefault();
+            Debug.LogWarning("prefab : " + info.accessoryId + " " + prefab + " " + stageType.ToString());
+            return prefab;
         }
         return null;
     }

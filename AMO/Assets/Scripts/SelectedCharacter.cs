@@ -273,6 +273,7 @@ public class SelectedCharacter : MonoBehaviour
         if (info.accessoryPrefabs != null)
         {
             GameObject prefab = AccessoryController.Instance.GetAccessoryPrefab(info, Info.stageType);
+            //Debug.Log("prefab : " + prefab.name);
             if (prefab != null)
             {
                 GameObject head = Instantiate(prefab, transform, false);

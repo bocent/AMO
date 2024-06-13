@@ -40,7 +40,11 @@ public class Item : MonoBehaviour
 
     public void SelectItem(bool isOn)
     {
-        if (isOn) HomeController.Instance.selectedCharacter.AddAccessory(Info.accessoryId);
+        if (isOn)
+        {
+            Debug.LogWarning("accId : " + Info.accessoryId);
+            HomeController.Instance.selectedCharacter.AddAccessory(Info.accessoryId);
+        }
     }
 
     public void SelectItem()

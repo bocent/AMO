@@ -37,11 +37,11 @@ public class CharacterItem : MonoBehaviour
 
     private void OnSelected(bool isOn)
     {
-        if ((isOn))
-        {
-            HomeController.Instance.SelectCharacter(Info, gameObject.activeInHierarchy);
-            UserData.SetAvatarName(Info);
-            Character.Instance.UpdateSelectedAvatar();
-        }
+        //if ((isOn))
+        //{
+        //    HomeController.Instance.SelectCharacter(Info, gameObject.activeInHierarchy);
+        //    UserData.SetAvatarName(Info);
+        //    Character.Instance.UpdateSelectedAvatar();
+        //}
     }
 }

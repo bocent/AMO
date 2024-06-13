@@ -71,7 +71,7 @@ public class HomeController : MonoBehaviour
         UserData.SetEnergy(100);
         DateTime dateTime = DateTime.Now;
         startTimeInSecond = dateTime.Second + dateTime.Minute * 60 + dateTime.Hour * 3600 + dateTime.DayOfYear * 86400;
-        characterSelection.Init();
+        
         coins.SetCoin(UserData.Coins.ToString());
     }
 

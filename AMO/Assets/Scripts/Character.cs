@@ -28,20 +28,35 @@ public class Character : MonoBehaviour
 
     private void Start()
     {
-        LoadAllCharacter();
-        UpdateSelectedAvatar();
-        //LoadCharacter(SelectedAvatarId);
-
-        //StartCoroutine(RequestCharacters(() => StartCoroutine(RequestUserData()), (error) => {
-        //    Debug.LogError("err : " + error);
-        //}));
+        for (int i = 0; i < avatarInfoList.Count; i++)
+        {
+            avatarInfoList[i].isUnlocked = false;
+        }
+        StartCoroutine(RequestCharacters(() => StartCoroutine(RequestUserData((id) => {
+            LoadAllCharacter();
+            LoadCharacter(id);
+            SelectedAvatarId = id;
+            //UpdateSelectedAvatar();
+            HomeController.Instance.characterSelection.Init();
+        }, (error) => { 
         
+        })), (error) =>
+        {
+            Debug.LogError("err : " + error);
+        }));
+
     }
 
-    public void UpdateSelectedAvatar()
+    public void UpdateSelectedAvatar(int avatarId)
     {
-        AvatarInfo info = GetLastStageAvatar(UserData.GetAvatarName());
-        SelectedAvatarId = info.avatarId;
+        //AvatarInfo info = GetLastStageAvatar(UserData.GetAvatarName());
+        //SelectedAvatarId = info.avatarId;
+
+        StartCoroutine(RequestSelectCharacter(avatarId, (id) => {
+            SelectedAvatarId = id;
+        }, (error) => { 
+        
+        }));
     }
 
     private void LoadAllCharacter()
@@ -145,14 +160,21 @@ public class Character : MonoBehaviour
                         liveAvatarInfoList = new List<AvatarInfo>();
                         for (int i = 0; i < response.karakter.Length; i++)
                         {
-                            AvatarAsset asset = avatarAssetList.Where(x => x.id == response.karakter[i].evolution.Where(y => y.evolution_id == x.id).FirstOrDefault().evolution_id).FirstOrDefault();
-                            liveAvatarInfoList.Add(new AvatarInfo
+                            Debug.LogWarning("karakter : " + response.karakter.Length);
+                            //AvatarAsset asset = avatarAssetList.Where(x => x.id == response.karakter[i].evolution.Where(y => y.evolution_id == x.id).FirstOrDefault().evolution_id).FirstOrDefault();
+                            //liveAvatarInfoList.Add(new AvatarInfo
+                            //{
+                            //    avatarId = response.karakter[i].karakter_id,
+                            //    avatarName = response.karakter[i].nama_karakter,
+                            //    characterPrefab = asset.prefab, //Resources.Load<GameObject>("Prefabs/Characters/" + response.karakter[i].karakter_id)
+                            //    avatarSprite = asset.sprite
+                            //});
+                            int index = avatarInfoList.FindIndex(x =>x.avatarId == response.karakter[i].karakter_id);
+                            avatarInfoList[index].evolutionList = new List<Evolution>();
+                            foreach (EvolutionData evolutionData in response.karakter[i].evolution)
                             {
-                                avatarId = response.karakter[i].karakter_id,
-                                avatarName = response.karakter[i].nama_karakter,
-                                characterPrefab = asset.prefab, //Resources.Load<GameObject>("Prefabs/Characters/" + response.karakter[i].karakter_id)
-                                avatarSprite = asset.sprite
-                            });
+                                avatarInfoList[index].evolutionList.Add(new Evolution { evolutionId = evolutionData.next_evolution_id, evolutionName = evolutionData.next_evolution_name, experienceToEvolve = evolutionData.experience_to_evolution });
+                            }
                         }
                         onComplete?.Invoke();
                     }
@@ -173,7 +195,7 @@ public class Character : MonoBehaviour
         }
     }
 
-    public IEnumerator RequestUserData()
+    public IEnumerator RequestUserData(Action<int> onComplete, Action<string> onFailed)
     {
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"karakter_id\" : \"\" }");
@@ -181,41 +203,50 @@ public class Character : MonoBehaviour
         {
             uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
-            try
+            //try
             {
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
                     UserResponse response = JsonUtility.FromJson<UserResponse>(uwr.downloadHandler.text);
+                    int activeCharacterId = -1;
                     if (response.status.ToLower() == "ok")
                     {
                         UserData.SetCoin(response.user_coin);
                         foreach (UserCharacter ownedCharacter in response.karakter_user)
                         {
-                            AvatarInfo info = avatarInfoList.Where(x => x.avatarId == ownedCharacter.karakter_id).FirstOrDefault();
-                            if (info != null)
+                            int index = avatarInfoList.FindIndex(x => x.avatarId == ownedCharacter.karakter_id);
+                            if (index >= 0)
                             {
-                                info.isUnlocked = true;
-                                info.exp = ownedCharacter.experience;
+                                avatarInfoList[index].isUnlocked = true;
+                                avatarInfoList[index].exp = ownedCharacter.experience;
+                               
+                            }
+                            if (ownedCharacter.is_used == 1)
+                            {
+                                activeCharacterId = ownedCharacter.karakter_id;
                                 UserData.SetMood((Main.MoodStage)(4 - Mathf.RoundToInt(ownedCharacter.status.happiness / 25)));
                                 UserData.SetEnergy(ownedCharacter.status.energy);
                             }
+                           
                         }
+                        onComplete?.Invoke(activeCharacterId);
                     }
                     else
                     {
-                        throw new Exception(response.msg);
+                        //throw new Exception(response.msg);
 
                     }
                 }
                 else
                 {
-                    throw new Exception(uwr.error);
+                    //throw new Exception(uwr.error);
                 }
             }
-            catch (Exception e)
-            {
-                Debug.LogError("err : " + e.Message);
-            }
+            //catch (Exception e)
+            //{
+            //    Debug.LogError("err : " + e.Message);
+            //    onFailed?.Invoke(e.Message);
+            //}
         }
     }
 
@@ -225,6 +256,7 @@ public class Character : MonoBehaviour
         form.AddField("data", "{\"karakter_id\" : \"" + id + "\", \"experience\" : \"" + experience + "\" }");
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "add_experience", form))
         {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
             try
             {
@@ -258,6 +290,7 @@ public class Character : MonoBehaviour
         form.AddField("data", "{\"karakter_id\" : \"" + characterId + "\" }");
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "add_experience", form))
         {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
             try
             {
@@ -285,21 +318,22 @@ public class Character : MonoBehaviour
         }
     }
 
-    public IEnumerator RequestSelectCharacter(int characterId, Action onComplete, Action<string> onFailed)
+    public IEnumerator RequestSelectCharacter(int characterId, Action<int> onComplete, Action<string> onFailed)
     {
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"karakter_id\" : \"" + characterId + "\" }");
-        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "add_experience", form))
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "use_karakter", form))
         {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
             try
             {
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
-                    ExperienceResponse response = JsonUtility.FromJson<ExperienceResponse>(uwr.downloadHandler.text);
+                    Response response = JsonUtility.FromJson<Response>(uwr.downloadHandler.text);
                     if (response.status.ToLower() == "ok")
                     {
-                        onComplete?.Invoke();
+                        onComplete?.Invoke(characterId);
                     }
                     else
                     {
@@ -314,6 +348,7 @@ public class Character : MonoBehaviour
             catch (Exception e)
             {
                 onFailed?.Invoke(e.Message);
+                Debug.LogError("err : " + e.Message);
             }
         }
     }

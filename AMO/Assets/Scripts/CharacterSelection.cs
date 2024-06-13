@@ -1,9 +1,14 @@
 using DanielLochner.Assets.SimpleScrollSnap;
+using DG.Tweening;
+using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 public class CharacterSelection : MonoBehaviour
 {
@@ -13,12 +18,15 @@ public class CharacterSelection : MonoBehaviour
 
     public GameObject container;
     public Image background;
+    public Image nameBackground;
     public TMP_Text nameText;
+    public TMP_Text evolutionText;
 
     private List<CharacterSelectionAnimation> characterItemList = new List<CharacterSelectionAnimation>();
+    private List<CharacterSelectionAnimation> characterList = new List<CharacterSelectionAnimation>();
 
     private bool isShown = false;
-    private float minSwipeLength = 5f;
+    private float minSwipeLength = 50f;
     private float swipeDistance;
     private Vector2 touchPos;
 
@@ -28,6 +36,7 @@ public class CharacterSelection : MonoBehaviour
     {
         //simpleScrollSnap.OnPanelCentered.AddListener(OnItemSelected);
         backButton.onClick.AddListener(Hide);
+        ChangeColor(Character.Instance.GetCurrentAvatarInfo());
     }
 
     private void OnEnable()
@@ -77,21 +86,60 @@ public class CharacterSelection : MonoBehaviour
         //}
     }
 
+    private int GetPositionIndex(int index)
+    {
+        if (index > 0)
+        {
+            index = index % (characterPlaceholderList.Count);
+        }
+        return index;
+    }
+
+    private int GetIndex(int index)
+    {
+        if (index > 0)
+        {
+            index = index % (characterList.Count);
+        }
+        else if (index < 0)
+        {
+            index = characterList.Count + index;
+        }
+        return index;
+    }
+
     public void Init()
     {
+        Debug.LogWarning("Init : " + Character.Instance.SelectedAvatarId);
         int unlockedCharacterCount = 0;
-        List<AvatarInfo> infoList = Character.Instance.GetAvatarInfoList();
+        List<AvatarInfo> infoList = Character.Instance.GetAvatarInfoList().Where(x => x.isUnlocked == true).ToList();
+        Debug.LogWarning("get unlocked character count : " + infoList.Count);
+        int centerIndex = 0;
+        int targetIndex = infoList.FindIndex(x => x.avatarId == Character.Instance.SelectedAvatarId);
+        int indexPos = GetPositionIndex(centerIndex - targetIndex);
+        int index = centerIndex - targetIndex;
+        Debug.LogWarning("first index : " + index);
         for (int i = 0; i < infoList.Count; i++)
         {
-            if (infoList[i].isUnlocked)
+            AvatarInfo info = infoList[i];
+            GameObject item = Instantiate(info.characterSelectionPrefab, characterItemParent, false);
+            CharacterSelectionAnimation characterItem = item.GetComponent<CharacterSelectionAnimation>();
+            characterItem.info = info;
+            characterList.Add(characterItem);
+            characterItem.index = index;
+            if (i < characterPlaceholderList.Count)
             {
-                AvatarInfo info = infoList[i];
-                GameObject item = Instantiate(info.characterSelectionPrefab, characterItemParent, false);
-                CharacterSelectionAnimation characterItem = item.GetComponent<CharacterSelectionAnimation>();
-                unlockedCharacterCount += 1;
-                item.transform.position = characterPlaceholderList[i].position;
+                Debug.LogWarning("index : " + indexPos);
+                //item.transform.position = characterPlaceholderList[indexPos].position;
                 characterItemList.Add(characterItem);
+                unlockedCharacterCount += 1;
+                //indexPos = GetPositionIndex(indexPos + 1);
             }
+            else
+            {
+                //Witem.SetActive(false);                
+            }
+            index += 1;
         }
         if (unlockedCharacterCount == 1)
         {
@@ -99,46 +147,82 @@ public class CharacterSelection : MonoBehaviour
             {
                 GameObject item = Instantiate(characterItemList[0].gameObject, characterItemParent, false);
                 CharacterSelectionAnimation characterItem = item.GetComponent<CharacterSelectionAnimation>();
-
-                item = Instantiate(characterItemPrefab, characterItemParent, false);
-                characterItem = item.GetComponent<CharacterSelectionAnimation>();
-                characterItemList.Add(characterItem);
+                characterItem.index = index;
+                characterList.Add(characterItem);
+                index += 1;
             }
         }
         else if (unlockedCharacterCount == 2)
         {
-            for (int i = 1; i < 5; i++)
+            for (int i = 0; i < 2; i++)
             {
-                if (i % 2 == 0)
+                for (int j = 0; j < characterItemList.Count; j++)
                 {
-                    GameObject item = Instantiate(characterItemList[0].gameObject, characterItemParent, false);
+                    GameObject item = Instantiate(characterItemList[j].gameObject, characterItemParent, false);
                     CharacterSelectionAnimation characterItem = item.GetComponent<CharacterSelectionAnimation>();
-
-                    item = Instantiate(characterItemPrefab, characterItemParent, false);
-                    characterItem = item.GetComponent<CharacterSelectionAnimation>();
-                    characterItemList.Add(characterItem);
-                }
-                else
-                {
-                    GameObject item = Instantiate(characterItemList[1].gameObject, characterItemParent, false);
-                    CharacterSelectionAnimation characterItem = item.GetComponent<CharacterSelectionAnimation>();
-
-                    item = Instantiate(characterItemPrefab, characterItemParent, false);
-                    characterItem = item.GetComponent<CharacterSelectionAnimation>();
-                    characterItemList.Add(characterItem);
+                    characterItem.index = index;
+                    characterList.Add(characterItem);
+                    index += 1;
                 }
             }
         }
-        else
+        else if (unlockedCharacterCount < 6)
         {
             for (int i = 0; i < characterItemList.Count; i++)
             {
                 GameObject item = Instantiate(characterItemList[i].gameObject, characterItemParent, false);
                 CharacterSelectionAnimation characterItem = item.GetComponent<CharacterSelectionAnimation>();
+                characterItem.index = index;
+                characterList.Add(characterItem);
+                index += 1;
+            }
+        }
 
-                item = Instantiate(characterItemPrefab, characterItemParent, false);
-                characterItem = item.GetComponent<CharacterSelectionAnimation>();
-                characterItemList.Add(characterItem);
+        characterList = characterList.OrderBy(x => x.index).ToList();
+        for (int i = 0; i < characterList.Count; i++)
+        {
+            characterList[i].index = GetIndex(characterList[i].index);
+        }
+        Reposition();
+    }
+
+    private void Reposition(bool withAnimation = false)
+    {
+        for (int i = 0; i < characterList.Count; i++)
+        {
+            if (characterList[i].index < 2)
+            {
+                if (withAnimation)
+                {
+                    characterList[i].transform.DOMove(characterPlaceholderList[characterList[i].index].position, 0.2f).SetEase(Ease.InOutQuad).Play();
+                }
+                else
+                {
+                    characterList[i].transform.position = characterPlaceholderList[characterList[i].index].position;
+                }
+            }
+            else if (characterList[i].index >= characterList.Count - 2)
+            {
+                int lastIndex = characterList.Count - characterList[i].index;
+                if (withAnimation)
+                {
+                    characterList[i].transform.DOMove(characterPlaceholderList[characterPlaceholderList.Count - lastIndex].position, 0.2f).SetEase(Ease.InOutQuad).Play();
+                }
+                else
+                {
+                    characterList[i].transform.position = characterPlaceholderList[characterPlaceholderList.Count - lastIndex].position;
+                }
+            }
+            else
+            {
+                if (withAnimation)
+                {
+                    characterList[i].transform.DOMove(characterPlaceholderList[3].position, 0.2f).SetEase(Ease.InOutQuad).Play();
+                }
+                else
+                {
+                    characterList[i].transform.position = characterPlaceholderList[3].position;
+                }
             }
         }
     }
@@ -150,7 +234,7 @@ public class CharacterSelection : MonoBehaviour
 
     private void Update()
     {
-        if (isShown)
+        //if (isShown)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -167,7 +251,7 @@ public class CharacterSelection : MonoBehaviour
                 {
                     NextCharacter();
                 }
-                else if (releasePos.x < touchPos.x + minSwipeLength)
+                else if (releasePos.x < touchPos.x - minSwipeLength)
                 {
                     PrevCharacter();
                 }
@@ -177,17 +261,50 @@ public class CharacterSelection : MonoBehaviour
 
     private void NextCharacter()
     {
-        
+        Debug.LogWarning("next character");
+        for (int i = 0; i < characterList.Count; i++)
+        {
+            characterList[i].index = GetIndex(characterList[i].index + 1);
+        }
+        Reposition(true);
+        SelectCharacter(GetSelectedCharacter());
     }
 
     private void PrevCharacter()
     {
-        
+        Debug.LogWarning("prev character");
+        for (int i = 0; i < characterList.Count; i++)
+        {
+            characterList[i].index = GetIndex(characterList[i].index - 1);
+        }
+        Reposition(true);
+        SelectCharacter(GetSelectedCharacter());
+    }
+
+    private AvatarInfo GetSelectedCharacter()
+    {
+        CharacterSelectionAnimation character = characterList.Where(x => x.index == 0).FirstOrDefault();
+        if (character != null)
+        {
+            character.OnCharacterSelected();
+            return character.info;
+        }
+        return null;
     }
 
     private void ChangeColor(AvatarInfo info)
     {
         background.color = info.color;
-        nameText.color = info.color;
+        nameBackground.color = info.color;
+        evolutionText.color = info.color;
+        nameText.text = info.avatarName;
+    }
+
+    private void SelectCharacter(AvatarInfo info)
+    {
+        HomeController.Instance.SelectCharacter(info, gameObject.activeInHierarchy);
+        UserData.SetAvatarName(info);
+        Character.Instance.UpdateSelectedAvatar(info.avatarId);
+        ChangeColor(info);
     }
 }
