@@ -26,11 +26,11 @@ public class AvatarInfo
     public float energy;
     public int exp;
 
-    public string helmetId;
-    public string outfitId;
+    public int helmetId;
+    public int outfitId;
 
     public string skinId;
-    public List<Evolution> evolutionList;
+    public List<EvolutionResponse> evolutionList;
     public GameObject characterPrefab;
     public GameObject characterSelectionPrefab;
     public Color color = Color.white;
@@ -47,11 +47,13 @@ public class AvatarAsset
 }
 
 [Serializable]
-public class Evolution
+public class EvolutionResponse
 {
     public int evolutionId;
     public string evolutionName;
     public int experienceToEvolve;
+    public GameObject characterPrefab;
+    public GameObject characterSelectionPrefab;
 }
 
 public class Avatar : MonoBehaviour

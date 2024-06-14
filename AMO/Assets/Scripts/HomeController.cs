@@ -75,6 +75,11 @@ public class HomeController : MonoBehaviour
         coins.SetCoin(UserData.Coins.ToString());
     }
 
+    public int ConvertSecondsToEnergy(int seconds)
+    {
+        return Mathf.RoundToInt(energyToSecond * seconds);
+    }
+
     private void Update()
     {
         elapsedTime += Time.deltaTime;

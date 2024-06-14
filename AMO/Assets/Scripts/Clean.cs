@@ -58,6 +58,8 @@ public class Clean : ActivityTask
             {
                 UserData.RemoveRequirement((int)Main.RequirementType.NEED_CLEAN_UP);
                 NeedsController.Instance.Pop(Main.RequirementType.NEED_CLEAN_UP);
+
+                Character.Instance.RequestAddExperience(Character.Instance.GetCurrentAvatarInfo().avatarId, 10, null, null);
             }
         }
         return elapsedTime / maxTime;

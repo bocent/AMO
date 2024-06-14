@@ -89,6 +89,11 @@ public class UserData
         }
     }
 
+    public static void RemoveAllRequirement()
+    {
+        requirementTypeList.Clear();
+    }
+
     public static List<int> GetRequirementList()
     {
         return requirementTypeList;

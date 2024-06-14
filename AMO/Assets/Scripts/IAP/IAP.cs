@@ -6,8 +6,10 @@ using TMPro;
 using Unity.Services.Core;
 using Unity.Services.Core.Environments;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Extension;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 [Serializable]
@@ -163,5 +165,53 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
     private void UpdateCoin()
     {
         coinText.text = UserData.Coins.ToString();
+    }
+
+
+
+
+    public IEnumerator RequestBuyCoin(int coinId, Action onComplete, Action<string> onFailed)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"karakter_id\" : \"" + coinId + "\" }");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "buy_coins", form))
+        {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    BuyCoinResponse response = JsonUtility.FromJson<BuyCoinResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        onComplete?.Invoke();
+                        Application.OpenURL(response.payment_url);
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                  new ButtonInfo
+                  {
+                      content = "Ulangi",
+                      onButtonClicked = () => StartCoroutine(RequestBuyCoin(coinId, onComplete, onFailed))
+                  },
+                  new ButtonInfo
+                  {
+                      content = "Batal"
+                  });
+            }
+        }
     }
 }

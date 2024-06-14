@@ -64,4 +64,14 @@ public class NeedsController : MonoBehaviour
         Debug.LogError("bubbleNeeds : " + bubbleNeeds);
         if(bubbleNeeds) bubbleNeeds.Pop();
     }
+
+    public void ClearAll()
+    {
+        List<int> requirementList = UserData.GetRequirementList();
+        foreach (int type in requirementList)
+        {
+            Pop((Main.RequirementType)type);
+        }
+        UserData.RemoveAllRequirement();
+    }
 }

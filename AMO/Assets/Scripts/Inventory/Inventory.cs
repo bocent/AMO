@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 [Serializable]
 public class ItemInfo
 {
-    public string itemId;
+    public int itemId;
     public string itemName;
     public int energy;
     public int itemCount;
@@ -25,8 +27,11 @@ public class Inventory : MonoBehaviour
 
     private List<GameObject> itemList = new List<GameObject>();
 
+    public static Inventory Instance { get; private set; }
+
     private void Start()
     {
+        Instance = this;
         backButton.onClick.AddListener(Hide);
     }
 
@@ -93,7 +98,7 @@ public class Inventory : MonoBehaviour
         return SpawnItem();
     }
 
-    public void AddItem(string itemId, int quantity)
+    public void AddItem(int itemId, int quantity)
     {
         ItemInfo info = itemInfoList.Where(x => x.itemId == itemId).FirstOrDefault();
         if (info != null)
@@ -111,17 +116,34 @@ public class Inventory : MonoBehaviour
             if (info.itemCount > 0)
             {
                 //Request API
-                if (info.itemId == "repair")
+                if (info.itemId == 3)
                 {
-                    UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
-                    UserData.RemoveRequirement((int)Main.RequirementType.NEED_FIX_UP);
-                    NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
-                    NeedsController.Instance.Pop(Main.RequirementType.NEED_FIX_UP);
-                    UserData.AddEnergy(info.energy);
-                    HomeController.Instance.ShowEatBatteryEffect();
-                    info.itemCount -= 1;
-
-                    Character.Instance.currentCharacter.PlayEatAnimation();
+                    StartCoroutine(RequestUseChargeItem(info.itemId, (itemCount) =>
+                    {
+                        info.itemCount = itemCount;
+                        UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
+                        UserData.RemoveRequirement((int)Main.RequirementType.NEED_FIX_UP);
+                        NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
+                        NeedsController.Instance.Pop(Main.RequirementType.NEED_FIX_UP);
+                        UserData.AddEnergy(info.energy);
+                        HomeController.Instance.ShowEatBatteryEffect();
+                        Character.Instance.currentCharacter.PlayEatAnimation();
+                    }, (error) =>
+                    {
+                        PopupManager.Instance.ShowPopupMessage("err", "Terjadi Kesalahan", error,
+                            new ButtonInfo
+                            {
+                                content = "Ulangi",
+                                onButtonClicked = () =>
+                                {
+                                    UseItem(info);
+                                }
+                            },
+                            new ButtonInfo
+                            {
+                                content = "Batal"
+                            });
+                    }));
                 }
                 else
                 {
@@ -134,33 +156,105 @@ public class Inventory : MonoBehaviour
                         }
                         else
                         {
-                            UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
-                            NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
-                            UserData.AddEnergy(info.energy);
-                            HomeController.Instance.ShowEatBatteryEffect();
-                            info.itemCount -= 1;
-                            Character.Instance.currentCharacter.PlayEatAnimation();
+                            StartCoroutine(RequestUseChargeItem(info.itemId, (itemCount) => 
+                            {
+                                info.itemCount = itemCount;
+                                UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
+                                NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
+                                UserData.AddEnergy(info.energy);
+                                HomeController.Instance.ShowEatBatteryEffect();
+                                Character.Instance.currentCharacter.PlayEatAnimation();
+                            }, (error) =>
+                            {
+                                PopupManager.Instance.ShowPopupMessage("err", "Terjadi Kesalahan", error,
+                                    new ButtonInfo
+                                    { 
+                                        content = "Ulangi",
+                                        onButtonClicked = () =>
+                                        {
+                                            UseItem(info);
+                                        }
+                                    },
+                                    new ButtonInfo
+                                    {
+                                        content = "Batal" 
+                                    });
+                            }));
                         }
                     }
                     else
                     {
-                        UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
-                        NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
-                        UserData.AddEnergy(info.energy);
-                        HomeController.Instance.ShowEatBatteryEffect();
-                        info.itemCount -= 1;
-                        Character.Instance.currentCharacter.PlayEatAnimation();
+                        StartCoroutine(RequestUseChargeItem(info.itemId, (itemCount) =>
+                        {
+                            info.itemCount = itemCount;
+                            UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
+                            NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
+                            UserData.AddEnergy(info.energy);
+                            HomeController.Instance.ShowEatBatteryEffect();
+                            Character.Instance.currentCharacter.PlayEatAnimation();
+                        }, (error) =>
+                        {
+                            PopupManager.Instance.ShowPopupMessage("err", "Terjadi Kesalahan", error,
+                                new ButtonInfo
+                                {
+                                    content = "Ulangi",
+                                    onButtonClicked = () =>
+                                    {
+                                        UseItem(info);
+                                    }
+                                },
+                                new ButtonInfo
+                                {
+                                    content = "Batal"
+                                });
+                        }));
+                       
                     }
                 }
             }
         }
     }
 
+    public IEnumerator RequestUseChargeItem(int itemId, Action<int> onComplete, Action<string> onFailed)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"charge_item\" : \"" + itemId + "\" }");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "use_charge_item", form))
+        {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    UseItemResponse response = JsonUtility.FromJson<UseItemResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        onComplete?.Invoke(response.sisa_stok);
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
+                Debug.LogError("err : " + e.Message);
+            }
+        }
+    }
+
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            AddItem("h_battery", 1);
-        }
+        //if (Input.GetKeyDown(KeyCode.E))
+        //{
+        //    AddItem("h_battery", 1);
+        //}
     }
 }

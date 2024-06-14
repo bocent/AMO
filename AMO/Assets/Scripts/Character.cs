@@ -1,3 +1,4 @@
+using OpenAI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,24 +27,42 @@ public class Character : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
         for (int i = 0; i < avatarInfoList.Count; i++)
         {
             avatarInfoList[i].isUnlocked = false;
         }
-        StartCoroutine(RequestCharacters(() => StartCoroutine(RequestUserData((id) => {
-            LoadAllCharacter();
-            LoadCharacter(id);
-            SelectedAvatarId = id;
-            //UpdateSelectedAvatar();
-            HomeController.Instance.characterSelection.Init();
-        }, (error) => { 
-        
-        })), (error) =>
+        yield return (RequestCharacters(() =>
+        {
+            StartCoroutine(RequestItemList(() =>
+            {
+                StartCoroutine(RequestUserData((id) =>
+                {
+                    LoadAllCharacter();
+                    LoadCharacter(id);
+                    SelectedAvatarId = id;
+                    //UpdateSelectedAvatar();
+                    HomeController.Instance.characterSelection.Init();
+                   
+
+                },
+                (error) =>
+                {
+
+                }));
+            },
+            (error) =>
+            {
+
+            }));
+        },
+        (error) =>
         {
             Debug.LogError("err : " + error);
         }));
+
+        
 
     }
 
@@ -54,7 +73,16 @@ public class Character : MonoBehaviour
 
         StartCoroutine(RequestSelectCharacter(avatarId, (id) => {
             SelectedAvatarId = id;
-        }, (error) => { 
+            NeedsController.Instance.ClearAll();
+            StartCoroutine(RequestUserData((id) => 
+            {
+                   
+            }, (error) => 
+            {
+
+            }));
+        }, (error) =>
+        { 
         
         }));
     }
@@ -170,10 +198,10 @@ public class Character : MonoBehaviour
                             //    avatarSprite = asset.sprite
                             //});
                             int index = avatarInfoList.FindIndex(x =>x.avatarId == response.karakter[i].karakter_id);
-                            avatarInfoList[index].evolutionList = new List<Evolution>();
+                            avatarInfoList[index].evolutionList = new List<EvolutionResponse>();
                             foreach (EvolutionData evolutionData in response.karakter[i].evolution)
                             {
-                                avatarInfoList[index].evolutionList.Add(new Evolution { evolutionId = evolutionData.next_evolution_id, evolutionName = evolutionData.next_evolution_name, experienceToEvolve = evolutionData.experience_to_evolution });
+                                avatarInfoList[index].evolutionList.Add(new EvolutionResponse { evolutionId = evolutionData.next_evolution_id, evolutionName = evolutionData.next_evolution_name, experienceToEvolve = evolutionData.experience_to_evolution });
                             }
                         }
                         onComplete?.Invoke();
@@ -185,13 +213,88 @@ public class Character : MonoBehaviour
                 }
                 else
                 {
-                    onFailed?.Invoke(uwr.error);
+                    throw new Exception(uwr.error);
                 }
             }
             catch (Exception e)
             {
                 onFailed?.Invoke(e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                    new ButtonInfo
+                    {
+                        content = "Ulangi",
+                        onButtonClicked = () => StartCoroutine(RequestCharacters(onComplete, onFailed))
+                    },
+                    new ButtonInfo
+                    {
+                        content = "Batal"
+                    });
             }
+        }
+    }
+
+    public IEnumerator RequestItemList(Action onComplete, Action<string> onFailed)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"items_id\" : \"" + string.Empty + "\" }");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "get_items", form))
+        {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            yield return uwr.SendWebRequest();
+            //try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    ItemResponse response = JsonUtility.FromJson<ItemResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        foreach (ItemData item in response.items.accessories.helmet)
+                        {
+                            Debug.LogWarning("acc Id : " + item.items_id);
+                            int index = AccessoryController.Instance.accessoryList.FindIndex(x => x.accessoryId == item.items_id);
+                            AccessoryController.Instance.accessoryList[index].accessoryName = item.item_name;
+                            AccessoryController.Instance.accessoryList[index].accessoryType = SelectedCharacter.AccessoryType.Helmet;
+                            AccessoryController.Instance.accessoryList[index].hasOwned = false;
+                        }
+                        foreach (ItemData item in response.items.accessories.outfit)
+                        {
+                            int index = AccessoryController.Instance.accessoryList.FindIndex(x => x.accessoryId == item.items_id);
+                            AccessoryController.Instance.accessoryList[index].accessoryName = item.item_name;
+                            AccessoryController.Instance.accessoryList[index].accessoryType = SelectedCharacter.AccessoryType.Outfit;
+                            AccessoryController.Instance.accessoryList[index].hasOwned = false;
+                        }
+                        foreach (ItemData item in response.items.charge)
+                        {
+                            int index = Inventory.Instance.itemInfoList.FindIndex(x => x.itemId == item.items_id);
+                            Inventory.Instance.itemInfoList[index].itemName = item.item_name;
+                        }
+                        onComplete?.Invoke();
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            //catch (Exception e)
+            //{
+            //    onFailed?.Invoke(e.Message);
+            //    Debug.LogError("err : " + e.Message);
+            //    PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+            //        new ButtonInfo
+            //        {
+            //            content = "Ulangi",
+            //            onButtonClicked = () => StartCoroutine(RequestItemList(onComplete, onFailed))
+            //        },
+            //        new ButtonInfo
+            //        {
+            //            content = "Batal"
+            //        });
+            //}
         }
     }
 
@@ -203,7 +306,7 @@ public class Character : MonoBehaviour
         {
             uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
-            //try
+            try
             {
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
@@ -224,33 +327,71 @@ public class Character : MonoBehaviour
                             if (ownedCharacter.is_used == 1)
                             {
                                 activeCharacterId = ownedCharacter.karakter_id;
+                                DateTime.TryParse(ownedCharacter.status.last_fed, out DateTime lastFed);
+                                DateTime now = DateTime.Now;
+
+                                TimeSpan gapTime = now - lastFed;
+                                double gapInSeconds = gapTime.TotalSeconds;
+                                Debug.LogWarning("gap Time : " + gapInSeconds);
+
+                                int energy = ownedCharacter.status.energy;
+                                int energyWasted = HomeController.Instance.ConvertSecondsToEnergy(Mathf.FloorToInt((float)gapInSeconds));
+                                int energyRemaining = Mathf.Clamp(energy - energyWasted, 0, 100);
+
+                                Debug.LogWarning("energy : " + energyRemaining + " " + ownedCharacter.status.energy);
+
                                 UserData.SetMood((Main.MoodStage)(4 - Mathf.RoundToInt(ownedCharacter.status.happiness / 25)));
-                                UserData.SetEnergy(ownedCharacter.status.energy);
+                                UserData.SetEnergy(energyRemaining);
                             }
-                           
                         }
+                        foreach (ItemData item in response.inventory.helmet)
+                        {
+                            int index = AccessoryController.Instance.accessoryList.FindIndex(x => x.accessoryId == item.items_id);
+                            AccessoryController.Instance.accessoryList[index].hasOwned = true;
+                        }
+                        foreach (ItemData item in response.inventory.outfit)
+                        {
+                            int index = AccessoryController.Instance.accessoryList.FindIndex(x => x.accessoryId == item.items_id);
+                            AccessoryController.Instance.accessoryList[index].hasOwned = true;
+                        }
+                        int energyItemIndex = Inventory.Instance.itemInfoList.FindIndex(x => x.itemId == 1);
+                        int hyperItemIndex = Inventory.Instance.itemInfoList.FindIndex(x => x.itemId == 2);
+                        int fixItemIndex = Inventory.Instance.itemInfoList.FindIndex(x => x.itemId == 3);
+                        Inventory.Instance.itemInfoList[energyItemIndex].itemCount = response.charge_items.energy_charge_stock;
+                        Inventory.Instance.itemInfoList[hyperItemIndex].itemCount = response.charge_items.energy_super_charge_stock;
+                        Inventory.Instance.itemInfoList[fixItemIndex].itemCount = response.charge_items.fix_charge_stock;
                         onComplete?.Invoke(activeCharacterId);
                     }
                     else
                     {
-                        //throw new Exception(response.msg);
+                        throw new Exception(response.msg);
 
                     }
                 }
                 else
                 {
-                    //throw new Exception(uwr.error);
+                    throw new Exception(uwr.error);
                 }
             }
-            //catch (Exception e)
-            //{
-            //    Debug.LogError("err : " + e.Message);
-            //    onFailed?.Invoke(e.Message);
-            //}
+            catch (Exception e)
+            {
+                Debug.LogError("err : " + e.Message);
+                onFailed?.Invoke(e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                  new ButtonInfo
+                  {
+                      content = "Ulangi",
+                      onButtonClicked = () => StartCoroutine(RequestUserData(onComplete, onFailed))
+                  },
+                  new ButtonInfo
+                  {
+                      content = "Batal"
+                  });
+            }
         }
     }
 
-    public IEnumerator RequestAddExperience(int id, int experience, Action onComplete, Action<string> onFailed)
+    public IEnumerator RequestAddExperience(int id, int experience, Action<bool, string> onComplete, Action<string> onFailed)
     {
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"karakter_id\" : \"" + id + "\", \"experience\" : \"" + experience + "\" }");
@@ -265,7 +406,14 @@ public class Character : MonoBehaviour
                     ExperienceResponse response = JsonUtility.FromJson<ExperienceResponse>(uwr.downloadHandler.text);
                     if (response.status.ToLower() == "ok")
                     {
-                        onComplete?.Invoke();
+                        onComplete?.Invoke(response.evolution_up, response.new_evolution_id);
+                        if (response.evolution_up)
+                        {
+                            if (int.TryParse(response.new_evolution_id, out int targetId))
+                            {
+                                Evolution(targetId);
+                            }
+                        }
                     }
                     else
                     {
@@ -280,6 +428,16 @@ public class Character : MonoBehaviour
             catch (Exception e)
             {
                 onFailed?.Invoke(e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                  new ButtonInfo
+                  {
+                      content = "Ulangi",
+                      onButtonClicked = () => StartCoroutine(RequestAddExperience(id, experience, onComplete, onFailed))
+                  },
+                  new ButtonInfo
+                  {
+                      content = "Batal"
+                  });
             }
         }
     }
@@ -314,6 +472,16 @@ public class Character : MonoBehaviour
             catch (Exception e)
             {
                 onFailed?.Invoke(e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                  new ButtonInfo
+                  {
+                      content = "Ulangi",
+                      onButtonClicked = () => StartCoroutine(RequestUpdateCharacter(characterId, onComplete, onFailed))
+                  },
+                  new ButtonInfo
+                  {
+                      content = "Batal"
+                  });
             }
         }
     }
@@ -350,6 +518,43 @@ public class Character : MonoBehaviour
                 onFailed?.Invoke(e.Message);
                 Debug.LogError("err : " + e.Message);
             }
+        }
+    }
+
+    public string GetNextStageEvolution(AvatarInfo info)
+    {
+        switch (info.stageType)
+        {
+            case AvatarInfo.StageType.Baby:
+                return AvatarInfo.StageType.Toddler.ToString();
+            case AvatarInfo.StageType.Toddler:
+                return AvatarInfo.StageType.Teen.ToString();
+            case AvatarInfo.StageType.Teen:
+                return AvatarInfo.StageType.Android.ToString();
+            case AvatarInfo.StageType.Android:
+                return AvatarInfo.StageType.Humanoid.ToString();
+        }
+        return "";
+    }
+
+    public void CheckEvolution()
+    {
+        AvatarInfo info = GetCurrentAvatarInfo();
+        EvolutionResponse evolution = info.evolutionList.Where(x => x.evolutionName == GetNextStageEvolution(info).ToUpper()).FirstOrDefault();
+        if (evolution != null)
+        {
+            if (info.exp >= evolution.experienceToEvolve)
+            {
+                Evolution(evolution.evolutionId);
+            }
+        }
+    }
+
+    public void Evolution(int targetId)
+    {
+        if (targetId != 0)
+        {
+            UpdateSelectedAvatar(targetId);
         }
     }
 }

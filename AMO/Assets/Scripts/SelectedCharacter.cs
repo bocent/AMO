@@ -39,8 +39,8 @@ public class SelectedCharacter : MonoBehaviour
     {
         Info = info;
         this.info = info;
-        string helmetId = LoadAccessory(AccessoryType.Helmet);
-        string outfitId = LoadAccessory(AccessoryType.Outfit);
+        int helmetId = LoadAccessory(AccessoryType.Helmet);
+        int outfitId = LoadAccessory(AccessoryType.Outfit);
         AddAccessory(helmetId, false);
         AddAccessory(outfitId, false);
     }
@@ -217,10 +217,10 @@ public class SelectedCharacter : MonoBehaviour
         }
     }
 
-    public GameObject AddAccessory(string accessoryId, bool useAnimation = true)
+    public GameObject AddAccessory(int accessoryId, bool useAnimation = true)
     {
         Debug.LogWarning("acc id : " + accessoryId);
-        if (!string.IsNullOrEmpty(accessoryId))
+        if (accessoryId > 0)
         {
             AccessoryInfo info = AccessoryController.Instance.GetAccessoryInfo(accessoryId);
             if (info != null)
@@ -249,7 +249,7 @@ public class SelectedCharacter : MonoBehaviour
                     Destroy(helmetAccessory);
                     helmetAccessory = null;
                 }
-                Info.helmetId = null;
+                Info.helmetId = 0;
                 break;
             case AccessoryType.Outfit:
                 if (outfitAccessory)
@@ -257,7 +257,7 @@ public class SelectedCharacter : MonoBehaviour
                     Destroy(outfitAccessory);
                     outfitAccessory = null;
                 }
-                Info.outfitId = null;
+                Info.outfitId = 0;
                 break;
         }
     }
@@ -373,34 +373,34 @@ public class SelectedCharacter : MonoBehaviour
         return null;
     }
 
-    private void SaveAccessory(AccessoryType accessoryType, string accesoryId)
+    private void SaveAccessory(AccessoryType accessoryType, int accesoryId)
     {
         if (accessoryType == AccessoryType.Helmet)
         {
-            PlayerPrefs.SetString(HELMET_KEY + info.avatarName, accesoryId);
+            PlayerPrefs.SetInt(HELMET_KEY + info.avatarName, accesoryId);
         }
         else
         {
-            PlayerPrefs.SetString(OUTFIT_KEY + info.avatarName, accesoryId);
+            PlayerPrefs.SetInt(OUTFIT_KEY + info.avatarName, accesoryId);
         }
         PlayerPrefs.Save();
     }
 
-    private string LoadAccessory(AccessoryType accessoryType)
+    private int LoadAccessory(AccessoryType accessoryType)
     {
         if (accessoryType == AccessoryType.Helmet)
         {
-            string helmetId = info.helmetId == "" ? GetDefaultAccessory(accessoryType) : info.helmetId;
-            return PlayerPrefs.HasKey(HELMET_KEY + info.avatarName) ? PlayerPrefs.GetString(HELMET_KEY + info.avatarName) : helmetId;
+            int helmetId = info.helmetId == 0 ? GetDefaultAccessory(accessoryType) : info.helmetId;
+            return PlayerPrefs.HasKey(HELMET_KEY + info.avatarName) ? PlayerPrefs.GetInt(HELMET_KEY + info.avatarName) : helmetId;
         }
         else
         {
-            string outfitId = info.outfitId == "" ? GetDefaultAccessory(accessoryType) : info.outfitId;
-            return PlayerPrefs.HasKey(OUTFIT_KEY + info.avatarName) ? PlayerPrefs.GetString(OUTFIT_KEY + info.avatarName) : outfitId;
+            int outfitId = info.outfitId == 0 ? GetDefaultAccessory(accessoryType) : info.outfitId;
+            return PlayerPrefs.HasKey(OUTFIT_KEY + info.avatarName) ? PlayerPrefs.GetInt(OUTFIT_KEY + info.avatarName) : outfitId;
         }
     }
 
-    private string GetDefaultAccessory(AccessoryType accessoryType)
+    private int GetDefaultAccessory(AccessoryType accessoryType)
     {
         if (accessoryType == AccessoryType.Outfit)
         {
@@ -434,7 +434,7 @@ public class SelectedCharacter : MonoBehaviour
                     return AccessoryController.DEFAULT_LORRY_HELMET;
             }
         }
-        return "";
+        return 0;
     }
 
     //private GameObject AddHandAccessory(AccessoryInfo info)
@@ -477,19 +477,6 @@ public class SelectedCharacter : MonoBehaviour
             }
         }
         return null;
-    }
-
-    public void Evolution()
-    {
-        int currentAvatarId = Info.avatarId;
-        {
-            Info.isUnlocked = false;
-            Evolution evolution = Info.evolutionList.Where(x => x.evolutionId == Info.nextEvolutionId).FirstOrDefault();
-            if (evolution != null)
-            {
-                TransferStats(Info.nextEvolutionId);
-            }
-        }
     }
 
     private void TransferStats(int avatarId)

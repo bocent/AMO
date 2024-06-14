@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEditor.Progress;
+using UnityEngine.Networking;
 
 [Serializable]
 public class AccessoryInfo
 {
-    public string accessoryId;
+    public int accessoryId;
     public string accessoryName;
     public string maskId;
     public string avatarName;
@@ -34,19 +36,19 @@ public class AccessoryMaterial
 
 public class AccessoryController : MonoBehaviour
 {
-    [SerializeField] private List<AccessoryInfo> accessoryList;
+    public List<AccessoryInfo> accessoryList;
 
-    public const string DEFAULT_AROHA_HELMET = "5";
-    public const string DEFAULT_GILMO_HELMET = "23";
-    public const string DEFAULT_LORRY_HELMET = "29";
-    public const string DEFAULT_MOCHI_HELMET = "11";
-    public const string DEFAULT_OLGA_HELMET = "17";
+    public const int DEFAULT_AROHA_HELMET = 5;
+    public const int DEFAULT_GILMO_HELMET = 23;
+    public const int DEFAULT_LORRY_HELMET = 29;
+    public const int DEFAULT_MOCHI_HELMET = 11;
+    public const int DEFAULT_OLGA_HELMET = 17;
 
-    public const string DEFAULT_AROHA_OUTFIT = "6";
-    public const string DEFAULT_GILMO_OUTFIT = "24";
-    public const string DEFAULT_LORRY_OUTFIT = "30";
-    public const string DEFAULT_MOCHI_OUTFIT = "12";
-    public const string DEFAULT_OLGA_OUTFIT = "18";
+    public const int DEFAULT_AROHA_OUTFIT = 6;
+    public const int DEFAULT_GILMO_OUTFIT = 24;
+    public const int DEFAULT_LORRY_OUTFIT = 30;
+    public const int DEFAULT_MOCHI_OUTFIT = 12;
+    public const int DEFAULT_OLGA_OUTFIT = 18;
 
     public static AccessoryController Instance { get; private set; }
 
@@ -60,13 +62,13 @@ public class AccessoryController : MonoBehaviour
         return accessoryList;
     }
 
-    public AccessoryInfo GetAccessoryInfo(string id)
+    public AccessoryInfo GetAccessoryInfo(int id)
     {
         AccessoryInfo info = accessoryList.Where(x => x.accessoryId == id).FirstOrDefault();
         return info;
     }
 
-    public GameObject GetAccessoryPrefab(string id, AvatarInfo.StageType stageType)
+    public GameObject GetAccessoryPrefab(int id, AvatarInfo.StageType stageType)
     {
         AccessoryInfo info = GetAccessoryInfo(id);
         if (info != null)
@@ -95,4 +97,6 @@ public class AccessoryController : MonoBehaviour
         }
         return null;
     }
+
+   
 }

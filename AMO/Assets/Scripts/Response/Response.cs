@@ -123,12 +123,12 @@ public class UsedAccessries
 [Serializable]
 public class InventoryList
 {
-    public AccessoryPart[] helmet;
-    public AccessoryPart[] outfit;
+    public ItemData[] helmet;
+    public ItemData[] outfit;
 }
 
 [Serializable]
-public class AccessoryPart
+public class ItemData
 {
     public int user_invenrtory_id;
     public int items_id;
@@ -195,3 +195,47 @@ public class ShopAccessory
 }
 
 #endregion
+
+[Serializable]
+public class UseItemResponse
+{
+    public string status;
+    public string msg;
+    public string charge_item;
+    public int sisa_stok;
+}
+
+
+[Serializable]
+public class ItemResponse
+{
+    public string status;
+    public string msg;
+    public IventoryItem items;
+}
+
+[Serializable]
+public class IventoryItem
+{
+    public ItemData[] charge;
+    public InventoryList accessories;
+}
+
+
+
+
+
+
+
+
+
+
+
+[Serializable]
+public class BuyCoinResponse
+{
+    public string status;
+    public string msg;
+    public string trx_id;
+    public string payment_url;
+}

@@ -50,11 +50,11 @@ public class ItemLibrary : MonoBehaviour
             Item item = go.GetComponent<Item>();
             if (item.Info != null)
             {
-                string helmetId = HomeController.Instance.selectedCharacter.Info.helmetId;
-                string outfitId = HomeController.Instance.selectedCharacter.Info.outfitId;
+                int helmetId = HomeController.Instance.selectedCharacter.Info.helmetId;
+                int outfitId = HomeController.Instance.selectedCharacter.Info.outfitId;
                 bool isEquipped =
-                    (item.Info.accessoryId == helmetId && helmetId != "") || 
-                    (item.Info.accessoryId == outfitId && outfitId != "");
+                    (item.Info.accessoryId == helmetId && helmetId != 0) || 
+                    (item.Info.accessoryId == outfitId && outfitId != 0);
 
                 //item.SelectItem(isEquipped);
             }
