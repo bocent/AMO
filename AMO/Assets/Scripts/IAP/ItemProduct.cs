@@ -4,31 +4,65 @@ using System.Globalization;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Purchasing;
 using UnityEngine.UI;
 
 public class ItemProduct : MonoBehaviour
 {
-    public string productId;
+    private string productId;
+    public Image productImage;
     public Button purchaseButton;
     public TMP_Text coinText;
     public TMP_Text priceText;
 
-    private void Start()
-    {
-        purchaseButton.onClick.AddListener(Purchase);
-        InAppProduct iap = IAP.Instance.iapList.Where(x => x.productId == productId).FirstOrDefault();
-        if (iap != null)
-        {
-            CultureInfo cultureInfo = new CultureInfo("ID-id");
+    protected ShopItem item;
+    protected ItemCoin coin;
 
-            coinText.text = iap.quantity.ToString();
-            priceText.text = iap.price.ToString("C3", cultureInfo);
-        }
+    protected virtual void Start()
+    {
+        purchaseButton.onClick.AddListener(PurchaseCoin);
     }
 
-    public void Purchase()
+    //public virtual void Init(string productId)
+    //{
+    //    this.productId = productId;
+    //    InAppProduct iap = IAP.Instance.iapList.Where(x => x.productId == productId).FirstOrDefault();
+
+    //    Debug.LogWarning("iap : " + iap);
+
+    //    if (iap != null)
+    //    {
+    //        CultureInfo cultureInfo = new CultureInfo("ID-id");
+
+    //        coinText.text = iap.quantity.ToString();
+    //        priceText.text = iap.price.ToString("C3", cultureInfo);
+    //        Debug.LogWarning("price : " + iap.price);
+    //    }
+    //}
+
+    public virtual void Init(ItemCoin item)
     {
-        IAP.Instance.BuyProduct(productId);
+        coin = item;
+        InAppProduct iap = IAP.Instance.iapList.Where(x => x.productId == item.topup_coin_id).FirstOrDefault();
+        CultureInfo cultureInfo = new CultureInfo("ID-id");
+
+        productImage.sprite = iap.sprite;
+        coinText.text = coin.ToString() + "COIN";
+        priceText.text = int.Parse(item.price).ToString("C3", cultureInfo);
+    }
+
+    public virtual void Init(ShopItem item)
+    {
+        
+    }
+
+
+    private void PurchaseCoin()
+    {
+        IAP.Instance.BuyProduct(coin);
+    }
+
+    private void Purchase()
+    {
+        IAP.Instance.BuyProduct(item);   
     }
 }

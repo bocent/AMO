@@ -21,17 +21,17 @@ public class UserData
 
     public static Main.MoodStage Mood { get; private set; }
 
-    public static void SetCoin(double value)
+    public static void SetCoin(long value)
     {
         Coins = value;
     }
 
-    public static void AddCoins(double value)
+    public static void AddCoins(long value)
     {
         Coins += value;
     }
 
-    public static void AddCoins(double value, Action onComplete)
+    public static void AddCoins(long value, Action onComplete)
     {
         Coins += value;
         onComplete?.Invoke();

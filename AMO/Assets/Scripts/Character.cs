@@ -241,7 +241,7 @@ public class Character : MonoBehaviour
         {
             uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
-            //try
+            try
             {
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
@@ -280,21 +280,21 @@ public class Character : MonoBehaviour
                     throw new Exception(uwr.error);
                 }
             }
-            //catch (Exception e)
-            //{
-            //    onFailed?.Invoke(e.Message);
-            //    Debug.LogError("err : " + e.Message);
-            //    PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
-            //        new ButtonInfo
-            //        {
-            //            content = "Ulangi",
-            //            onButtonClicked = () => StartCoroutine(RequestItemList(onComplete, onFailed))
-            //        },
-            //        new ButtonInfo
-            //        {
-            //            content = "Batal"
-            //        });
-            //}
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
+                Debug.LogError("err : " + e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                    new ButtonInfo
+                    {
+                        content = "Ulangi",
+                        onButtonClicked = () => StartCoroutine(RequestItemList(onComplete, onFailed))
+                    },
+                    new ButtonInfo
+                    {
+                        content = "Batal"
+                    });
+            }
         }
     }
 
@@ -322,13 +322,16 @@ public class Character : MonoBehaviour
                             {
                                 avatarInfoList[index].isUnlocked = true;
                                 avatarInfoList[index].exp = ownedCharacter.experience;
-                               
+                                if(ownedCharacter.accessories_used.helmet_items_id != null)
+                                avatarInfoList[index].helmetId = (int)ownedCharacter.accessories_used.helmet_items_id;
+                                if(ownedCharacter.accessories_used.outfit_items_id != null)
+                                avatarInfoList[index].outfitId = (int)ownedCharacter.accessories_used.outfit_items_id;
                             }
                             if (ownedCharacter.is_used == 1)
                             {
                                 activeCharacterId = ownedCharacter.karakter_id;
                                 DateTime.TryParse(ownedCharacter.status.last_fed, out DateTime lastFed);
-                                DateTime now = DateTime.Now;
+                                DateTime.TryParse(response.waktu_server, out DateTime now);
 
                                 TimeSpan gapTime = now - lastFed;
                                 double gapInSeconds = gapTime.TotalSeconds;

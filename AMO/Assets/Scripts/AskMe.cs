@@ -248,6 +248,11 @@ public class AskMe : MonoBehaviour
                 Language = "id"
             };
             var res = await openai.CreateAudioTranscription(req);
+            if (!string.IsNullOrEmpty(res.Error.Message))
+            {
+                Debug.LogError("err : " + res.Error.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Terjadi Kesalahan", "Silahkan hubungi tim kami di kontak Customer Service", new ButtonInfo { content = "Tutup" });
+            }
             
             progressBar.fillAmount = 0;
             message.text = res.Text;

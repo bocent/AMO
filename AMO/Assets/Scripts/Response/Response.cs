@@ -1,10 +1,6 @@
-using DG.Tweening.Plugins;
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
 
 [Serializable]
 public class Response
@@ -69,7 +65,8 @@ public class UserResponse
     public string msg;
     public string email;
     public string user_id;
-    public double user_coin;
+    public long user_coin;
+    public string waktu_server;
     public ChargeItems charge_items;
     public List<UserCharacter> karakter_user;
     public InventoryList inventory;
@@ -98,12 +95,22 @@ public class UserCharacter
     public string next_evolution_name;
     public int is_used;
     public CharacterStatus status;
+    public NeedAction need_action;
     public UsedAccessries accessories_used;
+}
+
+[Serializable]
+public class NeedAction
+{
+    public int need_clean;
+    public int need_charge;
+    public int need_repair;
 }
 
 [Serializable]
 public class CharacterStatus
 {
+    public int karakter_id;
     public int hunger;
     public int happiness;
     public int health;
@@ -168,6 +175,7 @@ public class ShopResponse
 [Serializable]
 public class ShopList
 {
+    public ShopItem[] karakter;
     public ShopItem[] charge;
     public ShopAccessory accessories;
 }
@@ -238,4 +246,44 @@ public class BuyCoinResponse
     public string msg;
     public string trx_id;
     public string payment_url;
+}
+
+[Serializable]
+public class BuyItemResponse
+{
+    public string status;
+    public string msg;
+    public int sisa_coin;
+}
+
+
+
+[Serializable]
+public class CoinListResponse
+{
+    public string status;
+    public string msg;
+    public ItemCoin[] items_coin;
+}
+
+[Serializable]
+public class ItemCoin
+{
+    public int topup_coin_id;
+    public string name;
+    public int qty;
+    public string price;
+    public string desc;
+}
+
+
+
+
+[Serializable]
+public class CharacterStatusResponse
+{
+    public string status;
+    public string msg;
+    public CharacterStatus status_karakter;
+    public NeedAction need_action;
 }

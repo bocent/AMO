@@ -31,6 +31,8 @@ public class ToDoController : MonoBehaviour
         button.onClick.AddListener(ShowReminderList);
         backButton.onClick.AddListener(HideReminderList);
         LoadNotes();
+
+        //Debug.LogError("tes notes : " +  LoadNotesAsText());
     }
 
     public string LoadNotesAsText()
@@ -54,7 +56,10 @@ public class ToDoController : MonoBehaviour
             }
             return list;
         }
-        return null;
+        else
+        {
+            return "Saat ini daftar masih kosong";
+        }
     }
 
     private void LoadNotes()

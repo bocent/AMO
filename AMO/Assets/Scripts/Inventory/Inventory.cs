@@ -257,4 +257,9 @@ public class Inventory : MonoBehaviour
         //    AddItem("h_battery", 1);
         //}
     }
+
+    public ItemInfo GetItemInfo(int itemId)
+    {
+        return itemInfoList.Where(x => x.itemId == itemId).FirstOrDefault();
+    }
 }

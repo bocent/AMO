@@ -39,10 +39,10 @@ public class SelectedCharacter : MonoBehaviour
     {
         Info = info;
         this.info = info;
-        int helmetId = LoadAccessory(AccessoryType.Helmet);
-        int outfitId = LoadAccessory(AccessoryType.Outfit);
-        AddAccessory(helmetId, false);
-        AddAccessory(outfitId, false);
+        //int helmetId = LoadAccessory(AccessoryType.Helmet);
+        //int outfitId = LoadAccessory(AccessoryType.Outfit);
+        AddAccessory(info.helmetId, false);
+        AddAccessory(info.outfitId, false);
     }
 
     public int GetMood()
@@ -283,20 +283,20 @@ public class SelectedCharacter : MonoBehaviour
                 Info.helmetId = info.accessoryId;
                 equippedAccessories.Add(head);
 
-                SaveAccessory(AccessoryType.Helmet, info.accessoryId);
+                //SaveAccessory(AccessoryType.Helmet, info.accessoryId);
                 PlayIdleAnimation();
                 return head;
             }
             else
             {
                 Info.helmetId = info.accessoryId;
-                SaveAccessory(AccessoryType.Helmet, info.accessoryId);
+                //SaveAccessory(AccessoryType.Helmet, info.accessoryId);
             }
         }
         else
         {
             Info.helmetId = info.accessoryId;
-            SaveAccessory(AccessoryType.Helmet, info.accessoryId);
+            //SaveAccessory(AccessoryType.Helmet, info.accessoryId);
         }
         return null;
     }
@@ -323,7 +323,7 @@ public class SelectedCharacter : MonoBehaviour
                 outfitAccessory.Init(info);
                 Info.outfitId = info.accessoryId;
                 equippedAccessories.Add(body);
-                SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+                //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
                 PlayIdleAnimation();
                 return body;
             }
@@ -334,19 +334,19 @@ public class SelectedCharacter : MonoBehaviour
                 {
                     Info.outfitId = info.accessoryId;
                     bodyMeshRenderer.material = material;
-                    SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+                    //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
                     PlayIdleAnimation();
                 }
                 else
                 {
                     Info.outfitId = info.accessoryId;
-                    SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+                    //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
                 }
             }
             else
             {
                 Info.outfitId = info.accessoryId;
-                SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+                //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
             }
         }
         else if (info.materials != null)
@@ -356,49 +356,49 @@ public class SelectedCharacter : MonoBehaviour
             {
                 Info.outfitId = info.accessoryId;
                 bodyMeshRenderer.material = material;
-                SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+                //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
                 PlayIdleAnimation();
             }
             else
             {
                 Info.outfitId = info.accessoryId;
-                SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+                //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
             }
         }
         else
         {
             Info.outfitId = info.accessoryId;
-            SaveAccessory(AccessoryType.Outfit, info.accessoryId);
+            //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
         }
         return null;
     }
 
-    private void SaveAccessory(AccessoryType accessoryType, int accesoryId)
-    {
-        if (accessoryType == AccessoryType.Helmet)
-        {
-            PlayerPrefs.SetInt(HELMET_KEY + info.avatarName, accesoryId);
-        }
-        else
-        {
-            PlayerPrefs.SetInt(OUTFIT_KEY + info.avatarName, accesoryId);
-        }
-        PlayerPrefs.Save();
-    }
+    //private void SaveAccessory(AccessoryType accessoryType, int accesoryId)
+    //{
+    //    if (accessoryType == AccessoryType.Helmet)
+    //    {
+    //        PlayerPrefs.SetInt(HELMET_KEY + info.avatarName, accesoryId);
+    //    }
+    //    else
+    //    {
+    //        PlayerPrefs.SetInt(OUTFIT_KEY + info.avatarName, accesoryId);
+    //    }
+    //    PlayerPrefs.Save();
+    //}
 
-    private int LoadAccessory(AccessoryType accessoryType)
-    {
-        if (accessoryType == AccessoryType.Helmet)
-        {
-            int helmetId = info.helmetId == 0 ? GetDefaultAccessory(accessoryType) : info.helmetId;
-            return PlayerPrefs.HasKey(HELMET_KEY + info.avatarName) ? PlayerPrefs.GetInt(HELMET_KEY + info.avatarName) : helmetId;
-        }
-        else
-        {
-            int outfitId = info.outfitId == 0 ? GetDefaultAccessory(accessoryType) : info.outfitId;
-            return PlayerPrefs.HasKey(OUTFIT_KEY + info.avatarName) ? PlayerPrefs.GetInt(OUTFIT_KEY + info.avatarName) : outfitId;
-        }
-    }
+    //private int LoadAccessory(AccessoryType accessoryType)
+    //{
+    //    if (accessoryType == AccessoryType.Helmet)
+    //    {
+    //        int helmetId = info.helmetId == 0 ? GetDefaultAccessory(accessoryType) : info.helmetId;
+    //        return PlayerPrefs.HasKey(HELMET_KEY + info.avatarName) ? PlayerPrefs.GetInt(HELMET_KEY + info.avatarName) : helmetId;
+    //    }
+    //    else
+    //    {
+    //        int outfitId = info.outfitId == 0 ? GetDefaultAccessory(accessoryType) : info.outfitId;
+    //        return PlayerPrefs.HasKey(OUTFIT_KEY + info.avatarName) ? PlayerPrefs.GetInt(OUTFIT_KEY + info.avatarName) : outfitId;
+    //    }
+    //}
 
     private int GetDefaultAccessory(AccessoryType accessoryType)
     {
