@@ -34,7 +34,7 @@ public class Settings : MonoBehaviour
         closeButton.onClick.AddListener(Close);
         changeNameButton.onClick.AddListener(ChangeName);
         saveNameButton.onClick.AddListener(SaveName);
-        nameInputField.onSubmit.AddListener(SubmitName);
+        //nameInputField.onSubmit.AddListener(SubmitName);
 
         sfxOn.isOn = SoundManager.instance.GetSFXOn();
         bgmOn.isOn = SoundManager.instance.GetBGMOn();
@@ -92,6 +92,7 @@ public class Settings : MonoBehaviour
     public void SaveName()
     {
         changeNameContainer.SetActive(false);
+        SubmitName(nameInputField.text);
     }
 
     public void SubmitName(string text)
@@ -102,9 +103,11 @@ public class Settings : MonoBehaviour
     private IEnumerator RequestSubmitName(string text)
     {
         WWWForm form = new WWWForm();
-        form.AddField("data", text);
+        form.AddField("data", "{\"name\" : \"" + text + "\"}");
+
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "update_profile", form))
         {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
             try
             {

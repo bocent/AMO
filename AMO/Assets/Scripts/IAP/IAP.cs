@@ -178,7 +178,7 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
                 onButtonClicked = () => StartCoroutine(RequestBuyItem(item.item_sell_id,
                 (coins) =>
                 {
-                    StartCoroutine(Character.Instance.RequestUserData(null, null));
+                    StartCoroutine(Character.Instance.RequestUserData((coin) => LoadingManager.Instance.HideSpinLoading(), null));
                 },
                 (error) =>
                 { 

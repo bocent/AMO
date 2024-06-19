@@ -123,8 +123,8 @@ public class CharacterStatus
 [Serializable]
 public class UsedAccessries
 {
-    public int? helmet_items_id;
-    public int? outfit_items_id;
+    public int helmet_items_id;
+    public int outfit_items_id;
 }
 
 [Serializable]

@@ -23,6 +23,7 @@ public class EnergyController : MonoBehaviour
 
     public void SetEnergy(float value)
     {
+        Debug.LogWarning("set energy : " + value);
         energyImage.sprite = GetEnergySprite(value);
     }
 

@@ -36,6 +36,9 @@ public class AvatarInfo
     public Color color = Color.white;
     public bool isUnlocked;
     public int nextEvolutionId;
+
+    [HideInInspector]
+    public int currentMood;
 }
 
 [Serializable]

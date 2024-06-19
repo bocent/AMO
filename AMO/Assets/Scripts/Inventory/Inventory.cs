@@ -121,28 +121,28 @@ public class Inventory : MonoBehaviour
                     StartCoroutine(RequestUseChargeItem(info.itemId, (itemCount) =>
                     {
                         info.itemCount = itemCount;
-                        UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
-                        UserData.RemoveRequirement((int)Main.RequirementType.NEED_FIX_UP);
-                        NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
-                        NeedsController.Instance.Pop(Main.RequirementType.NEED_FIX_UP);
-                        UserData.AddEnergy(info.energy);
-                        HomeController.Instance.ShowEatBatteryEffect();
-                        Character.Instance.currentCharacter.PlayEatAnimation();
+                        LoadInventory();
+
+                        StartCoroutine(Character.Instance.RequestSetCharacterStatus("energy", Mathf.RoundToInt(Mathf.Clamp(UserData.Energy, 0, 100)).ToString(), () =>
+                        {
+                            string json = "\"energy\" : " + "\"+" + info.energy + "\", \"need_repair\" : \"" + 0 + "\" ";
+                            StartCoroutine(Character.Instance.RequestSetCharacterStatus(json, () =>
+                            {
+                                UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
+                                UserData.RemoveRequirement((int)Main.RequirementType.NEED_FIX_UP);
+                                NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
+                                NeedsController.Instance.Pop(Main.RequirementType.NEED_FIX_UP);
+
+                                HomeController.Instance.ShowEatBatteryEffect();
+                                Character.Instance.currentCharacter.PlayEatAnimation();
+                                LoadingManager.Instance.HideSpinLoading();
+                            }, null));
+
+                        }, null));
+                       
                     }, (error) =>
                     {
-                        PopupManager.Instance.ShowPopupMessage("err", "Terjadi Kesalahan", error,
-                            new ButtonInfo
-                            {
-                                content = "Ulangi",
-                                onButtonClicked = () =>
-                                {
-                                    UseItem(info);
-                                }
-                            },
-                            new ButtonInfo
-                            {
-                                content = "Batal"
-                            });
+                       
                     }));
                 }
                 else
@@ -159,26 +159,23 @@ public class Inventory : MonoBehaviour
                             StartCoroutine(RequestUseChargeItem(info.itemId, (itemCount) => 
                             {
                                 info.itemCount = itemCount;
-                                UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
-                                NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
-                                UserData.AddEnergy(info.energy);
-                                HomeController.Instance.ShowEatBatteryEffect();
-                                Character.Instance.currentCharacter.PlayEatAnimation();
+                                LoadInventory();
+                                StartCoroutine(Character.Instance.RequestSetCharacterStatus("energy", Mathf.RoundToInt(Mathf.Clamp(UserData.Energy, 0, 100)).ToString(), () =>
+                                {
+                                    StartCoroutine(Character.Instance.RequestSetCharacterStatus("energy", "+" + info.energy, () =>
+                                    {
+                                        UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
+                                        NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
+                                        HomeController.Instance.ShowEatBatteryEffect();
+                                        Character.Instance.currentCharacter.PlayEatAnimation();
+                                        LoadingManager.Instance.HideSpinLoading();
+
+                                    }, null));
+                                }, null));
+                                //UserData.AddEnergy(info.energy);
                             }, (error) =>
                             {
-                                PopupManager.Instance.ShowPopupMessage("err", "Terjadi Kesalahan", error,
-                                    new ButtonInfo
-                                    { 
-                                        content = "Ulangi",
-                                        onButtonClicked = () =>
-                                        {
-                                            UseItem(info);
-                                        }
-                                    },
-                                    new ButtonInfo
-                                    {
-                                        content = "Batal" 
-                                    });
+                                
                             }));
                         }
                     }
@@ -187,26 +184,22 @@ public class Inventory : MonoBehaviour
                         StartCoroutine(RequestUseChargeItem(info.itemId, (itemCount) =>
                         {
                             info.itemCount = itemCount;
-                            UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
-                            NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
-                            UserData.AddEnergy(info.energy);
-                            HomeController.Instance.ShowEatBatteryEffect();
-                            Character.Instance.currentCharacter.PlayEatAnimation();
+                            LoadInventory();
+                            StartCoroutine(Character.Instance.RequestSetCharacterStatus("energy", "+" + info.energy, () =>
+                            {
+                                StartCoroutine(Character.Instance.RequestSetCharacterStatus("energy", Mathf.RoundToInt(Mathf.Clamp(UserData.Energy, 0, 100)).ToString(), () =>
+                                {
+                                    UserData.RemoveRequirement((int)Main.RequirementType.NEED_FOOD);
+                                    NeedsController.Instance.Pop(Main.RequirementType.NEED_FOOD);
+                                
+                                    HomeController.Instance.ShowEatBatteryEffect();
+                                    Character.Instance.currentCharacter.PlayEatAnimation();
+                                    LoadingManager.Instance.HideSpinLoading();
+                                }, null));
+                            }, null));
                         }, (error) =>
                         {
-                            PopupManager.Instance.ShowPopupMessage("err", "Terjadi Kesalahan", error,
-                                new ButtonInfo
-                                {
-                                    content = "Ulangi",
-                                    onButtonClicked = () =>
-                                    {
-                                        UseItem(info);
-                                    }
-                                },
-                                new ButtonInfo
-                                {
-                                    content = "Batal"
-                                });
+                            
                         }));
                        
                     }

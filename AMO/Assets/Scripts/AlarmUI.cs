@@ -18,7 +18,6 @@ public class AlarmUI : MonoBehaviour
 
     private void ShowAlarm()
     {
-        return;
         alarmController.Show();
     }
 

@@ -37,10 +37,8 @@ public class ItemLibrary : MonoBehaviour
     private void Update()
     {
         Limitation limitation = HomeController.Instance.currentLimitation;
-        if (limitation.dressing == 2)
-        {
-            button.interactable = false;
-        }
+        button.interactable = limitation.dressing != 2;
+        
     }
 
     private void SetEquippedAccesories()

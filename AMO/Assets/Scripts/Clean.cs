@@ -93,7 +93,7 @@ public class Clean : ActivityTask
     {
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"karakter_id\" : \"" + Character.Instance.GetCurrentAvatarInfo().avatarId + "\", \"status\" : { \"need_clean\" : \"" + 0 + "\" }}");
-        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "get_items", form))
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "set_status_karakter", form))
         {
             uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();

@@ -1,6 +1,8 @@
+using OpenAI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -53,7 +55,6 @@ public class HomeController : MonoBehaviour
 
     private bool isCharging = false;
 
-
     public static HomeController Instance { get; private set; }
 
     private void Awake()
@@ -83,26 +84,50 @@ public class HomeController : MonoBehaviour
     private void Update()
     {
         elapsedTime += Time.deltaTime;
-        elapsedTimeInSecond = Mathf.FloorToInt(elapsedTime);
 
         inGameEnergyConsumed = energyToSecond * Time.deltaTime;
 
         AvatarInfo info = character.GetCurrentAvatarInfo();
         UserData.UseEnergy(inGameEnergyConsumed);
+        Debug.LogWarning("energy : " + UserData.Energy + " " + (int)UserData.Mood + " " + currentLimitation.mood);
         currentLimitation = Main.Instance.GetFeatureLimitation(Mathf.RoundToInt(UserData.Energy));
-        if ((int)UserData.Mood != currentLimitation.mood)
+        if (Character.Instance.GetCurrentAvatarInfo() != null)
         {
-            UserData.SetMood((Main.MoodStage)currentLimitation.mood);
-            UserData.SetRequirementList(currentLimitation.requirementList);
-            StartCoroutine(NeedsController.Instance.Init());
-            glitchParticle.SetActive(UserData.Mood == Main.MoodStage.BROKEN);
-            if (UserData.Mood == Main.MoodStage.BROKEN)
+            UserData.SetMood((Main.MoodStage)(4 - Mathf.RoundToInt(UserData.Energy / 25)));
+            if ((int)UserData.Mood != Character.Instance.GetCurrentAvatarInfo().mood && energyController.energyMeterList.Where(x => x.minEnergy == Mathf.RoundToInt(UserData.Energy)).FirstOrDefault() != null)
             {
-                SoundManager.instance.PlayBGM("glitch", true);
-            }
-            else
-            {
-                SoundManager.instance.PlayBGM("home", true);
+                Debug.LogError("current energy : " + UserData.Energy);
+                Character.Instance.GetCurrentAvatarInfo().mood = (int)UserData.Mood;
+                //UserData.SetMood((Main.MoodStage)currentLimitation.mood);
+                //UserData.SetRequirementList(currentLimitation.requirementList);
+                StartCoroutine(NeedsController.Instance.Init());
+                //glitchParticle.SetActive(UserData.Mood == Main.MoodStage.BROKEN);
+                //if (UserData.Mood == Main.MoodStage.BROKEN)
+                //{
+                //    SoundManager.instance.PlayBGM("glitch", true);
+                //}
+                //else
+                //{
+                //    SoundManager.instance.PlayBGM("home", true);
+                //}
+
+                StartCoroutine(Character.Instance.RequestSetCharacterStatus("energy", Mathf.RoundToInt(Mathf.Clamp(UserData.Energy, 0, 100)).ToString(), () =>
+                {
+                    StartCoroutine(Character.Instance.RequestSetCharacterStatus("energy", "+0", () =>
+                    {
+                        Debug.LogError("finished set fed");
+                        LoadingManager.Instance.HideSpinLoading();
+                    }, null));
+                }, null));
+
+                //StartCoroutine(Character.Instance.RequestUserData((id) =>
+                //{
+                //    LoadingManager.Instance.HideSpinLoading();
+                //},
+                //   (error) =>
+                //   {
+
+                //   }));
             }
         }
 
@@ -115,21 +140,21 @@ public class HomeController : MonoBehaviour
         //    LoadScanScene();
         //}
 
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            selectedCharacter.PlayObtainCharacter();
-        }
+        //if (Input.GetKeyDown(KeyCode.O))
+        //{
+        //    selectedCharacter.PlayObtainCharacter();
+        //}
 
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            int addExp = Random.Range(400, 10000);
-            int[] levels = UserData.GetLevel(1, info.exp);
-            Debug.LogWarning("level start : " + levels[0]);
-            //level.SetLevel(levels[0], levels[1], levels[2]);
-            level.UpdateLevel(levels[0], levels[1], levels[2], addExp);
-            selectedCharacter.AddExp(addExp);
-            //RefreshLevel(selectedCharacter.Info);
-        }
+        //if (Input.GetKeyDown(KeyCode.U))
+        //{
+        //    int addExp = Random.Range(400, 10000);
+        //    int[] levels = UserData.GetLevel(1, info.exp);
+        //    Debug.LogWarning("level start : " + levels[0]);
+        //    //level.SetLevel(levels[0], levels[1], levels[2]);
+        //    level.UpdateLevel(levels[0], levels[1], levels[2], addExp);
+        //    selectedCharacter.AddExp(addExp);
+        //    //RefreshLevel(selectedCharacter.Info);
+        //}
 
         if (SystemInfo.batteryStatus == BatteryStatus.Charging)
         {

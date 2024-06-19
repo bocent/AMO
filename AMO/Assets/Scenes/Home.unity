@@ -15384,8 +15384,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 800048777}
+  m_Children: []
   m_Father: {fileID: 2133965058}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
@@ -15416,7 +15415,8 @@ MonoBehaviour:
   m_text: Alarms
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5b27fadc7f476fc45ab381d98c9a007f, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: -6601788013935341322, guid: 5b27fadc7f476fc45ab381d98c9a007f,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -28627,6 +28627,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2133965058}
+  - {fileID: 800048777}
   - {fileID: 1407858720}
   - {fileID: 421705531}
   - {fileID: 1516714260}
@@ -29734,11 +29735,11 @@ RectTransform:
   m_Children:
   - {fileID: 873483590}
   - {fileID: 263380846}
-  m_Father: {fileID: 435767750}
+  m_Father: {fileID: 763836835}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 25, y: -46.199997}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &800048778
@@ -54978,7 +54979,7 @@ GameObject:
   - component: {fileID: 1441074273}
   - component: {fileID: 1441074274}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: NamePlaceholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65832,7 +65833,7 @@ GameObject:
   - component: {fileID: 1688335068}
   - component: {fileID: 1688335069}
   m_Layer: 5
-  m_Name: ItemGalleryPage
+  m_Name: CostumePage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -33,6 +33,7 @@ public class Character : MonoBehaviour
         {
             avatarInfoList[i].isUnlocked = false;
         }
+
         yield return (RequestCharacters(() =>
         {
             StartCoroutine(RequestItemList(() =>
@@ -44,18 +45,17 @@ public class Character : MonoBehaviour
                     SelectedAvatarId = id;
                     //UpdateSelectedAvatar();
                     HomeController.Instance.characterSelection.Init();
-                   
 
-                },
-                (error) =>
-                {
-
-                }));
-            },
-            (error) =>
-            {
-
-            }));
+                    StartCoroutine(RequestSetCharacterStatus("energy", Mathf.RoundToInt(Mathf.Clamp(UserData.Energy, 0, 100)).ToString(), () =>
+                    {
+                        StartCoroutine(RequestSetCharacterStatus("energy", "+0", () =>
+                        {
+                            Debug.LogWarning("finished set fed");
+                            LoadingManager.Instance.HideSpinLoading();
+                        }, null));
+                    }, null));
+                }, null));
+            }, null));
         },
         (error) =>
         {
@@ -76,7 +76,13 @@ public class Character : MonoBehaviour
             NeedsController.Instance.ClearAll();
             StartCoroutine(RequestUserData((id) => 
             {
-                   
+                StartCoroutine(RequestSetCharacterStatus("energy", Mathf.RoundToInt(Mathf.Clamp(UserData.Energy, 0, 100)).ToString(), () =>
+                {
+                    StartCoroutine(RequestSetCharacterStatus("energy", "+0", () =>
+                    {
+                        LoadingManager.Instance.HideSpinLoading();
+                    }, null));
+                }, null));
             }, (error) => 
             {
 
@@ -300,6 +306,7 @@ public class Character : MonoBehaviour
 
     public IEnumerator RequestUserData(Action<int> onComplete, Action<string> onFailed)
     {
+        LoadingManager.Instance.ShowSpinLoading();
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"karakter_id\" : \"\" }");
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "get_user_karakter", form))
@@ -312,6 +319,7 @@ public class Character : MonoBehaviour
                 {
                     UserResponse response = JsonUtility.FromJson<UserResponse>(uwr.downloadHandler.text);
                     int activeCharacterId = -1;
+                    Debug.LogWarning("user data : " + uwr.downloadHandler.text);
                     if (response.status.ToLower() == "ok")
                     {
                         UserData.SetCoin(response.user_coin);
@@ -320,16 +328,22 @@ public class Character : MonoBehaviour
                             int index = avatarInfoList.FindIndex(x => x.avatarId == ownedCharacter.karakter_id);
                             if (index >= 0)
                             {
+                                Debug.LogWarning("");
                                 avatarInfoList[index].isUnlocked = true;
                                 avatarInfoList[index].exp = ownedCharacter.experience;
-                                if(ownedCharacter.accessories_used.helmet_items_id != null)
-                                avatarInfoList[index].helmetId = (int)ownedCharacter.accessories_used.helmet_items_id;
-                                if(ownedCharacter.accessories_used.outfit_items_id != null)
-                                avatarInfoList[index].outfitId = (int)ownedCharacter.accessories_used.outfit_items_id;
+                                if (ownedCharacter.accessories_used.helmet_items_id != 0)
+                                {
+                                    avatarInfoList[index].helmetId = (int)ownedCharacter.accessories_used.helmet_items_id;
+                                }
+                                if (ownedCharacter.accessories_used.outfit_items_id != 0)
+                                {
+                                    avatarInfoList[index].outfitId = (int)ownedCharacter.accessories_used.outfit_items_id;
+                                }
                             }
                             if (ownedCharacter.is_used == 1)
                             {
                                 activeCharacterId = ownedCharacter.karakter_id;
+
                                 DateTime.TryParse(ownedCharacter.status.last_fed, out DateTime lastFed);
                                 DateTime.TryParse(response.waktu_server, out DateTime now);
 
@@ -340,11 +354,22 @@ public class Character : MonoBehaviour
                                 int energy = ownedCharacter.status.energy;
                                 int energyWasted = HomeController.Instance.ConvertSecondsToEnergy(Mathf.FloorToInt((float)gapInSeconds));
                                 int energyRemaining = Mathf.Clamp(energy - energyWasted, 0, 100);
-
-                                Debug.LogWarning("energy : " + energyRemaining + " " + ownedCharacter.status.energy);
-
-                                UserData.SetMood((Main.MoodStage)(4 - Mathf.RoundToInt(ownedCharacter.status.happiness / 25)));
                                 UserData.SetEnergy(energyRemaining);
+
+                                List<int> requirementList = new List<int>();
+                                if (ownedCharacter.need_action.need_clean == 1)
+                                {
+                                    requirementList.Add((int)Main.RequirementType.NEED_CLEAN_UP);
+                                }
+                                if (ownedCharacter.need_action.need_charge == 1)
+                                {
+                                    requirementList.Add((int)Main.RequirementType.NEED_FOOD);
+                                }
+                                if (ownedCharacter.need_action.need_repair == 1)
+                                {
+                                    requirementList.Add((int)Main.RequirementType.NEED_FIX_UP);
+                                }
+                                UserData.SetRequirementList(requirementList);
                             }
                         }
                         foreach (ItemData item in response.inventory.helmet)
@@ -378,6 +403,7 @@ public class Character : MonoBehaviour
             }
             catch (Exception e)
             {
+                LoadingManager.Instance.HideSpinLoading();
                 Debug.LogError("err : " + e.Message);
                 onFailed?.Invoke(e.Message);
                 PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
@@ -445,11 +471,79 @@ public class Character : MonoBehaviour
         }
     }
 
-    public IEnumerator RequestUpdateCharacter(int characterId, Action onComplete, Action<string> onFailed)
+    public IEnumerator RequestSetCharacterStatus(string status, string value, Action onComplete, Action<string> onFailed)
     {
+        LoadingManager.Instance.ShowSpinLoading();
         WWWForm form = new WWWForm();
-        form.AddField("data", "{\"karakter_id\" : \"" + characterId + "\" }");
-        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "add_experience", form))
+        form.AddField("data", "{\"karakter_id\" : \"" + GetCurrentAvatarInfo().avatarId + "\", \"status\" : { \"" + status + "\" : \"" + value + "\" }}");
+        Debug.LogWarning("set value : " + value);
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "set_status_karakter", form))
+        {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            yield return uwr.SendWebRequest();
+            //try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    CharacterStatusResponse response = JsonUtility.FromJson<CharacterStatusResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        UserData.SetEnergy(response.status_karakter.energy);
+                        UserData.SetMood((Main.MoodStage)(4 - Mathf.RoundToInt(response.status_karakter.energy / 25)));
+
+
+                        List<int> requirementList = new List<int>();
+                        if (response.need_action.need_clean == 1)
+                        {
+                            requirementList.Add((int)Main.RequirementType.NEED_CLEAN_UP);
+                        }
+                        if (response.need_action.need_charge == 1)
+                        {
+                            requirementList.Add((int)Main.RequirementType.NEED_FOOD);
+                        }
+                        if (response.need_action.need_repair == 1)
+                        {
+                            requirementList.Add((int)Main.RequirementType.NEED_FIX_UP);
+                        }
+                        UserData.SetRequirementList(requirementList);
+
+                        onComplete?.Invoke();
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            //catch (Exception e)
+            //{
+            //    LoadingManager.Instance.HideSpinLoading();
+            //    onFailed?.Invoke(e.Message);
+            //    Debug.LogError("err : " + e.Message);
+            //    PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+            //        new ButtonInfo
+            //        {
+            //            content = "Ulangi",
+            //            onButtonClicked = () => StartCoroutine(RequestSetCharacterStatus(status, value, onComplete, onFailed))
+            //        },
+            //        new ButtonInfo
+            //        {
+            //            content = "Batal"
+            //        });
+            //}
+        }
+    }
+
+    public IEnumerator RequestSetCharacterStatus(string json, Action onComplete, Action<string> onFailed)
+    {
+        LoadingManager.Instance.ShowSpinLoading();
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"karakter_id\" : \"" + GetCurrentAvatarInfo().avatarId + "\", \"status\" : {" + json + "}}");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "set_status_karakter", form))
         {
             uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
@@ -457,9 +551,11 @@ public class Character : MonoBehaviour
             {
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
-                    ExperienceResponse response = JsonUtility.FromJson<ExperienceResponse>(uwr.downloadHandler.text);
+                    CharacterStatusResponse response = JsonUtility.FromJson<CharacterStatusResponse>(uwr.downloadHandler.text);
                     if (response.status.ToLower() == "ok")
                     {
+                        UserData.SetEnergy(response.status_karakter.energy);
+                        UserData.SetMood((Main.MoodStage)(4 - Mathf.RoundToInt(response.status_karakter.energy / 25)));
                         onComplete?.Invoke();
                     }
                     else
@@ -474,6 +570,55 @@ public class Character : MonoBehaviour
             }
             catch (Exception e)
             {
+                onFailed?.Invoke(e.Message);
+                LoadingManager.Instance.HideSpinLoading();
+                Debug.LogError("err : " + e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                    new ButtonInfo
+                    {
+                        content = "Ulangi",
+                        onButtonClicked = () => StartCoroutine(RequestSetCharacterStatus(json, onComplete, onFailed))
+                    },
+                    new ButtonInfo
+                    {
+                        content = "Batal"
+                    });
+            }
+        }
+    }
+
+    public IEnumerator RequestUpdateCharacter(int characterId, Action onComplete, Action<string> onFailed)
+    {
+        LoadingManager.Instance.ShowSpinLoading();
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"karakter_id\" : \"" + characterId + "\" }");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "add_experience", form))
+        {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    ExperienceResponse response = JsonUtility.FromJson<ExperienceResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        LoadingManager.Instance.HideSpinLoading();
+                        onComplete?.Invoke();
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            catch (Exception e)
+            {
+                LoadingManager.Instance.HideSpinLoading();
                 onFailed?.Invoke(e.Message);
                 PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
                   new ButtonInfo
@@ -491,6 +636,7 @@ public class Character : MonoBehaviour
 
     public IEnumerator RequestSelectCharacter(int characterId, Action<int> onComplete, Action<string> onFailed)
     {
+        LoadingManager.Instance.ShowSpinLoading();
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"karakter_id\" : \"" + characterId + "\" }");
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "use_karakter", form))
@@ -518,8 +664,18 @@ public class Character : MonoBehaviour
             }
             catch (Exception e)
             {
+                LoadingManager.Instance.HideSpinLoading();
                 onFailed?.Invoke(e.Message);
-                Debug.LogError("err : " + e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                  new ButtonInfo
+                  {
+                      content = "Ulangi",
+                      onButtonClicked = () => StartCoroutine(RequestSelectCharacter(characterId, onComplete, onFailed))
+                  },
+                  new ButtonInfo
+                  {
+                      content = "Batal"
+                  });
             }
         }
     }

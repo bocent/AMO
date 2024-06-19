@@ -182,10 +182,10 @@ public class AlarmController : MonoBehaviour
     private void FixedUpdate()
     {
         CheckAlarmTime();
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            Debug.LogWarning("show alarm");
-            BuzzOnAlarm(new AlarmInfo { alarmTitle = "Bangun", time = "09:00" });
-        }
+        //if (Input.GetKeyDown(KeyCode.A))
+        //{
+        //    Debug.LogWarning("show alarm");
+        //    BuzzOnAlarm(new AlarmInfo { alarmTitle = "Bangun", time = "09:00" });
+        //}
     }
 }
