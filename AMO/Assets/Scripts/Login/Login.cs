@@ -42,17 +42,17 @@ public class Login : MonoBehaviour
         //    }));
         //}
 
-        if (PlayerPrefs.HasKey("email"))
-        {
-            StartCoroutine(CheckLogin(PlayerPrefs.GetString("email"), PlayerPrefs.GetString("password"), () => 
-            {
-                CustomSceneManager.Instance.LoadScene("Home", null);
-            }, (error) => 
-            {
-                PopupManager.Instance.ShowPopupMessage("err", "Gagal Login Otomatis",
-                    "Ulangi login secara manual", new ButtonInfo { content = "OK" });
-            }));
-        }
+        //if (PlayerPrefs.HasKey("email"))
+        //{
+        //    StartCoroutine(CheckLogin(PlayerPrefs.GetString("email"), PlayerPrefs.GetString("password"), () => 
+        //    {
+        //        CustomSceneManager.Instance.LoadScene("Home", null);
+        //    }, (error) => 
+        //    {
+        //        PopupManager.Instance.ShowPopupMessage("err", "Gagal Login Otomatis",
+        //            "Ulangi login secara manual", new ButtonInfo { content = "OK" });
+        //    }));
+        //}
     }
 
     public void ShowLoginPage(bool value = true)

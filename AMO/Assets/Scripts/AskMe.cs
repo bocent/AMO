@@ -70,7 +70,7 @@ public class Usage
 public class TextToSpeechData
 {
     public string text;
-    //public string model_id;
+    public string model_id;
     //public VoiceSettings voice_settings;
     //public PronunciationDictionaryLocators[] pronunciation_dictionary_locators;
     //public int seed;
@@ -110,7 +110,6 @@ public class AskMe : MonoBehaviour
     private const string ELEVENLABS_BASE_URL = "https://api.elevenlabs.io/v1/text-to-speech/";
     //private const string OPEN_AI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
 
-    [SerializeField] private Button recordButton;
     [SerializeField] private EventTrigger eventTrigger;
     [SerializeField] private Image progressBar;
     [SerializeField] private Text message;
@@ -135,13 +134,11 @@ public class AskMe : MonoBehaviour
     private const string LORRY_VOICE_KEY = "";
     private const string OLGA_VOICE_KEY = "";
 
-    private const string BABY_INSTRUCTION = "kamu adalah bayi bernama \"Mochi\"." +
-        " Kamu hanya bisa menjawab dengan \"tidak tahu\"" +
-        " Kamu tidak bisa menjawab dengan lebih dari 3 kata";
-    private const string TODDLER_INSTRUCTION = "";
-    private const string TEEN_INSTRUCTION = "";
-    private const string ANDROID_INSTRUCTION = "";
-    private const string HUMANOID_INSTRUCTION = "";
+    private const string BABY_INSTRUCTION = "Sekarang kamu adalah [NAME]. Kamu harus memperkenalkan diri sebagai AMO. Kamu berusia 2 tahun, sehingga apa yang kamu harus jawab sesuai dengan usia mu. Kamu tidak perlu menyebut umurmu jika tidak ditanya umur";
+    private const string TODDLER_INSTRUCTION = "Sekarang kamu adalah [NAME]. Kamu harus memperkenalkan diri sebagai AMO. Kamu berusia 2 tahun, sehingga apa yang kamu harus jawab sesuai dengan usia mu. Kamu tidak perlu menyebut umurmu jika tidak ditanya umur";
+    private const string TEEN_INSTRUCTION = "Sekarang kamu adalah [NAME]. Kamu harus memperkenalkan diri sebagai AMO. Kamu berusia 11 tahun, sehingga apa yang kamu harus jawab sesuai dengan usia mu. Kamu adalah Android";
+    private const string ANDROID_INSTRUCTION = "Sekarang kamu adalah [NAME]. Kamu harus memperkenalkan diri sebagai AMO. Kamu adalah Humanoid";
+    private const string HUMANOID_INSTRUCTION = "Sekarang kamu adalah [NAME]. Kamu harus memperkenalkan diri sebagai AMO. Kamu adalah Android";
 
     private IEnumerator RequestOpenAISecretKey()
     {
@@ -161,6 +158,7 @@ public class AskMe : MonoBehaviour
             {
                 string json = uwr.downloadHandler.text;
                 openAISecretKey = JsonUtility.FromJson<OpenAISecretKey>(json);
+                Debug.LogWarning("key : " + json);
                 openai = new OpenAIApi(openAISecretKey.apiKey, openAISecretKey.organization);
             }
             else
@@ -189,6 +187,8 @@ public class AskMe : MonoBehaviour
         entry.eventID = EventTriggerType.PointerDown;
         entry.callback.AddListener(OnRecordPressed);
         eventTrigger.triggers.Add(entry);
+
+         entry = new EventTrigger.Entry();
         entry.eventID = EventTriggerType.PointerUp;
         entry.callback.AddListener(OnRecordReleased);
         eventTrigger.triggers.Add(entry);
@@ -199,11 +199,16 @@ public class AskMe : MonoBehaviour
 
     private void OnRecordPressed(BaseEventData eventData)
     {
-        StartRecording();
+        if (canRecord)
+        {
+            Debug.LogWarning("OnRecordPressed");
+            StartRecording();
+        }
     }
 
     private void OnRecordReleased(BaseEventData eventData)
     {
+        Debug.LogWarning("OnRecordReleased");
         EndRecording();
     }
 
@@ -214,10 +219,10 @@ public class AskMe : MonoBehaviour
 
     private void StartRecording()
     {
+        time = 0;
         canRecord = false;
         SoundManager.instance.PlaySFX(recordSFX);
         isRecording = true;
-        recordButton.interactable = false;
 
         var index = PlayerPrefs.GetInt("user-mic-device-index");
         Debug.LogWarning("index : " + index);
@@ -248,10 +253,13 @@ public class AskMe : MonoBehaviour
                 Language = "id"
             };
             var res = await openai.CreateAudioTranscription(req);
-            if (!string.IsNullOrEmpty(res.Error.Message))
+            if (res.Error != null)
             {
-                Debug.LogError("err : " + res.Error.Message);
-                PopupManager.Instance.ShowPopupMessage("err", "Terjadi Kesalahan", "Silahkan hubungi tim kami di kontak Customer Service", new ButtonInfo { content = "Tutup" });
+                if (!string.IsNullOrEmpty(res.Error.Message))
+                {
+                    Debug.LogError("err : " + res.Error.Message);
+                    PopupManager.Instance.ShowPopupMessage("err", "Terjadi Kesalahan", "Silahkan hubungi tim kami di kontak Customer Service", new ButtonInfo { content = "Tutup" });
+                }
             }
             
             progressBar.fillAmount = 0;
@@ -268,29 +276,34 @@ public class AskMe : MonoBehaviour
                     StartCoroutine(ProcessTextToSpeech(toDoList, audioClip =>
                     {
                         if (audioClip) Character.Instance.currentCharacter.PlayVoice(audioClip);
-                        recordButton.interactable = true;
                         canRecord = true;
                     }));
                 }
                 else
                 {
                     string instruction = "";
+                    //Character.Instance.currentCharacter.info.stageType = AvatarInfo.StageType.Humanoid;
                     switch (Character.Instance.currentCharacter.info.stageType)
                     {
                         case AvatarInfo.StageType.Baby:
                             instruction = BABY_INSTRUCTION;
+                            instruction = instruction.Replace("[NAME]", Character.Instance.GetCurrentAvatarInfo().avatarName);
                             break;
                         case AvatarInfo.StageType.Toddler:
                             instruction = TODDLER_INSTRUCTION;
+                            instruction = instruction.Replace("[NAME]", Character.Instance.GetCurrentAvatarInfo().avatarName);
                             break;
                         case AvatarInfo.StageType.Teen:
                             instruction = TEEN_INSTRUCTION;
+                            instruction = instruction.Replace("[NAME]", Character.Instance.GetCurrentAvatarInfo().avatarName);
                             break;
                         case AvatarInfo.StageType.Android:
                             instruction = ANDROID_INSTRUCTION;
+                            instruction = instruction.Replace("[NAME]", Character.Instance.GetCurrentAvatarInfo().avatarName);
                             break;
                         case AvatarInfo.StageType.Humanoid:
                             instruction = HUMANOID_INSTRUCTION;
+                            instruction = instruction.Replace("[NAME]", Character.Instance.GetCurrentAvatarInfo().avatarName);
                             break;
                     }
                     StartCoroutine(ProcessConversation(instruction, res.Text));
@@ -299,7 +312,6 @@ public class AskMe : MonoBehaviour
             else
             {
                 Debug.LogError("err : " + res.Error);
-                recordButton.interactable = true;
                 canRecord = true;
             }
         }
@@ -378,7 +390,6 @@ public class AskMe : MonoBehaviour
             {
                 Debug.LogError("err : " + uwr.error);
             }
-            recordButton.interactable = true;
             canRecord = true;
         }
     }
@@ -387,7 +398,8 @@ public class AskMe : MonoBehaviour
     {
         TextToSpeechData data = new TextToSpeechData
         {
-            text = text
+            text = text,
+            model_id = "eleven_multilingual_v2"
             //voice_settings = new VoiceSettings { stability = 50, similarity_boost = 75, use_speaker_boost = true },
             //pronunciation_dictionary_locators = new PronunciationDictionaryLocators[]
             //{
@@ -445,7 +457,6 @@ public class AskMe : MonoBehaviour
                 Debug.LogError("err : " + uwr.error);
             }
             canRecord = true;
-            recordButton.interactable = true;
         }
     }
 }

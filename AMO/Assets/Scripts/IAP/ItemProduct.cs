@@ -46,8 +46,8 @@ public class ItemProduct : MonoBehaviour
         CultureInfo cultureInfo = new CultureInfo("ID-id");
 
         productImage.sprite = iap.sprite;
-        coinText.text = coin.ToString() + "COIN";
-        priceText.text = int.Parse(item.price).ToString("C3", cultureInfo);
+        coinText.text = item.qty.ToString() + " COIN";
+        priceText.text = int.Parse(item.price).ToString("C2", cultureInfo);
     }
 
     public virtual void Init(ShopItem item)

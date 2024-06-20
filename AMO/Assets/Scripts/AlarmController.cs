@@ -11,13 +11,13 @@ public class AlarmInfo
     public string alarmId;
     public string alarmTitle;
     public string time;
-    public List<DayOfWeek> dayList;
+    public List<DayOfWeek> dayList = new List<DayOfWeek>();
     public bool isOn;
 }
 
 public class AlarmController : MonoBehaviour
 {
-    private List<AlarmInfo> alarmInfoList = new List<AlarmInfo>();
+    public List<AlarmInfo> alarmInfoList = new List<AlarmInfo>();
 
     public AlarmCreator alarmCreator;
     public GameObject alarmPrefab;
@@ -40,7 +40,6 @@ public class AlarmController : MonoBehaviour
 
     public AlarmItem AddAlarm(AlarmInfo info)
     {
-        alarmInfoList.Add(info);
         GameObject item = Instantiate(alarmPrefab, alarmItemParent, false);
         AlarmItem alarmItem = item.GetComponent<AlarmItem>();
         alarmList.Add(alarmItem);
@@ -79,6 +78,7 @@ public class AlarmController : MonoBehaviour
     {
         foreach (AlarmInfo info in alarmInfoList)
         {
+            Debug.LogError("info : " + info.alarmId);
             GetAlarm(info);
         }
         addAlarmButton.transform.SetAsLastSibling();
@@ -91,17 +91,22 @@ public class AlarmController : MonoBehaviour
         {
             if (!alarmItem.gameObject.activeSelf)
             {
-                alarmItem.gameObject.SetActive(true);
-                alarmInfoList.Add(info);
                 alarmItem.Init(this, info);
-                alarmItem.transform.SetAsLastSibling();
-                addAlarmButton.transform.SetAsLastSibling();
-                ShowAddButton();
+                
+                //alarmItem.transform.SetAsLastSibling();
+                //ShowAddButton();
+                alarmItem.gameObject.SetActive(true);
                 return alarmItem;
             }
         }
 
         return AddAlarm(info);
+    }
+
+    public void AddAlarmInfo(AlarmInfo info)
+    {
+        alarmInfoList.Add(info);
+        ShowAddButton();
     }
 
     private void ShowAlarmCreator()
@@ -133,7 +138,7 @@ public class AlarmController : MonoBehaviour
         {
             if (info.dayList != null)
             {
-                if (info.dayList.Contains(today) && info.isOn)
+                if ((info.dayList.Contains(today) && info.isOn) || (info.dayList.Count == 0 && info.isOn))
                 {
                     string[] times = info.time.Split(":");
                     int hour = int.Parse(times[0]);
@@ -143,6 +148,10 @@ public class AlarmController : MonoBehaviour
                     if (currentTimeInSeconds >= totalInSeconds && currentTimeInSeconds < totalInSeconds + 1)
                     {
                         BuzzOnAlarm(info);
+                        if (info.dayList.Count == 0 && info.isOn)
+                        {
+                            info.isOn = false;
+                        }
                     }
                 }
             }
@@ -156,6 +165,13 @@ public class AlarmController : MonoBehaviour
             isAlarmOn = true;
             alarmPopup.Init(this, info);
             alarmPopup.Show(true);
+
+            if (info != null)
+            {
+                string[] intro = { UserData.username };
+                string text = "ingatkan saya" + info.alarmTitle;
+                //StartCoroutine(HomeController.Instance.askMe.ProcessTextToSpeech(text));
+            }
         }
     }
 

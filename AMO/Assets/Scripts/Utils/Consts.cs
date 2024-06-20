@@ -12,6 +12,12 @@ public class Consts
     public const string LORRY = "Lorry";
     public const string OLGA = "Olga";
 
+    public const string BABY = "BABY";
+    public const string TODDLER = "TODDLER";
+    public const string TEEN = "TEEN";
+    public const string ANDROID = "ANDROID";
+    public const string HUMANOID = "HUMANOID";
+
     public const string EXPIRED_TOKEN = "X1";
     public const string OK = "OK";
     public const string NOK = "NOK";

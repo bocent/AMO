@@ -1,5 +1,6 @@
 using JsonFx.Json;
 using maxstAR;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -49,9 +50,15 @@ public class QRScanner : ARBehaviour
             //codeValueText.text = "Value : " + resultAsDicionary["Value"];
             if (resultAsDicionary != null)
             {
-                ScanSuccess();
+                RequestGetItem(resultAsDicionary["Value"], ScanSuccess, null);
             }
         }
+    }
+
+    private IEnumerator RequestGetItem(string id, Action onComplete, Action<string> onFailed)
+    {
+        yield return null;
+        onComplete?.Invoke();
     }
 
     void OnApplicationPause(bool pause)

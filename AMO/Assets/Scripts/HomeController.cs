@@ -89,14 +89,12 @@ public class HomeController : MonoBehaviour
 
         AvatarInfo info = character.GetCurrentAvatarInfo();
         UserData.UseEnergy(inGameEnergyConsumed);
-        Debug.LogWarning("energy : " + UserData.Energy + " " + (int)UserData.Mood + " " + currentLimitation.mood);
         currentLimitation = Main.Instance.GetFeatureLimitation(Mathf.RoundToInt(UserData.Energy));
         if (Character.Instance.GetCurrentAvatarInfo() != null)
         {
-            UserData.SetMood((Main.MoodStage)(4 - Mathf.RoundToInt(UserData.Energy / 25)));
+            UserData.SetMood((Main.MoodStage)(4 - Mathf.CeilToInt(UserData.Energy / 25)));
             if ((int)UserData.Mood != Character.Instance.GetCurrentAvatarInfo().mood && energyController.energyMeterList.Where(x => x.minEnergy == Mathf.RoundToInt(UserData.Energy)).FirstOrDefault() != null)
             {
-                Debug.LogError("current energy : " + UserData.Energy);
                 Character.Instance.GetCurrentAvatarInfo().mood = (int)UserData.Mood;
                 //UserData.SetMood((Main.MoodStage)currentLimitation.mood);
                 //UserData.SetRequirementList(currentLimitation.requirementList);
@@ -131,10 +129,11 @@ public class HomeController : MonoBehaviour
             }
         }
 
-        //if (Input.GetKeyDown(KeyCode.E))
-        //{
-        //    selectedCharacter.Evolution();
-        //}
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            StartCoroutine(Character.Instance.RequestAddExperience(
+                      Character.Instance.GetCurrentAvatarInfo().avatarId, Random.Range(10, 500), null, null));
+        }
         //if (Input.GetKeyDown(KeyCode.S))
         //{
         //    LoadScanScene();

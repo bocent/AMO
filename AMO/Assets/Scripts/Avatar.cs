@@ -31,8 +31,8 @@ public class AvatarInfo
 
     public string skinId;
     public List<EvolutionResponse> evolutionList;
-    public GameObject characterPrefab;
-    public GameObject characterSelectionPrefab;
+    //public GameObject characterPrefab;
+    //public GameObject characterSelectionPrefab;
     public Color color = Color.white;
     public bool isUnlocked;
     public int nextEvolutionId;

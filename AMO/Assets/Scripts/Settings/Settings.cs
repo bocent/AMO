@@ -43,14 +43,13 @@ public class Settings : MonoBehaviour
         bgmSlider.value = SoundManager.instance.GetBgmVolume();
         voiceSlider.value = SoundManager.instance.GetVoiceVolume();
 
-        nameText.text = UserData.username;
-
         GetComponent<Button>().onClick.AddListener(Show);
     }
 
     public void Show()
     {
         container.SetActive(true);
+        nameText.text = UserData.username;
     }
 
     private void ChangeSfxToggle(bool isOn)

@@ -3853,7 +3853,6 @@ RectTransform:
   - {fileID: 1137566518}
   - {fileID: 1643746846}
   - {fileID: 1146774593}
-  - {fileID: 651476842}
   - {fileID: 1958744827}
   - {fileID: 213437810}
   - {fileID: 1592961424}
@@ -25996,7 +25995,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 651476841}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -26004,7 +26003,7 @@ RectTransform:
   - {fileID: 1312546190}
   - {fileID: 744016803}
   - {fileID: 1559724668}
-  m_Father: {fileID: 180516025}
+  m_Father: {fileID: 653188185}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -26090,6 +26089,7 @@ RectTransform:
   - {fileID: 394838194}
   - {fileID: 1688335068}
   - {fileID: 1390740499}
+  - {fileID: 651476842}
   - {fileID: 1747073584}
   - {fileID: 53066915}
   - {fileID: 629380746}
@@ -35331,7 +35331,6 @@ GameObject:
   - component: {fileID: 837820258}
   - component: {fileID: 837820261}
   - component: {fileID: 837820262}
-  - component: {fileID: 837820263}
   m_Layer: 5
   m_Name: AskMe
   m_TagString: Untagged
@@ -35411,7 +35410,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2997348b9ea87b84b8e9e86a04f2b4a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  recordButton: {fileID: 837820263}
   eventTrigger: {fileID: 837820262}
   progressBar: {fileID: 702486774}
   message: {fileID: 1736087006}
@@ -35432,50 +35430,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Delegates: []
---- !u!114 &837820263
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 837820255}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 50151050}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &840029808
 GameObject:
   m_ObjectHideFlags: 0
@@ -43288,18 +43242,38 @@ MonoBehaviour:
     outfitId: 0
     skinId: 
     evolutionList:
-    - evolutionId: 0
+    - evolutionId: 1
       evolutionName: 
       experienceToEvolve: 0
-      characterPrefab: {fileID: 0}
-      characterSelectionPrefab: {fileID: 0}
-    characterPrefab: {fileID: 4533189722708371132, guid: 5e1e24e122083af41b6e4f1e71e785fe,
-      type: 3}
-    characterSelectionPrefab: {fileID: 5656871280012985796, guid: 1e97293e506021d45ac5642b66f17d22,
-      type: 3}
+      characterPrefab: {fileID: 4533189722708371132, guid: 5e1e24e122083af41b6e4f1e71e785fe,
+        type: 3}
+      characterSelectionPrefab: {fileID: 1681421491016556740, guid: 56022777c6d273e409dac15fd5b14f1f,
+        type: 3}
+    - evolutionId: 2
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 4533189722708371132, guid: 5e1e24e122083af41b6e4f1e71e785fe,
+        type: 3}
+      characterSelectionPrefab: {fileID: 1681421491016556740, guid: 56022777c6d273e409dac15fd5b14f1f,
+        type: 3}
+    - evolutionId: 3
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 4533189722708371132, guid: 5e1e24e122083af41b6e4f1e71e785fe,
+        type: 3}
+      characterSelectionPrefab: {fileID: 1681421491016556740, guid: 56022777c6d273e409dac15fd5b14f1f,
+        type: 3}
+    - evolutionId: 4
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 4533189722708371132, guid: 5e1e24e122083af41b6e4f1e71e785fe,
+        type: 3}
+      characterSelectionPrefab: {fileID: 1681421491016556740, guid: 56022777c6d273e409dac15fd5b14f1f,
+        type: 3}
     color: {r: 0.7960785, g: 0, b: 0, a: 1}
     isUnlocked: 1
     nextEvolutionId: 0
+    currentMood: 0
   - avatarId: 2
     avatarSprite: {fileID: 21300000, guid: 71725569bc74dc745bcbb0e7fec11578, type: 3}
     avatarName: Mochi
@@ -43311,14 +43285,46 @@ MonoBehaviour:
     helmetId: 0
     outfitId: 0
     skinId: 
-    evolutionList: []
-    characterPrefab: {fileID: 6001404713945072765, guid: a585cc7325dc5364eb9b04a080235f3b,
-      type: 3}
-    characterSelectionPrefab: {fileID: 6709150730569588656, guid: acf98040ac43a254eb9ca30613b6d538,
-      type: 3}
+    evolutionList:
+    - evolutionId: 5
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 6001404713945072765, guid: a585cc7325dc5364eb9b04a080235f3b,
+        type: 3}
+      characterSelectionPrefab: {fileID: 6709150730569588656, guid: acf98040ac43a254eb9ca30613b6d538,
+        type: 3}
+    - evolutionId: 6
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 6001404713945072765, guid: 72431efa6a94a824ca67e5a34abf814f,
+        type: 3}
+      characterSelectionPrefab: {fileID: 6709150730569588656, guid: acf98040ac43a254eb9ca30613b6d538,
+        type: 3}
+    - evolutionId: 7
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 6001404713945072765, guid: a585cc7325dc5364eb9b04a080235f3b,
+        type: 3}
+      characterSelectionPrefab: {fileID: 6709150730569588656, guid: acf98040ac43a254eb9ca30613b6d538,
+        type: 3}
+    - evolutionId: 8
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 6001404713945072765, guid: a585cc7325dc5364eb9b04a080235f3b,
+        type: 3}
+      characterSelectionPrefab: {fileID: 6709150730569588656, guid: acf98040ac43a254eb9ca30613b6d538,
+        type: 3}
+    - evolutionId: 9
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 6001404713945072765, guid: a585cc7325dc5364eb9b04a080235f3b,
+        type: 3}
+      characterSelectionPrefab: {fileID: 6709150730569588656, guid: acf98040ac43a254eb9ca30613b6d538,
+        type: 3}
     color: {r: 1, g: 0, b: 0.75294125, a: 1}
     isUnlocked: 1
     nextEvolutionId: 0
+    currentMood: 0
   - avatarId: 3
     avatarSprite: {fileID: 21300000, guid: b505b02e20b9325449672cc73e98fb11, type: 3}
     avatarName: Olga
@@ -43330,14 +43336,39 @@ MonoBehaviour:
     helmetId: 0
     outfitId: 0
     skinId: 
-    evolutionList: []
-    characterPrefab: {fileID: 7081602969184218888, guid: 8bb9483d1c33c334f8ad1771a6f779cb,
-      type: 3}
-    characterSelectionPrefab: {fileID: 4246421012020742165, guid: 489a5692bf174c94db077ff455588e8b,
-      type: 3}
+    evolutionList:
+    - evolutionId: 9
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 7081602969184218888, guid: 8bb9483d1c33c334f8ad1771a6f779cb,
+        type: 3}
+      characterSelectionPrefab: {fileID: 4246421012020742165, guid: 489a5692bf174c94db077ff455588e8b,
+        type: 3}
+    - evolutionId: 10
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 7081602969184218888, guid: 8bb9483d1c33c334f8ad1771a6f779cb,
+        type: 3}
+      characterSelectionPrefab: {fileID: 4246421012020742165, guid: 489a5692bf174c94db077ff455588e8b,
+        type: 3}
+    - evolutionId: 11
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 7081602969184218888, guid: 8bb9483d1c33c334f8ad1771a6f779cb,
+        type: 3}
+      characterSelectionPrefab: {fileID: 4246421012020742165, guid: 489a5692bf174c94db077ff455588e8b,
+        type: 3}
+    - evolutionId: 12
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 7081602969184218888, guid: 8bb9483d1c33c334f8ad1771a6f779cb,
+        type: 3}
+      characterSelectionPrefab: {fileID: 4246421012020742165, guid: 489a5692bf174c94db077ff455588e8b,
+        type: 3}
     color: {r: 0.40000004, g: 0.74509805, b: 0, a: 1}
     isUnlocked: 1
     nextEvolutionId: 0
+    currentMood: 0
   - avatarId: 4
     avatarSprite: {fileID: 21300000, guid: c3849909d3834e44d9fd506b46b6288a, type: 3}
     avatarName: Lorry
@@ -43349,14 +43380,39 @@ MonoBehaviour:
     helmetId: 0
     outfitId: 0
     skinId: 
-    evolutionList: []
-    characterPrefab: {fileID: 1584587612748259148, guid: 57ce4d34bf437f14eb42368a47978083,
-      type: 3}
-    characterSelectionPrefab: {fileID: 8611660930623475188, guid: c19a05bff9bca4648a80ca0005c2dfee,
-      type: 3}
+    evolutionList:
+    - evolutionId: 13
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 1584587612748259148, guid: 57ce4d34bf437f14eb42368a47978083,
+        type: 3}
+      characterSelectionPrefab: {fileID: 8611660930623475188, guid: c19a05bff9bca4648a80ca0005c2dfee,
+        type: 3}
+    - evolutionId: 14
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 1584587612748259148, guid: 57ce4d34bf437f14eb42368a47978083,
+        type: 3}
+      characterSelectionPrefab: {fileID: 8611660930623475188, guid: c19a05bff9bca4648a80ca0005c2dfee,
+        type: 3}
+    - evolutionId: 15
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 1584587612748259148, guid: 57ce4d34bf437f14eb42368a47978083,
+        type: 3}
+      characterSelectionPrefab: {fileID: 8611660930623475188, guid: c19a05bff9bca4648a80ca0005c2dfee,
+        type: 3}
+    - evolutionId: 16
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 1584587612748259148, guid: 57ce4d34bf437f14eb42368a47978083,
+        type: 3}
+      characterSelectionPrefab: {fileID: 8611660930623475188, guid: c19a05bff9bca4648a80ca0005c2dfee,
+        type: 3}
     color: {r: 0.37647063, g: 0, b: 0.59607846, a: 1}
     isUnlocked: 1
     nextEvolutionId: 0
+    currentMood: 0
   - avatarId: 5
     avatarSprite: {fileID: 21300000, guid: fd53b3a79a839f048aca7dc95aa67f14, type: 3}
     avatarName: Gilmo
@@ -43368,33 +43424,39 @@ MonoBehaviour:
     helmetId: 0
     outfitId: 0
     skinId: 
-    evolutionList: []
-    characterPrefab: {fileID: 5588793710204317940, guid: 87fd45c38216a35409213932e42c0bca,
-      type: 3}
-    characterSelectionPrefab: {fileID: 1681421491016556740, guid: 56022777c6d273e409dac15fd5b14f1f,
-      type: 3}
+    evolutionList:
+    - evolutionId: 17
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 5588793710204317940, guid: 87fd45c38216a35409213932e42c0bca,
+        type: 3}
+      characterSelectionPrefab: {fileID: 1681421491016556740, guid: 56022777c6d273e409dac15fd5b14f1f,
+        type: 3}
+    - evolutionId: 18
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 5588793710204317940, guid: 87fd45c38216a35409213932e42c0bca,
+        type: 3}
+      characterSelectionPrefab: {fileID: 1681421491016556740, guid: 56022777c6d273e409dac15fd5b14f1f,
+        type: 3}
+    - evolutionId: 19
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 5588793710204317940, guid: 87fd45c38216a35409213932e42c0bca,
+        type: 3}
+      characterSelectionPrefab: {fileID: 1681421491016556740, guid: 56022777c6d273e409dac15fd5b14f1f,
+        type: 3}
+    - evolutionId: 20
+      evolutionName: 
+      experienceToEvolve: 0
+      characterPrefab: {fileID: 5588793710204317940, guid: 87fd45c38216a35409213932e42c0bca,
+        type: 3}
+      characterSelectionPrefab: {fileID: 1681421491016556740, guid: 56022777c6d273e409dac15fd5b14f1f,
+        type: 3}
     color: {r: 0.77647066, g: 0.3372549, b: 0, a: 1}
     isUnlocked: 1
     nextEvolutionId: 0
-  - avatarId: 6
-    avatarSprite: {fileID: 21300000, guid: 71725569bc74dc745bcbb0e7fec11578, type: 3}
-    avatarName: Mochi
-    level: 0
-    mood: 0
-    stageType: 1
-    energy: 0
-    exp: 0
-    helmetId: 0
-    outfitId: 0
-    skinId: 
-    evolutionList: []
-    characterPrefab: {fileID: 6001404713945072765, guid: edaa9885c3823bc4e8395a5b584af746,
-      type: 3}
-    characterSelectionPrefab: {fileID: 6709150730569588656, guid: acf98040ac43a254eb9ca30613b6d538,
-      type: 3}
-    color: {r: 1, g: 0, b: 0.72156864, a: 1}
-    isUnlocked: 0
-    nextEvolutionId: 0
+    currentMood: 0
   liveAvatarInfoList:
   - avatarId: 0
     avatarSprite: {fileID: 0}
@@ -43408,11 +43470,10 @@ MonoBehaviour:
     outfitId: 0
     skinId: 
     evolutionList: []
-    characterPrefab: {fileID: 0}
-    characterSelectionPrefab: {fileID: 0}
     color: {r: 1, g: 1, b: 1, a: 1}
     isUnlocked: 0
     nextEvolutionId: 0
+    currentMood: 0
   characterParent: {fileID: 980846265}
   avatarAssetList:
   - id: 1
@@ -46624,6 +46685,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5958ed204702cf40912bfb1ad9b5206, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  alarmInfoList: []
   alarmCreator: {fileID: 1390740500}
   alarmPrefab: {fileID: 4636729957725231039, guid: 0e991d543f7c82b42a3ff91dc8df8a31,
     type: 3}

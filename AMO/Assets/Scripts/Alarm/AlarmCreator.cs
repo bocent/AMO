@@ -226,7 +226,10 @@ public class AlarmCreator : MonoBehaviour
             minuteScrollSnap.Content.GetChild(minuteIndex).GetComponent<TMP_Text>().text;
         alarmInfo.isOn = true;
         if (isCreateNew)
+        {
             controller.GetAlarm(alarmInfo);
+            controller.AddAlarmInfo(alarmInfo);
+        }
         else
             controller.EditAlarm(selectedAlarmItem, alarmInfo);
         controller.HideAlarmCreator();

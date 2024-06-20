@@ -63,6 +63,7 @@ public class UserResponse
 {
     public string status;
     public string msg;
+    public string name;
     public string email;
     public string user_id;
     public long user_coin;

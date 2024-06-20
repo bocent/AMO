@@ -122,22 +122,26 @@ public class CharacterSelection : MonoBehaviour
         for (int i = 0; i < infoList.Count; i++)
         {
             AvatarInfo info = infoList[i];
-            GameObject item = Instantiate(info.characterSelectionPrefab, characterItemParent, false);
-            CharacterSelectionAnimation characterItem = item.GetComponent<CharacterSelectionAnimation>();
-            characterItem.info = info;
-            characterList.Add(characterItem);
-            characterItem.index = index;
-            if (i < characterPlaceholderList.Count)
+            EvolutionResponse data = info.evolutionList.Where(x => x.evolutionName == info.stageType.ToString().ToUpper()).FirstOrDefault();
+            if (data != null)
             {
-                Debug.LogWarning("index : " + indexPos);
-                //item.transform.position = characterPlaceholderList[indexPos].position;
-                characterItemList.Add(characterItem);
-                unlockedCharacterCount += 1;
-                //indexPos = GetPositionIndex(indexPos + 1);
-            }
-            else
-            {
-                //Witem.SetActive(false);                
+                GameObject item = Instantiate(data.characterSelectionPrefab, characterItemParent, false);
+                CharacterSelectionAnimation characterItem = item.GetComponent<CharacterSelectionAnimation>();
+                characterItem.info = info;
+                characterList.Add(characterItem);
+                characterItem.index = index;
+                if (i < characterPlaceholderList.Count)
+                {
+                    Debug.LogWarning("index : " + indexPos);
+                    //item.transform.position = characterPlaceholderList[indexPos].position;
+                    characterItemList.Add(characterItem);
+                    unlockedCharacterCount += 1;
+                    //indexPos = GetPositionIndex(indexPos + 1);
+                }
+                else
+                {
+                    //Witem.SetActive(false);                
+                }
             }
             index += 1;
         }

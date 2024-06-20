@@ -30,7 +30,7 @@ public class Verification : MonoBehaviour
 
     private void Back()
     {
-        login.ShowForgetPassword(false);
+        login.ShowVerification(false);
     }
 
     public void ResetTime()

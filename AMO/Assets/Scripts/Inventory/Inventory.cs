@@ -122,7 +122,6 @@ public class Inventory : MonoBehaviour
                     {
                         info.itemCount = itemCount;
                         LoadInventory();
-
                         StartCoroutine(Character.Instance.RequestSetCharacterStatus("energy", Mathf.RoundToInt(Mathf.Clamp(UserData.Energy, 0, 100)).ToString(), () =>
                         {
                             string json = "\"energy\" : " + "\"+" + info.energy + "\", \"need_repair\" : \"" + 0 + "\" ";

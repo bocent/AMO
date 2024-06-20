@@ -97,11 +97,16 @@ public class Character : MonoBehaviour
     {
         foreach (AvatarInfo info in avatarInfoList)
         {
-            GameObject charObj = Instantiate(info.characterPrefab, characterParent, false);
-            SelectedCharacter character = charObj.GetComponent<SelectedCharacter>();
-            character.Init(info);
-            charObj.SetActive(false);
-            characterList.Add(character);
+            Debug.LogWarning("stage : " + info.stageType.ToString());
+            EvolutionResponse data = info.evolutionList.Where(x => x.evolutionName == info.stageType.ToString().ToUpper()).FirstOrDefault();
+            if (data != null)
+            {
+                GameObject charObj = Instantiate(data.characterPrefab, characterParent, false);
+                SelectedCharacter character = charObj.GetComponent<SelectedCharacter>();
+                character.Init(info);
+                charObj.SetActive(false);
+                characterList.Add(character);
+            }
         }
     }
 
@@ -183,7 +188,7 @@ public class Character : MonoBehaviour
         {
             uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
-            try
+            //try
             {
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
@@ -203,11 +208,16 @@ public class Character : MonoBehaviour
                             //    characterPrefab = asset.prefab, //Resources.Load<GameObject>("Prefabs/Characters/" + response.karakter[i].karakter_id)
                             //    avatarSprite = asset.sprite
                             //});
-                            int index = avatarInfoList.FindIndex(x =>x.avatarId == response.karakter[i].karakter_id);
-                            avatarInfoList[index].evolutionList = new List<EvolutionResponse>();
+                            int index = avatarInfoList.FindIndex(x => x.avatarId == response.karakter[i].karakter_id);
                             foreach (EvolutionData evolutionData in response.karakter[i].evolution)
                             {
-                                avatarInfoList[index].evolutionList.Add(new EvolutionResponse { evolutionId = evolutionData.next_evolution_id, evolutionName = evolutionData.next_evolution_name, experienceToEvolve = evolutionData.experience_to_evolution });
+                                int evoIndex = avatarInfoList[index].evolutionList.FindIndex(x => x.evolutionId == evolutionData.evolution_id);
+                                Debug.LogWarning("evo index : " + evoIndex);
+                                if (index >= 0)
+                                {
+                                    avatarInfoList[index].evolutionList[evoIndex].evolutionName = evolutionData.evolution_name;
+                                    avatarInfoList[index].evolutionList[evoIndex].experienceToEvolve = evolutionData.experience_to_evolution;
+                                }
                             }
                         }
                         onComplete?.Invoke();
@@ -222,20 +232,20 @@ public class Character : MonoBehaviour
                     throw new Exception(uwr.error);
                 }
             }
-            catch (Exception e)
-            {
-                onFailed?.Invoke(e.Message);
-                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
-                    new ButtonInfo
-                    {
-                        content = "Ulangi",
-                        onButtonClicked = () => StartCoroutine(RequestCharacters(onComplete, onFailed))
-                    },
-                    new ButtonInfo
-                    {
-                        content = "Batal"
-                    });
-            }
+            //catch (Exception e)
+            //{
+            //    onFailed?.Invoke(e.Message);
+            //    PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+            //        new ButtonInfo
+            //        {
+            //            content = "Ulangi",
+            //            onButtonClicked = () => StartCoroutine(RequestCharacters(onComplete, onFailed))
+            //        },
+            //        new ButtonInfo
+            //        {
+            //            content = "Batal"
+            //        });
+            //}
         }
     }
 
@@ -304,6 +314,25 @@ public class Character : MonoBehaviour
         }
     }
 
+    private AvatarInfo.StageType GetStageType(string evolutionName)
+    {
+        switch (evolutionName)
+        {
+            case Consts.BABY:
+                return AvatarInfo.StageType.Baby;
+            case Consts.TODDLER:
+                return AvatarInfo.StageType.Toddler;
+            case Consts.TEEN:
+                return AvatarInfo.StageType.Teen;
+            case Consts.ANDROID:
+                return AvatarInfo.StageType.Android;
+            case Consts.HUMANOID:
+                return AvatarInfo.StageType.Humanoid;
+        }
+
+        return AvatarInfo.StageType.Baby;
+    }
+
     public IEnumerator RequestUserData(Action<int> onComplete, Action<string> onFailed)
     {
         LoadingManager.Instance.ShowSpinLoading();
@@ -323,6 +352,8 @@ public class Character : MonoBehaviour
                     if (response.status.ToLower() == "ok")
                     {
                         UserData.SetCoin(response.user_coin);
+                        UserData.username = response.name;
+                        HomeController.Instance.RefreshCoins();
                         foreach (UserCharacter ownedCharacter in response.karakter_user)
                         {
                             int index = avatarInfoList.FindIndex(x => x.avatarId == ownedCharacter.karakter_id);
@@ -331,6 +362,7 @@ public class Character : MonoBehaviour
                                 Debug.LogWarning("");
                                 avatarInfoList[index].isUnlocked = true;
                                 avatarInfoList[index].exp = ownedCharacter.experience;
+                                avatarInfoList[index].stageType = GetStageType(ownedCharacter.evolution_name);
                                 if (ownedCharacter.accessories_used.helmet_items_id != 0)
                                 {
                                     avatarInfoList[index].helmetId = (int)ownedCharacter.accessories_used.helmet_items_id;
@@ -370,6 +402,7 @@ public class Character : MonoBehaviour
                                     requirementList.Add((int)Main.RequirementType.NEED_FIX_UP);
                                 }
                                 UserData.SetRequirementList(requirementList);
+                                StartCoroutine(NeedsController.Instance.Init());
                             }
                         }
                         foreach (ItemData item in response.inventory.helmet)
@@ -422,6 +455,7 @@ public class Character : MonoBehaviour
 
     public IEnumerator RequestAddExperience(int id, int experience, Action<bool, string> onComplete, Action<string> onFailed)
     {
+        Debug.LogWarning("RequestAddExperience");
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"karakter_id\" : \"" + id + "\", \"experience\" : \"" + experience + "\" }");
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "add_experience", form))
@@ -435,7 +469,9 @@ public class Character : MonoBehaviour
                     ExperienceResponse response = JsonUtility.FromJson<ExperienceResponse>(uwr.downloadHandler.text);
                     if (response.status.ToLower() == "ok")
                     {
-                        onComplete?.Invoke(response.evolution_up, response.new_evolution_id);
+                        GetCurrentAvatarInfo().exp = response.new_experience;
+                        UserData.GetLevel(1, response.new_experience);
+                        HomeController.Instance.RefreshLevel(GetCurrentAvatarInfo());
                         if (response.evolution_up)
                         {
                             if (int.TryParse(response.new_evolution_id, out int targetId))
@@ -443,6 +479,7 @@ public class Character : MonoBehaviour
                                 Evolution(targetId);
                             }
                         }
+                        onComplete?.Invoke(response.evolution_up, response.new_evolution_id);
                     }
                     else
                     {
@@ -489,7 +526,7 @@ public class Character : MonoBehaviour
                     if (response.status.ToLower() == "ok")
                     {
                         UserData.SetEnergy(response.status_karakter.energy);
-                        UserData.SetMood((Main.MoodStage)(4 - Mathf.RoundToInt(response.status_karakter.energy / 25)));
+                        UserData.SetMood((Main.MoodStage)(4 - Mathf.CeilToInt(response.status_karakter.energy / 25)));
 
 
                         List<int> requirementList = new List<int>();
@@ -506,7 +543,7 @@ public class Character : MonoBehaviour
                             requirementList.Add((int)Main.RequirementType.NEED_FIX_UP);
                         }
                         UserData.SetRequirementList(requirementList);
-
+                        StartCoroutine(NeedsController.Instance.Init());
                         onComplete?.Invoke();
                     }
                     else
@@ -555,7 +592,7 @@ public class Character : MonoBehaviour
                     if (response.status.ToLower() == "ok")
                     {
                         UserData.SetEnergy(response.status_karakter.energy);
-                        UserData.SetMood((Main.MoodStage)(4 - Mathf.RoundToInt(response.status_karakter.energy / 25)));
+                        UserData.SetMood((Main.MoodStage)(4 - Mathf.CeilToInt(response.status_karakter.energy / 25)));
                         onComplete?.Invoke();
                     }
                     else
@@ -643,7 +680,7 @@ public class Character : MonoBehaviour
         {
             uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
-            try
+            //try
             {
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
@@ -662,21 +699,21 @@ public class Character : MonoBehaviour
                     throw new Exception(uwr.error);
                 }
             }
-            catch (Exception e)
-            {
-                LoadingManager.Instance.HideSpinLoading();
-                onFailed?.Invoke(e.Message);
-                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
-                  new ButtonInfo
-                  {
-                      content = "Ulangi",
-                      onButtonClicked = () => StartCoroutine(RequestSelectCharacter(characterId, onComplete, onFailed))
-                  },
-                  new ButtonInfo
-                  {
-                      content = "Batal"
-                  });
-            }
+            //catch (Exception e)
+            //{
+            //    LoadingManager.Instance.HideSpinLoading();
+            //    onFailed?.Invoke(e.Message);
+            //    PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+            //      new ButtonInfo
+            //      {
+            //          content = "Ulangi",
+            //          onButtonClicked = () => StartCoroutine(RequestSelectCharacter(characterId, onComplete, onFailed))
+            //      },
+            //      new ButtonInfo
+            //      {
+            //          content = "Batal"
+            //      });
+            //}
         }
     }
 
@@ -699,7 +736,7 @@ public class Character : MonoBehaviour
     public void CheckEvolution()
     {
         AvatarInfo info = GetCurrentAvatarInfo();
-        EvolutionResponse evolution = info.evolutionList.Where(x => x.evolutionName == GetNextStageEvolution(info).ToUpper()).FirstOrDefault();
+        EvolutionResponse evolution = info.evolutionList.Where(x => x.evolutionName == info.stageType.ToString().ToUpper()).FirstOrDefault();
         if (evolution != null)
         {
             if (info.exp >= evolution.experienceToEvolve)

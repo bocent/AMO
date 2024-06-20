@@ -63,8 +63,7 @@ public class SignupUI : MonoBehaviour
             }
             else
             {
-                PopupManager.Instance.ShowPopupMessage("err", "Register Failed", 
-                    $"username length must be more than {MIN_USERNAME_LENGTH} and less than {MAX_USERNAME_LENGTH}\n" +
+                PopupManager.Instance.ShowPopupMessage("err", "Register Failed",
                     $"password length must be more than {MIN_PASSWORD_LENGTH} and less than {MAX_PASSWORD_LENGTH}.",
                     new ButtonInfo { content = "OK" });
             }
