@@ -11,6 +11,7 @@ public class ChargeIAP : ItemProduct
 
     public override void Init(ShopItem item)
     {
+        base.item = item;
         priceText.text = item.price + " COINS";
         productImage.sprite = Inventory.Instance.GetItemInfo(item.items_id)?.sprite;
     }

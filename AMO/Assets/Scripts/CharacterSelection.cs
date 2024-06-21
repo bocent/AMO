@@ -7,10 +7,19 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
-public class CharacterSelection : MonoBehaviour
+[Serializable]
+public class  EvolutionTree
+{
+    public GameObject parent;
+    public Image image;
+    public GameObject nextArrow;
+}
+
+public class CharacterSelection : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public GameObject characterItemPrefab;
     public Transform characterItemParent;
@@ -21,6 +30,8 @@ public class CharacterSelection : MonoBehaviour
     public Image nameBackground;
     public TMP_Text nameText;
     public TMP_Text evolutionText;
+
+    public List<EvolutionTree> evolutionTreeList;
 
     private List<CharacterSelectionAnimation> characterItemList = new List<CharacterSelectionAnimation>();
     private List<CharacterSelectionAnimation> characterList = new List<CharacterSelectionAnimation>();
@@ -60,6 +71,11 @@ public class CharacterSelection : MonoBehaviour
         HomeController.Instance.ShowHome(!value);
         HomeController.Instance.ShowHUD(!value);
 
+        if (value)
+        {
+            SetEvolutionTree(Character.Instance.GetCurrentAvatarInfo());
+        }
+
         //for (int i = 0; i < simpleScrollSnap.Content.childCount; i++)
         //{
         //    Debug.LogWarning("avatar id : " + Character.Instance.SelectedAvatarId + " " + simpleScrollSnap.Content.GetChild(i).GetComponent<CharacterItem>().Info.avatarId);
@@ -72,6 +88,25 @@ public class CharacterSelection : MonoBehaviour
 
     }
 
+    public void SetEvolutionTree(AvatarInfo info)
+    {
+        foreach (EvolutionTree tree in evolutionTreeList)
+        {
+            tree.parent.SetActive(false);
+        }
+        if (evolutionTreeList.Count >= info.evolutionList.Count)
+        {
+            for (int i = 0; i < info.evolutionList.Count; i++)
+            {
+                evolutionTreeList[i].parent.SetActive(true);
+                evolutionTreeList[i].image.sprite = info.evolutionList[i].avatarSprite;
+                if (evolutionTreeList[i].nextArrow)
+                {
+                    evolutionTreeList[i].nextArrow.SetActive(i != info.evolutionList.Count - 1);
+                }
+            }
+        }
+    }
     private IEnumerator WaitToRefresh()
     {
         yield return null;
@@ -236,30 +271,25 @@ public class CharacterSelection : MonoBehaviour
         //simpleScrollSnap.Content.GetChild(to).GetComponent<Toggle>().isOn = true;
     }
 
-    private void Update()
+    public void OnPointerDown(PointerEventData eventData)
     {
-        //if (isShown)
+        swipeDistance = 0f;
+        touchPos = Input.mousePosition;
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        Vector2 releasePos = Input.mousePosition;
+
+        swipeDistance = Vector2.Distance(touchPos, releasePos);
+
+        if (releasePos.x > touchPos.x + minSwipeLength)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                swipeDistance = 0f;
-                touchPos = Input.mousePosition;
-            }
-            else if (Input.GetMouseButtonUp(0))
-            {
-                Vector2 releasePos = Input.mousePosition;
-
-                swipeDistance = Vector2.Distance(touchPos, releasePos);
-
-                if (releasePos.x > touchPos.x + minSwipeLength)
-                {
-                    NextCharacter();
-                }
-                else if (releasePos.x < touchPos.x - minSwipeLength)
-                {
-                    PrevCharacter();
-                }
-            }
+            NextCharacter();
+        }
+        else if (releasePos.x < touchPos.x - minSwipeLength)
+        {
+            PrevCharacter();
         }
     }
 
@@ -310,5 +340,7 @@ public class CharacterSelection : MonoBehaviour
         UserData.SetAvatarName(info);
         Character.Instance.UpdateSelectedAvatar(info.avatarId);
         ChangeColor(info);
+
+        SetEvolutionTree(info);
     }
 }

@@ -103,7 +103,7 @@ public class Character : MonoBehaviour
             {
                 GameObject charObj = Instantiate(data.characterPrefab, characterParent, false);
                 SelectedCharacter character = charObj.GetComponent<SelectedCharacter>();
-                character.Init(info);
+                StartCoroutine(character.Init(info));
                 charObj.SetActive(false);
                 characterList.Add(character);
             }
@@ -359,7 +359,6 @@ public class Character : MonoBehaviour
                             int index = avatarInfoList.FindIndex(x => x.avatarId == ownedCharacter.karakter_id);
                             if (index >= 0)
                             {
-                                Debug.LogWarning("");
                                 avatarInfoList[index].isUnlocked = true;
                                 avatarInfoList[index].exp = ownedCharacter.experience;
                                 avatarInfoList[index].stageType = GetStageType(ownedCharacter.evolution_name);
@@ -751,6 +750,7 @@ public class Character : MonoBehaviour
         if (targetId != 0)
         {
             UpdateSelectedAvatar(targetId);
+            currentCharacter.PlayChoosenAnimation();
         }
     }
 }

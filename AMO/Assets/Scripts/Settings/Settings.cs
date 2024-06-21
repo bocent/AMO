@@ -49,7 +49,7 @@ public class Settings : MonoBehaviour
     public void Show()
     {
         container.SetActive(true);
-        nameText.text = UserData.username;
+        nameText.text = string.IsNullOrEmpty(UserData.username) ? "Guest" : UserData.username;
     }
 
     private void ChangeSfxToggle(bool isOn)

@@ -201,7 +201,7 @@ public class HomeController : MonoBehaviour
     public void SelectCharacter(AvatarInfo info, bool playAnimation = true)
     {
         selectedCharacter = character.SwitchCharacter(info.avatarId);
-        selectedCharacter.Init(info);
+        StartCoroutine(selectedCharacter.Init(info));
         if(playAnimation) selectedCharacter.PlayChoosenAnimation();
 
         RefreshLevel(info);

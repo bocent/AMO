@@ -57,6 +57,7 @@ public class EvolutionResponse
     public int experienceToEvolve;
     public GameObject characterPrefab;
     public GameObject characterSelectionPrefab;
+    public Sprite avatarSprite;
 }
 
 public class Avatar : MonoBehaviour

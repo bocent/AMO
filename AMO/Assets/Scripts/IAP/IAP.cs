@@ -171,6 +171,7 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
 
     public void BuyProduct(ShopItem item)
     {
+        Debug.LogWarning("buy item : " + item.item_name);
         PopupManager.Instance.ShowPopupMessage("topup", "Konfirmasi", "Apakah kamu yakin untuk membeli <color=yellow>" + item.item_name + "</color>?",
             new ButtonInfo
             {
@@ -178,6 +179,7 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
                 onButtonClicked = () => StartCoroutine(RequestBuyItem(item.item_sell_id,
                 (coins) =>
                 {
+                    UserData.SetCoin(coins);
                     StartCoroutine(Character.Instance.RequestUserData((coin) => LoadingManager.Instance.HideSpinLoading(), null));
                 },
                 (error) =>
@@ -410,7 +412,7 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
     {
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"item_sell_id\" : \"" + productId + "\" }");
-        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "get_item_sell", form))
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "buy_item", form))
         {
             uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
@@ -421,6 +423,8 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
                     BuyItemResponse response = JsonUtility.FromJson<BuyItemResponse>(uwr.downloadHandler.text);
                     if (response.status.ToLower() == "ok")
                     {
+                        Debug.LogWarning("buy response : " + uwr.downloadHandler.text);
+                        Debug.LogWarning("coin remaining : " + response.sisa_coin);
                         onComplete?.Invoke(response.sisa_coin);
                     }
                     else

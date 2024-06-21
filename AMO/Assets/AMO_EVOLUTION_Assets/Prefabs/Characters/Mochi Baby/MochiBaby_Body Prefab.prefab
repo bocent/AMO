@@ -3366,7 +3366,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 48aa542f97765db42afd6b692affb412, type: 2}
   m_Controller: {fileID: 9100000, guid: a238d2c0e85d6584786793e66fbcd4c0, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -3409,13 +3409,14 @@ MonoBehaviour:
     stageType: 0
     energy: 0
     exp: 0
-    helmetId: 
-    outfitId: 
+    helmetId: 0
+    outfitId: 0
     skinId: 
     evolutionList: []
-    characterPrefab: {fileID: 0}
+    color: {r: 1, g: 1, b: 1, a: 1}
     isUnlocked: 0
     nextEvolutionId: 0
+    currentMood: 0
   helmetAccessory: {fileID: 0}
   outfitAccessory: {fileID: 0}
   bodyMeshRenderer: {fileID: 0}

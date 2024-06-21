@@ -35,7 +35,7 @@ public class SelectedCharacter : MonoBehaviour
         voiceSource = GetComponent<AudioSource>();
     }
 
-    public void Init(AvatarInfo info)
+    public IEnumerator Init(AvatarInfo info)
     {
         Info = info;
         this.info = info;
@@ -43,6 +43,8 @@ public class SelectedCharacter : MonoBehaviour
         //int outfitId = LoadAccessory(AccessoryType.Outfit);
         AddAccessory(info.helmetId, false);
         AddAccessory(info.outfitId, false);
+        yield return new WaitForSeconds(0.1f);
+        PlayIdleAnimation();
     }
 
     public int GetMood()
@@ -500,7 +502,13 @@ public class SelectedCharacter : MonoBehaviour
 
         string MOOD = "Mood";
         string ENERGY = "Energy";
-        float moodValue = ((int)UserData.Mood + 1) / 4f;
+
+        float moodValue = 0;
+        int index = HomeController.Instance.energyController.energyMeterList.FindIndex(x => x.maxEnergy >= UserData.Energy && x.minEnergy < UserData.Energy);
+        if (index >= 0)
+        {
+            moodValue = index * 0.25f;
+        }
         characterAnimation.SetAnimationCondition(MOOD, moodValue);
         characterAnimation.SetAnimationCondition(ENERGY, (int)UserData.Energy);
         foreach (GameObject equippedAccessory in equippedAccessories)

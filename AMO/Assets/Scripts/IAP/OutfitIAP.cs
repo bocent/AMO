@@ -14,7 +14,7 @@ public class OutfitIAP : ItemProduct
     public override void Init(ShopItem item)
     {
         priceText.text = item.price + " COINS";
-        this.item = item;
+        base.item = item;
         productImage.sprite = AccessoryController.Instance.GetAccessoryInfo(item.items_id).accessorySprite;
     }
 
