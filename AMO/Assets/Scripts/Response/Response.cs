@@ -1,3 +1,5 @@
+using DG.Tweening.Plugins;
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,6 +22,14 @@ public class LoginResponse
     public string token;
 }
 
+
+[Serializable]
+public class RegistrationResponse
+{
+    public string status;
+    public string msg;
+    public string email;
+}
 
 
 [Serializable]
@@ -287,4 +297,24 @@ public class CharacterStatusResponse
     public string msg;
     public CharacterStatus status_karakter;
     public NeedAction need_action;
+}
+
+
+
+[Serializable]
+public class ScanCardResponse
+{
+    public string status;
+    public string msg;
+    public CardReward items_on_card;
+    public string[] user_gets;
+}
+
+[Serializable]
+public class CardReward
+{
+    public int coins;
+    public string[] karakter;
+    public string[] items;
+    public string[] charge_item;
 }

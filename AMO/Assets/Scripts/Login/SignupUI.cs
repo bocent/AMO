@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
@@ -17,19 +18,26 @@ public class SignupUI : MonoBehaviour
 
     public Button signUpButton;
     public Button loginButton;
+    public Button backButton;
     
     private Login login;
 
     private void Start()
     {
-        loginButton.onClick.AddListener(Login);
-        signUpButton.onClick.AddListener(SignUp);
+        loginButton?.onClick.AddListener(Login);
+        signUpButton?.onClick.AddListener(SignUp);
+        backButton?.onClick.AddListener(Back);
         login = GetComponent<Login>();
     }
 
     private void Login()
     {
         login.ShowLoginPage();
+    }
+
+    private void Back()
+    {
+        login.ShowRegistrationPage(false);
     }
 
     private bool Validate()
@@ -91,8 +99,10 @@ public class SignupUI : MonoBehaviour
 
     private bool CheckPassword()
     {
-        Match match = Regex.Match(passwordInputField.text, "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$");
-        return match.Success;
+        //Match match = Regex.Match(passwordInputField.text, "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$");
+        //return match.Success;
+
+        return passwordInputField.text.All(char.IsLetter) && passwordInputField.text.All(char.IsNumber);
     }
 
     private bool CheckConfPassword()
@@ -110,7 +120,7 @@ public class SignupUI : MonoBehaviour
     {
         if (Validate())
         {
-            StartCoroutine(login.Register(emailInputField.text, passwordInputField.text, () => {
+            StartCoroutine(login.Register(emailInputField.text, passwordInputField.text, (email) => {
                 login.ShowVerification(true);
             }, (error) => { 
             

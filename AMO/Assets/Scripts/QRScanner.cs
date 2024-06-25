@@ -4,11 +4,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.Purchasing;
 using UnityEngine.UI;
 
 public class QRScanner : ARBehaviour
 {
     public Button backButton;
+
+    private bool isRequesting = false;
 
     private CameraBackgroundBehaviour cameraBackgroundBehaviour = null;
     void Awake()
@@ -25,6 +29,7 @@ public class QRScanner : ARBehaviour
 
     void Start()
     {
+        isRequesting = false;
         StartCodeScan();
         StartCameraInternal();
     }
@@ -41,6 +46,7 @@ public class QRScanner : ARBehaviour
         cameraBackgroundBehaviour.UpdateCameraBackgroundImage(state);
 
         string codeScanResult = state.GetCodeScanResult();
+        Debug.LogWarning("code scan result : " + codeScanResult);
         if (!codeScanResult.Equals("") && codeScanResult.Length > 0)
         {
             Dictionary<string, string> resultAsDicionary =
@@ -50,15 +56,71 @@ public class QRScanner : ARBehaviour
             //codeValueText.text = "Value : " + resultAsDicionary["Value"];
             if (resultAsDicionary != null)
             {
-                RequestGetItem(resultAsDicionary["Value"], ScanSuccess, null);
+                Debug.LogWarning("result scan : " + resultAsDicionary["Value"]);
+                if (!isRequesting)
+                {
+                    StartCoroutine(RequestGetItem(resultAsDicionary["Value"], ScanSuccess, null));
+                }
             }
         }
     }
 
-    private IEnumerator RequestGetItem(string id, Action onComplete, Action<string> onFailed)
+    private IEnumerator RequestGetItem(string id, Action<string> onComplete, Action<string> onFailed)
     {
-        yield return null;
-        onComplete?.Invoke();
+        isRequesting = true;
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"qrcode\" : \"" + id + "\" }");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "scan_card", form))
+        {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    ScanCardResponse response = JsonUtility.FromJson<ScanCardResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        string content = "";
+                        for (int i = 0; i < response.user_gets.Length; i++)
+                        {
+                            content += "• " + response.user_gets[i];
+                            if (i < response.user_gets.Length - 1)
+                            {
+                                content += "\n";
+                            }
+                        }
+                        onComplete?.Invoke(content);
+                        isRequesting = false;
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
+                Debug.LogError("err : " + e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                    new ButtonInfo
+                    {
+                        content = "Ulangi",
+                        onButtonClicked = () => StartCoroutine(RequestGetItem(id, onComplete, onFailed))
+                    },
+                    new ButtonInfo
+                    {
+                        content = "Batal"
+                    });
+
+                isRequesting = false;
+            }
+        }
     }
 
     void OnApplicationPause(bool pause)
@@ -110,9 +172,9 @@ public class QRScanner : ARBehaviour
         }
     }
 
-    private void ScanSuccess()
+    private void ScanSuccess(string content)
     {
-        CustomSceneManager.Instance.LoadScene("Home", () => Main.Instance.UnlockCharacter(5));
+        CustomSceneManager.Instance.LoadScene("Home", () => Main.Instance.UnlockItemByScan(content));
     }
 
     private void BackToHome()

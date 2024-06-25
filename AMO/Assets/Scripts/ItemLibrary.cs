@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class ItemLibrary : MonoBehaviour
@@ -162,6 +163,54 @@ public class ItemLibrary : MonoBehaviour
         if (value)
         {
             Init(SelectedCharacter.AccessoryType.Helmet);
+        }
+    }
+
+    public IEnumerator RequestEquipItem(int itemId, Action<int> onComplete, Action<string> onFailed)
+    {
+        Debug.LogWarning("RequestEquipItem : " + itemId);
+        LoadingManager.Instance.ShowSpinLoading();
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"items_id\" : \"" + itemId + "\", \"is_used\" : \"" + 1 + "\" }");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "set_used_item", form))
+        {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    Response response = JsonUtility.FromJson<Response>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        LoadingManager.Instance.HideSpinLoading();
+                        onComplete?.Invoke(itemId);
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            catch (Exception e)
+            {
+                LoadingManager.Instance.HideSpinLoading();
+                onFailed?.Invoke(e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                  new ButtonInfo
+                  {
+                      content = "Ulangi",
+                      onButtonClicked = () => StartCoroutine(RequestEquipItem(itemId, onComplete, onFailed))
+                  },
+                  new ButtonInfo
+                  {
+                      content = "Batal"
+                  });
+            }
         }
     }
 }

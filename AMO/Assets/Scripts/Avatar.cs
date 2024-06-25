@@ -39,6 +39,11 @@ public class AvatarInfo
 
     [HideInInspector]
     public int currentMood;
+
+    public AvatarInfo Clone()
+    {
+        return (AvatarInfo)MemberwiseClone();
+    }
 }
 
 [Serializable]

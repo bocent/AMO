@@ -9,9 +9,11 @@ public class Item : MonoBehaviour
     public Image image;
 
     private Toggle toggle;
+    private ItemLibrary library;
 
     public void Init(ItemLibrary library, AccessoryInfo info, ToggleGroup toggleGroup)
     {
+        this.library = library;
         if (toggle == null)
         {
             toggle = GetComponent<Toggle>();
@@ -34,7 +36,7 @@ public class Item : MonoBehaviour
 
     public void SetToggle(bool value)
     {
-        toggle.isOn = value;
+        toggle.SetIsOnWithoutNotify(value);
         Debug.LogWarning("settoggle " + value, this);
     }
 
@@ -43,7 +45,9 @@ public class Item : MonoBehaviour
         if (isOn)
         {
             Debug.LogWarning("accId : " + Info.accessoryId);
-            HomeController.Instance.selectedCharacter.AddAccessory(Info.accessoryId);
+            StartCoroutine(library.RequestEquipItem(Info.accessoryId, (itemId) => { 
+                HomeController.Instance.selectedCharacter.AddAccessory(itemId);
+            }, null));
         }
     }
 

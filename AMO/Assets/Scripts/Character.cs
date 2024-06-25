@@ -13,7 +13,7 @@ public class Character : MonoBehaviour
     [SerializeField] private Transform characterParent;
     [SerializeField] private List<AvatarAsset> avatarAssetList;
 
-    private List<SelectedCharacter> characterList = new List<SelectedCharacter>();
+    public List<SelectedCharacter> characterList = new List<SelectedCharacter>();
 
     public GameObject unlockCharacterPopup;
 
@@ -98,12 +98,14 @@ public class Character : MonoBehaviour
         foreach (AvatarInfo info in avatarInfoList)
         {
             Debug.LogWarning("stage : " + info.stageType.ToString());
-            EvolutionResponse data = info.evolutionList.Where(x => x.evolutionName == info.stageType.ToString().ToUpper()).FirstOrDefault();
-            if (data != null)
+            foreach(EvolutionResponse data in info.evolutionList)
             {
                 GameObject charObj = Instantiate(data.characterPrefab, characterParent, false);
                 SelectedCharacter character = charObj.GetComponent<SelectedCharacter>();
-                StartCoroutine(character.Init(info));
+                AvatarInfo newInfo = info.Clone();
+                newInfo.stageType = GetStageType(data.evolutionName);
+                Debug.LogWarning("init : " + newInfo.avatarName + " " + newInfo.stageType.ToString());
+                StartCoroutine(character.Init(newInfo));
                 charObj.SetActive(false);
                 characterList.Add(character);
             }
@@ -119,7 +121,7 @@ public class Character : MonoBehaviour
                 currentCharacter = character;
                 //HomeController.Instance.selectedCharacter = character;
                 //character.gameObject.SetActive(true);
-                HomeController.Instance.SelectCharacter(character.info, false);
+                HomeController.Instance.SelectCharacter(character.info, false, false);
                 break;
             }
         }
@@ -134,17 +136,18 @@ public class Character : MonoBehaviour
     {
         foreach (SelectedCharacter character in characterList)
         {
-            if (character.Info.avatarId == avatarId)
+            if (character.Info.avatarId == avatarId && GetAvatarInfo(avatarId).stageType.ToString() == character.info.stageType.ToString())
             {
                 currentCharacter = character;
                 character.gameObject.SetActive(true);
+                Debug.LogWarning("setactive : " + character, character);
             }
             else
             {
                 character.gameObject.SetActive(false);
+                Debug.LogWarning("disabled : " + character, character);
             }
-        }
-
+        }        
         return currentCharacter;
     }
 
@@ -165,20 +168,6 @@ public class Character : MonoBehaviour
         return avatarInfoList;
     }
 
-    public IEnumerator UnlockCharacter(int avatarId)
-    {
-        foreach (AvatarInfo info in avatarInfoList)
-        {
-            if (info.avatarId == avatarId)
-            {
-                info.isUnlocked = true;
-            }
-        }
-
-        yield return new WaitForSeconds(0.5f);
-        unlockCharacterPopup.SetActive(true);
-    }
-
     public IEnumerator RequestCharacters(Action onComplete, Action<string> onFailed)
     {
         Debug.LogError("request character");
@@ -188,7 +177,7 @@ public class Character : MonoBehaviour
         {
             uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
-            //try
+            try
             {
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
@@ -232,20 +221,20 @@ public class Character : MonoBehaviour
                     throw new Exception(uwr.error);
                 }
             }
-            //catch (Exception e)
-            //{
-            //    onFailed?.Invoke(e.Message);
-            //    PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
-            //        new ButtonInfo
-            //        {
-            //            content = "Ulangi",
-            //            onButtonClicked = () => StartCoroutine(RequestCharacters(onComplete, onFailed))
-            //        },
-            //        new ButtonInfo
-            //        {
-            //            content = "Batal"
-            //        });
-            //}
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                    new ButtonInfo
+                    {
+                        content = "Ulangi",
+                        onButtonClicked = () => StartCoroutine(RequestCharacters(onComplete, onFailed))
+                    },
+                    new ButtonInfo
+                    {
+                        content = "Batal"
+                    });
+            }
         }
     }
 
@@ -335,7 +324,7 @@ public class Character : MonoBehaviour
 
     public IEnumerator RequestUserData(Action<int> onComplete, Action<string> onFailed)
     {
-        LoadingManager.Instance.ShowSpinLoading();
+        LoadingManager.Instance?.ShowSpinLoading();
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"karakter_id\" : \"\" }");
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "get_user_karakter", form))
@@ -679,7 +668,7 @@ public class Character : MonoBehaviour
         {
             uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
             yield return uwr.SendWebRequest();
-            //try
+            try
             {
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
@@ -698,21 +687,21 @@ public class Character : MonoBehaviour
                     throw new Exception(uwr.error);
                 }
             }
-            //catch (Exception e)
-            //{
-            //    LoadingManager.Instance.HideSpinLoading();
-            //    onFailed?.Invoke(e.Message);
-            //    PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
-            //      new ButtonInfo
-            //      {
-            //          content = "Ulangi",
-            //          onButtonClicked = () => StartCoroutine(RequestSelectCharacter(characterId, onComplete, onFailed))
-            //      },
-            //      new ButtonInfo
-            //      {
-            //          content = "Batal"
-            //      });
-            //}
+            catch (Exception e)
+            {
+                LoadingManager.Instance.HideSpinLoading();
+                onFailed?.Invoke(e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                  new ButtonInfo
+                  {
+                      content = "Ulangi",
+                      onButtonClicked = () => StartCoroutine(RequestSelectCharacter(characterId, onComplete, onFailed))
+                  },
+                  new ButtonInfo
+                  {
+                      content = "Batal"
+                  });
+            }
         }
     }
 
@@ -747,9 +736,17 @@ public class Character : MonoBehaviour
 
     public void Evolution(int targetId)
     {
+        Debug.LogWarning("evolution!!!");
         if (targetId != 0)
         {
-            UpdateSelectedAvatar(targetId);
+            string nextStage = GetNextStageEvolution(GetCurrentAvatarInfo());
+            AvatarInfo newInfo = GetCurrentAvatarInfo().Clone();
+            newInfo.stageType = GetStageType(nextStage);
+
+            HomeController.Instance.SelectCharacter(newInfo, true);
+
+            //UpdateSelectedAvatar(targetId);
+            //EvolutionResponse evolution = GetCurrentAvatarInfo().evolutionList.Where(x => x.evolutionId == targetId).FirstOrDefault();
             currentCharacter.PlayChoosenAnimation();
         }
     }

@@ -18,7 +18,10 @@ public class Settings : MonoBehaviour
     public Button closeButton;
     public Button changeNameButton;
     public Button saveNameButton;
+    public Button bindAccountButton;
+    public Button logoutButton;
     public TMP_InputField nameInputField;
+    public Login login;
 
     public GameObject changeNameContainer;
     public TMP_Text nameText;
@@ -34,6 +37,8 @@ public class Settings : MonoBehaviour
         closeButton.onClick.AddListener(Close);
         changeNameButton.onClick.AddListener(ChangeName);
         saveNameButton.onClick.AddListener(SaveName);
+        bindAccountButton.onClick.AddListener(BindAccount);
+        logoutButton.onClick.AddListener(Logout);
         //nameInputField.onSubmit.AddListener(SubmitName);
 
         sfxOn.isOn = SoundManager.instance.GetSFXOn();
@@ -93,11 +98,23 @@ public class Settings : MonoBehaviour
         changeNameContainer.SetActive(false);
         SubmitName(nameInputField.text);
     }
+    public void BindAccount()
+    {
+        login.ShowRegistrationPage();
+    }
+
+    public void Logout()
+    {
+        PlayerPrefs.DeleteKey("email");
+        PlayerPrefs.DeleteKey("password");
+        CustomSceneManager.Instance.LoadScene("Login", null);
+    }
 
     public void SubmitName(string text)
     {
         StartCoroutine(RequestSubmitName(text));
     }
+
 
     private IEnumerator RequestSubmitName(string text)
     {

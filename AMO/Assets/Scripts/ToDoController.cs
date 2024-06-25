@@ -54,7 +54,7 @@ public class ToDoController : MonoBehaviour
                     }
                 }
             }
-            return list;
+            return "Berikut adalah daftar pengingatmu : " + list;
         }
         else
         {

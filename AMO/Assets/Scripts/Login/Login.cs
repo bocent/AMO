@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 [Serializable]
 public class APIResponse
@@ -30,6 +31,8 @@ public class Login : MonoBehaviour
     public GameObject verificationPage;
     public TweenColor backgroundTweenColor;
 
+    private const string GUEST = "guess";
+
     private IEnumerator Start()
     {
         yield return null;
@@ -42,9 +45,9 @@ public class Login : MonoBehaviour
         //    }));
         //}
 
-        if (PlayerPrefs.HasKey("email"))
+        if (PlayerPrefs.HasKey("email") && SceneManager.GetActiveScene().name != "Home")
         {
-            StartCoroutine(CheckLogin(PlayerPrefs.GetString("email"), PlayerPrefs.GetString("password"), () =>
+            StartCoroutine(CheckLogin(PlayerPrefs.GetString("email"), PlayerPrefs.GetString("password"), false, true, () =>
             {
                 CustomSceneManager.Instance.LoadScene("Home", null);
             }, (error) =>
@@ -53,26 +56,45 @@ public class Login : MonoBehaviour
                     "Ulangi login secara manual", new ButtonInfo { content = "OK" });
             }));
         }
+        else if (SceneManager.GetActiveScene().name != "Home")
+        {
+            Debug.LogWarning("Guest Login");
+            StartCoroutine(Register(GUEST, "12345678", (email) =>
+            {
+                StartCoroutine(CheckLogin(email, "12345678", true, true, () =>
+                {
+                    CustomSceneManager.Instance.LoadScene("Home", null);
+                }, null));
+            }, (error) =>
+            {
+                //PopupManager.Instance.ShowPopupMessage("err", "Gagal Login Otomatis",
+                //    "Ulangi login secara manual", new ButtonInfo { content = "OK" });
+            }));
+        }
+        else
+        {
+            ShowLoginPage();
+        }
     }
 
     public void ShowLoginPage(bool value = true)
     {
-        loginPage.SetActive(value);
-        registrationPage.SetActive(!value);
+        if(loginPage) loginPage.SetActive(value);
+        if(registrationPage) registrationPage.SetActive(!value);
         if (value)
-            backgroundTweenColor.PlayBackward(null);
+            backgroundTweenColor?.PlayBackward(null);
         else
-            backgroundTweenColor.Play();
+            backgroundTweenColor?.Play();
     }
 
     public void ShowRegistrationPage(bool value = true)
     {
-        loginPage.SetActive(!value);
-        registrationPage.SetActive(value);
+        if(loginPage) loginPage.SetActive(!value);
+        if(registrationPage) registrationPage.SetActive(value);
         if (value)
-            backgroundTweenColor.Play();
+            backgroundTweenColor?.Play();
         else
-            backgroundTweenColor.PlayBackward(null);
+            backgroundTweenColor?.PlayBackward(null);
     }
 
     public void ShowForgetPassword(bool value = true)
@@ -123,7 +145,7 @@ public class Login : MonoBehaviour
         }
     }
 
-    public IEnumerator Register(string email, string password, Action onSuccess, Action<string> onFailed)
+    public IEnumerator Register(string email, string password, Action<string> onSuccess, Action<string> onFailed)
     {
         string json = "{\"email\": \"" + email + "\", \"password\": \"" + password + "\"}";
         WWWForm form = new WWWForm();
@@ -136,10 +158,10 @@ public class Login : MonoBehaviour
             {
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
-                    Response response = JsonUtility.FromJson<Response>(uwr.downloadHandler.text);
+                    RegistrationResponse response = JsonUtility.FromJson<RegistrationResponse>(uwr.downloadHandler.text);
                     if (response.status.ToLower() == "ok")
                     {
-                        onSuccess?.Invoke();
+                        onSuccess?.Invoke(response.email);
                     }
                     else
                     {
@@ -159,39 +181,64 @@ public class Login : MonoBehaviour
         }
     }
 
-    public IEnumerator CheckLogin(string email, string password, Action onSuccess, Action<string> onFailed)
+    public IEnumerator CheckLogin(string email, string password, bool isSaveToLocal, bool includeToken, Action onSuccess, Action<string> onFailed)
     {
         string json = "{\"email\": \"" + email + "\", \"password\": \"" + password + "\"}";
         WWWForm form = new WWWForm();
         form.AddField("data", json);
-
+        Debug.LogWarning("CheckLogin : " + email + " " + password);
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "login", form))
         {
-            yield return uwr.SendWebRequest();
-            if (uwr.result == UnityWebRequest.Result.Success)
+            if (includeToken)
             {
-                LoginResponse response = JsonUtility.FromJson<LoginResponse>(uwr.downloadHandler.text);
-                Debug.Log(uwr.downloadHandler.text);
-                if (response != null)
+                uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            }
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
                 {
-                    if (response.status.ToLower() == "ok")
+                    LoginResponse response = JsonUtility.FromJson<LoginResponse>(uwr.downloadHandler.text);
+                    Debug.Log(uwr.downloadHandler.text);
+                    if (response != null)
                     {
-                        UserData.token = response.token;
-                        PlayerPrefs.SetString("email", email);
-                        PlayerPrefs.SetString("password", password);
-                        PlayerPrefs.Save();
-                        onSuccess?.Invoke();
-                    }
-                    else
-                    {
-                        onFailed?.Invoke(response.msg);
+                        if (response.status.ToLower() == "ok")
+                        {
+                            UserData.token = response.token;
+                            if (isSaveToLocal)
+                            {
+                                PlayerPrefs.SetString("email", email);
+                                PlayerPrefs.SetString("password", password);
+                                PlayerPrefs.Save();
+                            }
+                            Debug.LogWarning("Login successfully : " + email);
+                            onSuccess?.Invoke();
+                        }
+                        else
+                        {
+                            throw new Exception(response.msg);
+                        }
                     }
                 }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
             }
-            else
+
+            catch (Exception e)
             {
-                onFailed?.Invoke(uwr.error);
-                Debug.LogError("err : " + uwr.error);
+                onFailed?.Invoke(e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                   new ButtonInfo
+                   {
+                       content = "Ulangi",
+                       onButtonClicked = () => StartCoroutine(CheckLogin(email, password, isSaveToLocal, includeToken, onSuccess, onFailed))
+                   },
+                   new ButtonInfo
+                   {
+                       content = "Batal"
+                   });
             }
         }
     }

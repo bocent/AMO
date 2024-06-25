@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 
 [Serializable]
@@ -33,6 +32,8 @@ public class Limitation
 public class Main : MonoBehaviour
 {
     public List<SpritePair> spritePairList;
+    public UnlockItemPopup unlockItemPopup;
+
     public enum MoodStage
     {
         HAPPY = 0,
@@ -59,9 +60,15 @@ public class Main : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void UnlockCharacter(int avatarId)
+    public void UnlockItemByScan(string content)
     {
-        StartCoroutine(Character.Instance.UnlockCharacter(avatarId));
+        StartCoroutine(UnlockItemByScanAsync(content));
+    }
+
+    private IEnumerator UnlockItemByScanAsync(string content)
+    {
+        yield return new WaitForSeconds(0.5f);
+        unlockItemPopup.Set(content);
     }
 
     public Sprite GetSprite(string id)

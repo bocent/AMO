@@ -169,8 +169,9 @@ public class AlarmController : MonoBehaviour
             if (info != null)
             {
                 string[] intro = { UserData.username };
-                string text = "ingatkan saya" + info.alarmTitle;
-                //StartCoroutine(HomeController.Instance.askMe.ProcessTextToSpeech(text));
+                string text = info.alarmTitle;
+                Debug.LogWarning("text : " + text);
+                StartCoroutine(HomeController.Instance.askMe.ProcessConversation("Alarm saya berbunyi. Ingatkan saya dengan singkat alarm yang berisi : ", text));
             }
         }
     }
@@ -201,7 +202,7 @@ public class AlarmController : MonoBehaviour
         //if (Input.GetKeyDown(KeyCode.A))
         //{
         //    Debug.LogWarning("show alarm");
-        //    BuzzOnAlarm(new AlarmInfo { alarmTitle = "Bangun", time = "09:00" });
+        //    BuzzOnAlarm(new AlarmInfo { alarmTitle = "Pekerjaan rumah", time = "09:00" });
         //}
     }
 }

@@ -198,10 +198,15 @@ public class HomeController : MonoBehaviour
         inventory.Show(value);
     }
 
-    public void SelectCharacter(AvatarInfo info, bool playAnimation = true)
+    public void SelectCharacter(AvatarInfo info, bool updateInfo, bool playAnimation = true)
     {
         selectedCharacter = character.SwitchCharacter(info.avatarId);
-        StartCoroutine(selectedCharacter.Init(info));
+        //
+        //
+        if (updateInfo)
+            StartCoroutine(selectedCharacter.Init(info));
+        //
+        //
         if(playAnimation) selectedCharacter.PlayChoosenAnimation();
 
         RefreshLevel(info);

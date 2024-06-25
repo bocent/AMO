@@ -26,7 +26,7 @@ public class LoginUI : MonoBehaviour
     {
         if (Validate())
         {
-            StartCoroutine(login.CheckLogin(emailInputField.text, passwordInputField.text, () =>
+            StartCoroutine(login.CheckLogin(emailInputField.text, passwordInputField.text, true, true, () =>
             {
                 CustomSceneManager.Instance.LoadScene("Home", null);
             },

@@ -481,17 +481,17 @@ public class SelectedCharacter : MonoBehaviour
         return null;
     }
 
-    private void TransferStats(int avatarId)
-    {
-        AvatarInfo targetAvatarInfo = Character.Instance.GetAvatarInfo(avatarId);
-        Debug.LogError("avatar id : " + targetAvatarInfo.avatarId + " " + targetAvatarInfo.stageType.ToString());
-        //targetAvatarInfo.mood = Info.mood;
-        //targetAvatarInfo.energy = Info.energy;
-        targetAvatarInfo.level = Info.level;
-        targetAvatarInfo.isUnlocked = true;
-        HomeController.Instance.SelectCharacter(targetAvatarInfo);
-        Info = targetAvatarInfo;
-    }
+    //private void TransferStats(int avatarId)
+    //{
+    //    AvatarInfo targetAvatarInfo = Character.Instance.GetAvatarInfo(avatarId);
+    //    Debug.LogError("avatar id : " + targetAvatarInfo.avatarId + " " + targetAvatarInfo.stageType.ToString());
+    //    //targetAvatarInfo.mood = Info.mood;
+    //    //targetAvatarInfo.energy = Info.energy;
+    //    targetAvatarInfo.level = Info.level;
+    //    targetAvatarInfo.isUnlocked = true;
+    //    HomeController.Instance.SelectCharacter(targetAvatarInfo);
+    //    Info = targetAvatarInfo;
+    //}
 
     private void Update()
     {
