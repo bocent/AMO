@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Verification : MonoBehaviour
@@ -31,6 +32,7 @@ public class Verification : MonoBehaviour
     private void Back()
     {
         login.ShowVerification(false);
+        SceneManager.LoadScene("Login");
     }
 
     public void ResetTime()

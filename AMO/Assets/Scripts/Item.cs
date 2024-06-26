@@ -42,7 +42,7 @@ public class Item : MonoBehaviour
 
     public void SelectItem(bool isOn)
     {
-        if (isOn)
+        if (isOn && !toggle.isOn)
         {
             Debug.LogWarning("accId : " + Info.accessoryId);
             StartCoroutine(library.RequestEquipItem(Info.accessoryId, (itemId) => { 
@@ -54,5 +54,6 @@ public class Item : MonoBehaviour
     public void SelectItem()
     {
         HomeController.Instance.selectedCharacter.AddAccessory(Info.accessoryId, false);
+        Character.Instance.currentCharacter.PlayIdleAnimation();
     }
 }

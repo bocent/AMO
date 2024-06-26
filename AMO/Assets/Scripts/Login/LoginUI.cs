@@ -38,7 +38,7 @@ public class LoginUI : MonoBehaviour
         }
         else
         {
-            PopupManager.Instance.ShowPopupMessage("err", "Data Tidak Valid", "Username dan Password harus diisi",
+            PopupManager.Instance.ShowPopupMessage("err", "Data Tidak Valid", "Email dan Password harus diisi",
                     new ButtonInfo { content = "OK" });
         }
 

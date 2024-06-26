@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,7 @@ public class CharacterAnimation : MonoBehaviour
 {
     private Animator animator;
 
-    private void Start()
+    private void Awake()
     {
         animator = GetComponent<Animator>();
     }
@@ -30,9 +31,26 @@ public class CharacterAnimation : MonoBehaviour
         animator.SetInteger(conditionName, value);
     }
 
-    public void SetAnimationCondition(string conditionName)
+    public float SetAnimationCondition(string conditionName)
     {
-        if (!animator) animator = GetComponent<Animator>();
-        animator.SetTrigger(conditionName);
+        if (gameObject.activeInHierarchy)
+        {
+            if (!animator) animator = GetComponent<Animator>();
+            animator.SetTrigger(conditionName);
+            Debug.LogWarning("set idle animation " + DateTime.Now.Ticks);
+            return animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+        }
+        return 0f;
+    }
+
+    public void SetIdleAnimation(string conditionName, float time)
+    {
+        if (gameObject.activeInHierarchy)
+        {
+            if (!animator) animator = GetComponent<Animator>();
+            animator.Play("Idle", 0, time);
+            animator.SetTrigger(conditionName);
+            Debug.LogWarning("set acc idle animation " + DateTime.Now.Ticks);
+        }
     }
 }

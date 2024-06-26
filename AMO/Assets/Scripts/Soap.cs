@@ -15,6 +15,7 @@ public class Soap : MonoBehaviour
 
     public void Show(Clean clean)
     {
+        Debug.LogWarning("Soap");
         this.clean = clean;
         gameObject.SetActive(true);
         soapImage.enabled = false;
@@ -66,7 +67,6 @@ public class Soap : MonoBehaviour
         soapParticle.transform.position = rayPos;
         if (Physics.Raycast(rayPos, transform.forward, out RaycastHit hitInfo, 10f, targetLayer))
         {
-            Debug.LogWarning("touch : " + hitInfo.collider.name);
             if (hitInfo.collider != null && lastPos != transform.position)
             {
                 float value = clean.Cleaning();

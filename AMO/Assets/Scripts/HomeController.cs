@@ -81,6 +81,11 @@ public class HomeController : MonoBehaviour
         return Mathf.RoundToInt(energyToSecond * seconds);
     }
 
+    private void SetEnergyAndMood()
+    {
+        Character.Instance.currentCharacter.SetEnergyAndMood();
+    }
+
     private void Update()
     {
         elapsedTime += Time.deltaTime;
@@ -95,6 +100,9 @@ public class HomeController : MonoBehaviour
             UserData.SetMood((Main.MoodStage)(4 - Mathf.CeilToInt(UserData.Energy / 25)));
             if ((int)UserData.Mood != Character.Instance.GetCurrentAvatarInfo().mood && energyController.energyMeterList.Where(x => x.minEnergy == Mathf.RoundToInt(UserData.Energy)).FirstOrDefault() != null)
             {
+                SetEnergyAndMood();
+
+
                 Character.Instance.GetCurrentAvatarInfo().mood = (int)UserData.Mood;
                 //UserData.SetMood((Main.MoodStage)currentLimitation.mood);
                 //UserData.SetRequirementList(currentLimitation.requirementList);
@@ -129,11 +137,12 @@ public class HomeController : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            StartCoroutine(Character.Instance.RequestAddExperience(
-                      Character.Instance.GetCurrentAvatarInfo().avatarId, Random.Range(10, 500), null, null));
-        }
+        //if (Input.GetKeyDown(KeyCode.E))
+        //{
+        //    StartCoroutine(Character.Instance.RequestAddExperience(
+        //              Character.Instance.GetCurrentAvatarInfo().avatarId, Random.Range(10, 500), null, null));
+        //}
+
         //if (Input.GetKeyDown(KeyCode.S))
         //{
         //    LoadScanScene();
@@ -212,6 +221,7 @@ public class HomeController : MonoBehaviour
         RefreshLevel(info);
 
         avatar.SetAvatar(info);
+        ActionProgress.Instance.SetFillBar(0);
     }
 
     public void RefreshCoins()

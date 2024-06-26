@@ -329,9 +329,10 @@ public class CharacterSelection : MonoBehaviour, IPointerDownHandler, IPointerUp
     private void ChangeColor(AvatarInfo info)
     {
         background.color = info.color;
-        nameBackground.color = info.color;
-        evolutionText.color = info.color;
         nameText.text = info.avatarName;
+        evolutionText.color = info.textColor;
+        nameBackground.sprite = Main.Instance.GetSprite(info.avatarName + "_Button");
+        backButton.GetComponent<Image>().sprite = Main.Instance.GetSprite(info.avatarName + "_Back");
     }
 
     private void SelectCharacter(AvatarInfo info)

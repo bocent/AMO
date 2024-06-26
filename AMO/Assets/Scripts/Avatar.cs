@@ -34,6 +34,7 @@ public class AvatarInfo
     //public GameObject characterPrefab;
     //public GameObject characterSelectionPrefab;
     public Color color = Color.white;
+    public Color textColor = Color.white;
     public bool isUnlocked;
     public int nextEvolutionId;
 

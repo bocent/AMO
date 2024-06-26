@@ -66,6 +66,33 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: dde0ededa4ff93847b05619e4d10fbb5, type: 3}
   - id: BROKEN
     sprite: {fileID: 21300000, guid: 8233254cc780f08479e6c77d0e5ea724, type: 3}
+  - id: Soap
+    sprite: {fileID: 21300000, guid: ed0d7f3e2b0d0764db89fca5f4a81efa, type: 3}
+  - id: Battery
+    sprite: {fileID: 21300000, guid: a643910c416c2a746ab96690dab6dbb9, type: 3}
+  - id: Wrench
+    sprite: {fileID: 21300000, guid: f80b2bb96b53b5e41886a90106e2222a, type: 3}
+  - id: Aroha_Back
+    sprite: {fileID: 21300000, guid: 950d1ed4d09b2474fa8add38ebb96ea6, type: 3}
+  - id: Mochi_Back
+    sprite: {fileID: 21300000, guid: afab4e21055e62848b55b4fe03df951a, type: 3}
+  - id: Gilmo_Back
+    sprite: {fileID: 21300000, guid: f45a889a8b93d824398fb345afc57af7, type: 3}
+  - id: Lorry_Back
+    sprite: {fileID: 21300000, guid: 7346682544f3c1147b1a3625fd50ea0b, type: 3}
+  - id: Olga_Back
+    sprite: {fileID: 21300000, guid: 9514b67c948a0de49818bdfc9edc735c, type: 3}
+  - id: Aroha_Button
+    sprite: {fileID: 21300000, guid: 464d0536afb6387439bb6ebc26afdf97, type: 3}
+  - id: Mochi_Button
+    sprite: {fileID: 21300000, guid: be4c7063251f23d47ac009507adc2135, type: 3}
+  - id: Gilmo_Button
+    sprite: {fileID: 21300000, guid: c780b888bb161c6429a024df949f38c9, type: 3}
+  - id: Lorry_Button
+    sprite: {fileID: 21300000, guid: 777614cc61bcea742a604984f3c09b07, type: 3}
+  - id: Olga_Button
+    sprite: {fileID: 21300000, guid: eabb4792c9f61e64e82912ef1404be93, type: 3}
+  unlockItemPopup: {fileID: 0}
   limitationList:
   - energyMax: 100
     energyMin: 60
@@ -75,7 +102,7 @@ MonoBehaviour:
     canUseReminder: 1
     hygiene: Clean
     mood: 0
-    dessing: 0
+    dressing: 0
     requirementList: 
   - energyMax: 60
     energyMin: 40
@@ -85,7 +112,7 @@ MonoBehaviour:
     canUseReminder: 1
     hygiene: Little Dirty
     mood: 1
-    dessing: 1
+    dressing: 0
     requirementList: 0000000001000000
   - energyMax: 40
     energyMin: 20
@@ -95,7 +122,7 @@ MonoBehaviour:
     canUseReminder: 0
     hygiene: Dirty
     mood: 2
-    dessing: 2
+    dressing: 0
     requirementList: 0000000001000000
   - energyMax: 20
     energyMin: -1
@@ -105,5 +132,5 @@ MonoBehaviour:
     canUseReminder: 0
     hygiene: Dirty
     mood: 3
-    dessing: 2
+    dressing: 0
     requirementList: 000000000100000002000000

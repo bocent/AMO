@@ -151,7 +151,7 @@ public class Inventory : MonoBehaviour
                     {
                         if (UserData.GetRequirementList().Contains((int)Main.RequirementType.NEED_FIX_UP))
                         {
-                            PopupManager.Instance.ShowPopupMessage("err", "UNABLE TO FEED AMO", "AMO need to be fixed first", new ButtonInfo { content = "OK" });
+                            PopupManager.Instance.ShowPopupMessage("err", "Tidak Dapat Memberi Makan AMO", "AMO perlu diperbaiki terlebih dahulu", new ButtonInfo { content = "OK" });
                         }
                         else
                         {

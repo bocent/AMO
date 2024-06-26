@@ -21,9 +21,10 @@ public class Clean : ActivityTask
 
     private void ShowSoap()
     {
+        Debug.LogWarning("Show Soap");
         if (UserData.GetRequirementList().Contains((int)Main.RequirementType.NEED_FIX_UP))
         {
-            PopupManager.Instance.ShowPopupMessage("err", "UNABLE TO FEED AMO", "AMO need to be fixed first", new ButtonInfo { content = "OK" });
+            PopupManager.Instance.ShowPopupMessage("err", "Tidak Dapat Memberi Makan AMO", "AMO perlu diperbaiki terlebih dahulu", new ButtonInfo { content = "OK" });
         }
         else
         {
@@ -42,6 +43,7 @@ public class Clean : ActivityTask
     {
         Character.Instance.currentCharacter.PlayCleanUpAnimation(false);
         soap.Hide();
+        ActionProgress.Instance.SetFillBar(0);
     }
 
     public float Cleaning()
@@ -56,6 +58,7 @@ public class Clean : ActivityTask
             Reset();
             HideSoap();
             ActionProgress.Instance.Hide();
+            ActionProgress.Instance.SetFillBar(0);
             if (UserData.GetRequirementList() != null)
             {
                 //UserData.RemoveRequirement((int)Main.RequirementType.NEED_CLEAN_UP);

@@ -52,6 +52,7 @@ public class Login : MonoBehaviour
                 CustomSceneManager.Instance.LoadScene("Home", null);
             }, (error) =>
             {
+                ShowLoginPage();
                 PopupManager.Instance.ShowPopupMessage("err", "Gagal Login Otomatis",
                     "Ulangi login secara manual", new ButtonInfo { content = "OK" });
             }));
@@ -112,7 +113,6 @@ public class Login : MonoBehaviour
             GetComponent<Verification>().ResetTime();
         }
     }
-
 
     /// <summary>
     /// Return string token onComplete
@@ -234,6 +234,64 @@ public class Login : MonoBehaviour
                    {
                        content = "Ulangi",
                        onButtonClicked = () => StartCoroutine(CheckLogin(email, password, isSaveToLocal, includeToken, onSuccess, onFailed))
+                   },
+                   new ButtonInfo
+                   {
+                       content = "Batal"
+                   });
+            }
+        }
+    }
+
+    public IEnumerator BindAccount(string email, string password, Action onSuccess, Action<string> onFailed)
+    {
+        string json = "{\"email\": \"" + email + "\", \"password\": \"" + password + "\"}";
+        WWWForm form = new WWWForm();
+        form.AddField("data", json);
+        Debug.LogWarning("BindAccount : " + email + " " + password);
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "request_link", form))
+        {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    LoginResponse response = JsonUtility.FromJson<LoginResponse>(uwr.downloadHandler.text);
+                    Debug.Log(uwr.downloadHandler.text);
+                    if (response != null)
+                    {
+                        if (response.status.ToLower() == "ok")
+                        {
+                            UserData.token = response.token;
+                            //PlayerPrefs.SetString("email", email);
+                            //PlayerPrefs.SetString("password", password);
+                            //PlayerPrefs.Save();
+                            Debug.LogWarning("Login successfully : " + email);
+                            onSuccess?.Invoke();
+                        }
+                        else
+                        {
+                            Debug.LogError("err : " + response.msg);
+                            throw new Exception(response.msg);
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.LogError("err : " + uwr.error);
+                    throw new Exception(uwr.error);
+                }
+            }
+
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                   new ButtonInfo
+                   {
+                       content = "Ulangi",
+                       onButtonClicked = () => StartCoroutine(BindAccount(email, password, onSuccess, onFailed))
                    },
                    new ButtonInfo
                    {

@@ -1,7 +1,9 @@
+using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class SelectedCharacter : MonoBehaviour
 {
@@ -23,6 +25,7 @@ public class SelectedCharacter : MonoBehaviour
     private AudioSource voiceSource;
 
     private List<GameObject> equippedAccessories = new List<GameObject>();
+    private List<CharacterAnimation> characterAnimations = new List<CharacterAnimation>();
 
     private CharacterAnimation characterAnimation;
     private const string HELMET_KEY = "helmet";
@@ -43,8 +46,9 @@ public class SelectedCharacter : MonoBehaviour
         //int outfitId = LoadAccessory(AccessoryType.Outfit);
         AddAccessory(info.helmetId, false);
         AddAccessory(info.outfitId, false);
-        yield return new WaitForSeconds(0.1f);
-        PlayIdleAnimation();
+        yield return new WaitForSeconds(0.5f);
+        SetEnergyAndMood();
+        //PlayIdleAnimation();
     }
 
     public int GetMood()
@@ -104,21 +108,27 @@ public class SelectedCharacter : MonoBehaviour
         voiceSource.Play();    
     }
 
-    public void PlayIdleAnimation()
+    public IEnumerator PlayIdleAnimation()
     {
+        yield return null;
+        Debug.LogWarning("Play Idle Animation");
         string conditionName = "Idle";
         if (characterAnimation)
         {
-            characterAnimation.SetAnimationCondition(conditionName);
-            foreach (GameObject equippedAccessory in equippedAccessories)
+            float time = characterAnimation.SetAnimationCondition(conditionName);
+            //foreach (GameObject equippedAccessory in equippedAccessories)
+            //{
+            //    CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
+            //    if (characterAnim) characterAnim.SetIdleAnimation(conditionName, time);
+            //    CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
+            //    foreach (CharacterAnimation animation in animations)
+            //    {
+            //        animation.SetIdleAnimation(conditionName, time);
+            //    }
+            //}
+            foreach (CharacterAnimation anim in characterAnimations)
             {
-                CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
-                if (characterAnim) characterAnim.SetAnimationCondition(conditionName);
-                CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
-                foreach (CharacterAnimation animation in animations)
-                {
-                    animation.SetAnimationCondition(conditionName);
-                }
+                anim.SetIdleAnimation(conditionName, time);
             }
         }
     }
@@ -269,6 +279,7 @@ public class SelectedCharacter : MonoBehaviour
         Debug.LogError("helmet acc : " + helmetAccessory);
         if (helmetAccessory != null)
         {
+            characterAnimations.Remove(helmetAccessory.GetComponent<CharacterAnimation>());
             equippedAccessories.Remove(helmetAccessory.gameObject);
             Destroy(helmetAccessory.gameObject);
         }
@@ -284,6 +295,7 @@ public class SelectedCharacter : MonoBehaviour
                 helmetAccessory.Init(info);
                 Info.helmetId = info.accessoryId;
                 equippedAccessories.Add(head);
+                characterAnimations.Add(head.GetComponent<CharacterAnimation>());
 
                 //SaveAccessory(AccessoryType.Helmet, info.accessoryId);
                 PlayIdleAnimation();
@@ -310,6 +322,10 @@ public class SelectedCharacter : MonoBehaviour
         Debug.LogWarning("outfit : " + outfitAccessory);
         if (outfitAccessory != null)
         {
+            foreach (CharacterAnimation anim in outfitAccessory.GetComponentsInChildren<CharacterAnimation>())
+            {
+                characterAnimations.Remove(anim);
+            }
             equippedAccessories.Remove(outfitAccessory.gameObject);
             Destroy(outfitAccessory.gameObject);
             outfitAccessory = null;
@@ -325,6 +341,7 @@ public class SelectedCharacter : MonoBehaviour
                 outfitAccessory.Init(info);
                 Info.outfitId = info.accessoryId;
                 equippedAccessories.Add(body);
+                characterAnimations.AddRange(body.GetComponentsInChildren<CharacterAnimation>());
                 //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
                 PlayIdleAnimation();
                 return body;
@@ -493,13 +510,25 @@ public class SelectedCharacter : MonoBehaviour
     //    Info = targetAvatarInfo;
     //}
 
-    private void Update()
+    private void LateUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            PlayChoosenAnimation();
-        }
+        //if (Input.GetKeyDown(KeyCode.V))
+        //{
+        //    PlayChoosenAnimation();
+        //}
 
+        
+        //float moodValue = 0;
+        //int index = HomeController.Instance.energyController.energyMeterList.FindIndex(x => x.maxEnergy >= UserData.Energy && x.minEnergy < UserData.Energy);
+        //if (index >= 0)
+        //{
+        //    moodValue = index * 0.25f;
+        //}
+        SetEnergyAndMood();
+    }
+
+    public void SetEnergyAndMood()
+    {
         string MOOD = "Mood";
         string ENERGY = "Energy";
 
@@ -509,22 +538,13 @@ public class SelectedCharacter : MonoBehaviour
         {
             moodValue = index * 0.25f;
         }
+
         characterAnimation.SetAnimationCondition(MOOD, moodValue);
         characterAnimation.SetAnimationCondition(ENERGY, (int)UserData.Energy);
-        foreach (GameObject equippedAccessory in equippedAccessories)
+        foreach (CharacterAnimation anim in characterAnimations)
         {
-            CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
-            if (characterAnim)
-            {
-                characterAnim.SetAnimationCondition(MOOD, moodValue);
-                characterAnim.SetAnimationCondition(ENERGY, (int)UserData.Energy);
-            }
-            CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
-            foreach (CharacterAnimation animation in animations)
-            {
-                animation.SetAnimationCondition(MOOD, moodValue);
-                animation.SetAnimationCondition(ENERGY, (int)UserData.Energy);
-            }
+            anim.SetAnimationCondition(MOOD, moodValue);
+            anim.SetAnimationCondition(ENERGY, (int)UserData.Energy);
         }
     }
 }

@@ -97,14 +97,12 @@ public class Character : MonoBehaviour
     {
         foreach (AvatarInfo info in avatarInfoList)
         {
-            Debug.LogWarning("stage : " + info.stageType.ToString());
             foreach(EvolutionResponse data in info.evolutionList)
             {
                 GameObject charObj = Instantiate(data.characterPrefab, characterParent, false);
                 SelectedCharacter character = charObj.GetComponent<SelectedCharacter>();
                 AvatarInfo newInfo = info.Clone();
                 newInfo.stageType = GetStageType(data.evolutionName);
-                Debug.LogWarning("init : " + newInfo.avatarName + " " + newInfo.stageType.ToString());
                 StartCoroutine(character.Init(newInfo));
                 charObj.SetActive(false);
                 characterList.Add(character);
@@ -140,12 +138,10 @@ public class Character : MonoBehaviour
             {
                 currentCharacter = character;
                 character.gameObject.SetActive(true);
-                Debug.LogWarning("setactive : " + character, character);
             }
             else
             {
                 character.gameObject.SetActive(false);
-                Debug.LogWarning("disabled : " + character, character);
             }
         }        
         return currentCharacter;
