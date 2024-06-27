@@ -210,6 +210,25 @@ public class SelectedCharacter : MonoBehaviour
         }
     }
 
+    public void PlayThinkAnimation(bool value)
+    {
+        string conditionName = "Thinking";
+        if (characterAnimation)
+        {
+            characterAnimation.SetAnimationCondition(conditionName, value);
+            foreach (GameObject equippedAccessory in equippedAccessories)
+            {
+                CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
+                if (characterAnim) characterAnim.SetAnimationCondition(conditionName, value);
+                CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
+                foreach (CharacterAnimation animation in animations)
+                {
+                    animation.SetAnimationCondition(conditionName, value);
+                }
+            }
+        }
+    }
+
     public void PlayCleanUpAnimation(bool value)
     {
         string conditionName = "CleanUp";

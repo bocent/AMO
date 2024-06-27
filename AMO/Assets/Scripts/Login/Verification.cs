@@ -32,6 +32,8 @@ public class Verification : MonoBehaviour
     private void Back()
     {
         login.ShowVerification(false);
+        PlayerPrefs.DeleteKey("guest_email");
+        PlayerPrefs.DeleteKey("guest_password");
         SceneManager.LoadScene("Login");
     }
 

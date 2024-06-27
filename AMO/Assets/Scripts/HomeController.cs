@@ -74,6 +74,8 @@ public class HomeController : MonoBehaviour
         startTimeInSecond = dateTime.Second + dateTime.Minute * 60 + dateTime.Hour * 3600 + dateTime.DayOfYear * 86400;
         
         coins.SetCoin(UserData.Coins.ToString());
+        PlayerPrefs.SetInt(Consts.HAS_ENTER, 1);
+
     }
 
     public int ConvertSecondsToEnergy(int seconds)

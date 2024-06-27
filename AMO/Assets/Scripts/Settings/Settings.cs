@@ -37,7 +37,14 @@ public class Settings : MonoBehaviour
         closeButton.onClick.AddListener(Close);
         changeNameButton.onClick.AddListener(ChangeName);
         saveNameButton.onClick.AddListener(SaveName);
-        bindAccountButton.onClick.AddListener(BindAccount);
+        if (!PlayerPrefs.HasKey("email"))
+        {
+            bindAccountButton.onClick.AddListener(BindAccount);
+        }
+        else
+        {
+            bindAccountButton.gameObject.SetActive(false);
+        }
         logoutButton.onClick.AddListener(Logout);
         //nameInputField.onSubmit.AddListener(SubmitName);
 
@@ -105,9 +112,27 @@ public class Settings : MonoBehaviour
 
     public void Logout()
     {
-        PlayerPrefs.DeleteKey("email");
-        PlayerPrefs.DeleteKey("password");
-        CustomSceneManager.Instance.LoadScene("Login", null);
+        if (PlayerPrefs.HasKey("guest_email"))
+        {
+            PopupManager.Instance.ShowPopupMessage("remind", "Peringatan", "Akun guestmu akan hilang jika kamu logout", new ButtonInfo
+            {
+                content = "Logout",
+                onButtonClicked = () =>
+                {
+                    PlayerPrefs.DeleteKey("email");
+                    PlayerPrefs.DeleteKey("password");
+                    PlayerPrefs.DeleteKey("guest_email");
+                    PlayerPrefs.DeleteKey("guest_password");
+                    CustomSceneManager.Instance.LoadScene("Login", null);
+                }
+            }, new ButtonInfo { content = "Batal" });
+        }
+        else
+        {
+            PlayerPrefs.DeleteKey("email");
+            PlayerPrefs.DeleteKey("password");
+            CustomSceneManager.Instance.LoadScene("Login", null);
+        }
     }
 
     public void SubmitName(string text)

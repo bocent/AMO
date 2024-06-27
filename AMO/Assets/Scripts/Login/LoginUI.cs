@@ -11,6 +11,7 @@ public class LoginUI : MonoBehaviour
     public Button loginButton;
     public Button signUpButton;
     public Button forgetButton;
+    public Button guestLoginButton;
 
     private Login login;
 
@@ -19,14 +20,20 @@ public class LoginUI : MonoBehaviour
         loginButton.onClick.AddListener(Login);
         signUpButton.onClick.AddListener(SignUp);
         forgetButton.onClick.AddListener(ForgetPassword);
+        guestLoginButton.onClick.AddListener(GuestLogin);
         login = GetComponent<Login>();
+    }
+
+    public void GuestLogin()
+    {
+        StartCoroutine(login.GuestLogin());
     }
 
     private void Login()
     {
         if (Validate())
         {
-            StartCoroutine(login.CheckLogin(emailInputField.text, passwordInputField.text, true, true, () =>
+            StartCoroutine(login.CheckLogin(emailInputField.text, passwordInputField.text, true, false, () =>
             {
                 CustomSceneManager.Instance.LoadScene("Home", null);
             },

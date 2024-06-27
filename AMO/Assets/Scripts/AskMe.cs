@@ -243,6 +243,7 @@ public class AskMe : MonoBehaviour
             Microphone.End(null);
 #endif
 
+            Character.Instance.currentCharacter.PlayThinkAnimation(true);
             byte[] data = SaveWav.Save(fileName, clip);
 
             var req = new CreateAudioTranscriptionsRequest
@@ -313,6 +314,7 @@ public class AskMe : MonoBehaviour
             {
                 Debug.LogError("err : " + res.Error);
                 canRecord = true;
+                Character.Instance.currentCharacter.PlayThinkAnimation(false);
             }
         }
     }
@@ -391,6 +393,7 @@ public class AskMe : MonoBehaviour
                 Debug.LogError("err : " + uwr.error);
             }
             canRecord = true;
+            Character.Instance.currentCharacter.PlayThinkAnimation(false);
         }
     }
 

@@ -32,4 +32,8 @@ public class Consts
 
     public const string BASE_URL = "https://dev.amoevo.my.id/";
     public const string MENU_URL = "menu/";
+
+    public const string HAS_ACCOUNT = "has_account";
+    public const string HAS_ENTER = "has_enter";
+    public const string HAS_VERIFIED = "has_verified";
 }

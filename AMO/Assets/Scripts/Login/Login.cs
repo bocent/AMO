@@ -45,37 +45,60 @@ public class Login : MonoBehaviour
         //    }));
         //}
 
-        if (PlayerPrefs.HasKey("email") && SceneManager.GetActiveScene().name != "Home")
+        if (SceneManager.GetActiveScene().name != "Home")
         {
-            StartCoroutine(CheckLogin(PlayerPrefs.GetString("email"), PlayerPrefs.GetString("password"), false, true, () =>
+            if (PlayerPrefs.HasKey("email") && PlayerPrefs.HasKey(Consts.HAS_VERIFIED))
             {
-                CustomSceneManager.Instance.LoadScene("Home", null);
-            }, (error) =>
-            {
-                ShowLoginPage();
-                PopupManager.Instance.ShowPopupMessage("err", "Gagal Login Otomatis",
-                    "Ulangi login secara manual", new ButtonInfo { content = "OK" });
-            }));
-        }
-        else if (SceneManager.GetActiveScene().name != "Home")
-        {
-            Debug.LogWarning("Guest Login");
-            StartCoroutine(Register(GUEST, "12345678", (email) =>
-            {
-                StartCoroutine(CheckLogin(email, "12345678", true, true, () =>
+                StartCoroutine(CheckLogin(PlayerPrefs.GetString("email"), PlayerPrefs.GetString("password"), false, true, () =>
                 {
                     CustomSceneManager.Instance.LoadScene("Home", null);
-                }, null));
-            }, (error) =>
+                }, (error) =>
+                {
+                    ShowLoginPage();
+                    PopupManager.Instance.ShowPopupMessage("err", "Gagal Login Otomatis",
+                        "Ulangi login secara manual", new ButtonInfo { content = "OK" });
+                }));
+            }
+            else if (!PlayerPrefs.HasKey(Consts.HAS_ACCOUNT) && !PlayerPrefs.HasKey(Consts.HAS_ENTER))
             {
-                //PopupManager.Instance.ShowPopupMessage("err", "Gagal Login Otomatis",
-                //    "Ulangi login secara manual", new ButtonInfo { content = "OK" });
-            }));
+                StartCoroutine(GuestLogin());
+            }
+            else
+            {
+                if (PlayerPrefs.HasKey("guest_email"))
+                {
+                    StartCoroutine(CheckLogin(PlayerPrefs.GetString("guest_email"), PlayerPrefs.GetString("guest_password"), false, false, () =>
+                    {
+                        CustomSceneManager.Instance.LoadScene("Home", null);
+                    }, (error) =>
+                    {
+                        ShowLoginPage();
+                        PopupManager.Instance.ShowPopupMessage("err", "Gagal Login Otomatis",
+                            "Ulangi login secara manual", new ButtonInfo { content = "OK" });
+                    }));
+                }
+                else
+                {
+                    ShowLoginPage();
+                }
+            }
         }
-        else
+    }
+
+    public IEnumerator GuestLogin()
+    {
+        Debug.LogWarning("Guest Login");
+        yield return (Register(GUEST, "12345678", (email) =>
         {
-            ShowLoginPage();
-        }
+            StartCoroutine(CheckLogin(email, "12345678", true, true, () =>
+            {
+                CustomSceneManager.Instance.LoadScene("Home", null);
+            }, null));
+        }, (error) =>
+        {
+            //PopupManager.Instance.ShowPopupMessage("err", "Gagal Login Otomatis",
+            //    "Ulangi login secara manual", new ButtonInfo { content = "OK" });
+        }));
     }
 
     public void ShowLoginPage(bool value = true)
@@ -181,7 +204,7 @@ public class Login : MonoBehaviour
         }
     }
 
-    public IEnumerator CheckLogin(string email, string password, bool isSaveToLocal, bool includeToken, Action onSuccess, Action<string> onFailed)
+    public IEnumerator CheckLogin(string email, string password, bool isSaveToLocal, bool isGuest, Action onSuccess, Action<string> onFailed)
     {
         string json = "{\"email\": \"" + email + "\", \"password\": \"" + password + "\"}";
         WWWForm form = new WWWForm();
@@ -189,10 +212,6 @@ public class Login : MonoBehaviour
         Debug.LogWarning("CheckLogin : " + email + " " + password);
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "login", form))
         {
-            if (includeToken)
-            {
-                uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
-            }
             yield return uwr.SendWebRequest();
             try
             {
@@ -207,8 +226,21 @@ public class Login : MonoBehaviour
                             UserData.token = response.token;
                             if (isSaveToLocal)
                             {
-                                PlayerPrefs.SetString("email", email);
-                                PlayerPrefs.SetString("password", password);
+                                if (isGuest)
+                                {
+                                    PlayerPrefs.SetString("guest_email", email);
+                                    PlayerPrefs.SetString("guest_password", password);
+                                }
+                                else
+                                {
+                                    PlayerPrefs.SetString("email", email);
+                                    PlayerPrefs.SetString("password", password);
+                                }
+                                PlayerPrefs.Save();
+                            }
+                            if (SceneManager.GetActiveScene().name != "Home")
+                            {
+                                PlayerPrefs.SetInt(Consts.HAS_VERIFIED, 1);
                                 PlayerPrefs.Save();
                             }
                             Debug.LogWarning("Login successfully : " + email);
@@ -233,7 +265,7 @@ public class Login : MonoBehaviour
                    new ButtonInfo
                    {
                        content = "Ulangi",
-                       onButtonClicked = () => StartCoroutine(CheckLogin(email, password, isSaveToLocal, includeToken, onSuccess, onFailed))
+                       onButtonClicked = () => StartCoroutine(CheckLogin(email, password, isSaveToLocal, isGuest, onSuccess, onFailed))
                    },
                    new ButtonInfo
                    {
@@ -267,6 +299,8 @@ public class Login : MonoBehaviour
                             //PlayerPrefs.SetString("email", email);
                             //PlayerPrefs.SetString("password", password);
                             //PlayerPrefs.Save();
+                            PlayerPrefs.SetInt(Consts.HAS_ACCOUNT, 1);
+                            PlayerPrefs.Save();
                             Debug.LogWarning("Login successfully : " + email);
                             onSuccess?.Invoke();
                         }
