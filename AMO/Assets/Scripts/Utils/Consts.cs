@@ -31,6 +31,7 @@ public class Consts
     public const string FOOTER_URL = "";
 
     public const string BASE_URL = "https://dev.amoevo.my.id/";
+    public const string PROD_BASE_URL = "https://dev.amoevo.my.id/";
     public const string MENU_URL = "menu/";
 
     public const string HAS_ACCOUNT = "has_account";

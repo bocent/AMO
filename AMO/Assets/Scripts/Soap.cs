@@ -38,7 +38,7 @@ public class Soap : MonoBehaviour
         {
             if (UserData.GetRequirementList().Contains((int)Main.RequirementType.NEED_FIX_UP))
             {
-                PopupManager.Instance.ShowPopupMessage("err", "UNABLE TO FEED AMO", "AMO need to be fixed first", new ButtonInfo { content = "OK" });
+                PopupManager.Instance.ShowPopupMessage("err", "Tidak Dapat Membersihkan AMO", "AMO perlu diperbaiki terlebih dahulu", new ButtonInfo { content = "OK" });
                 ActionProgress.Instance.Hide();
                 Character.Instance.currentCharacter.PlayCleanUpAnimation(false);
                 Hide();

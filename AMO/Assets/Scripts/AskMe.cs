@@ -116,6 +116,9 @@ public class AskMe : MonoBehaviour
     [SerializeField] private AudioSource voiceSource;
     [SerializeField] private AudioClip recordSFX;
     [SerializeField] private AudioClip stopRecordSFX;
+    [SerializeField] private string openAiKey;
+    [SerializeField] private string openAiOrganization;
+    [SerializeField] private string elevenLabsKey;
 
     private readonly string fileName = "output.wav";
     private readonly float duration = 10;
@@ -126,7 +129,6 @@ public class AskMe : MonoBehaviour
     private float time;
     private OpenAIApi openai;
     private OpenAISecretKey openAISecretKey;
-    public TextAsset text;
 
     private const string MOCHI_VOICE_KEY = "jdtEogghM74T0WObHkIa";
     private const string AROHA_VOICE_KEY = "";
@@ -142,6 +144,7 @@ public class AskMe : MonoBehaviour
 
     private IEnumerator RequestOpenAISecretKey()
     {
+        yield break;
         //if (text)
         //{
         //    Debug.LogWarning("text : " + text.ToString().Trim(' '));
@@ -180,9 +183,13 @@ public class AskMe : MonoBehaviour
     private void Start()
     {
         //string encrypted = Utils.EncryptXOR("\"{ \\\"apiKey\\\" : \\\"sk-proj-79onAQqUEAGGgWfUMdk7T3BlbkFJ73jWQl0nCPKm4aUBmSsy\\\", \\\"organization\\\" : \\\"org-cGPsbYflW34h5iD4eoYgVmJI\\\" }\"", "amoverse");
-        
-        StartCoroutine(RequestOpenAISecretKey());
+
+        //StartCoroutine(RequestOpenAISecretKey());
         //recordButton.onClick.AddListener(StartRecording);
+
+        openai = new OpenAIApi(openAiKey, openAiOrganization);
+
+
         EventTrigger.Entry entry = new EventTrigger.Entry();
         entry.eventID = EventTriggerType.PointerDown;
         entry.callback.AddListener(OnRecordPressed);
@@ -434,7 +441,8 @@ public class AskMe : MonoBehaviour
         using (UnityWebRequest uwr = UnityWebRequest.Post(ELEVENLABS_BASE_URL + voiceCharacter, json, "application/json"))
         {
             uwr.downloadHandler = new DownloadHandlerAudioClip(ELEVENLABS_BASE_URL + voiceCharacter, AudioType.MPEG);
-            uwr.SetRequestHeader("xi-api-key", openAISecretKey.elevenLabs);
+            //uwr.SetRequestHeader("xi-api-key", openAISecretKey.elevenLabs);
+            uwr.SetRequestHeader("xi-api-key", elevenLabsKey);
             yield return uwr.SendWebRequest();
             Debug.LogError("result : " + uwr.result.ToString() + " " + uwr.downloadHandler.ToString());
             if (uwr.result == UnityWebRequest.Result.Success)
