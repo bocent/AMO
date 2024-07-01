@@ -15,6 +15,12 @@ public class AlarmInfo
     public bool isOn;
 }
 
+[Serializable]
+public class AlarmInfoList
+{
+    public List<AlarmInfo> alarmList;
+}
+
 public class AlarmController : MonoBehaviour
 {
     public List<AlarmInfo> alarmInfoList = new List<AlarmInfo>();
@@ -35,6 +41,7 @@ public class AlarmController : MonoBehaviour
     {
         addAlarmButton.onClick.AddListener(ShowAlarmCreator);
         cancelCreateButton.onClick.AddListener(HideAlarmCreator);
+        LoadAlarmList();
         //Debug.LogError("timespan now : " + DateTime.Now.TimeOfDay.ToString(@"hh\:mm"));
     }
 
@@ -46,6 +53,7 @@ public class AlarmController : MonoBehaviour
         alarmItem.Init(this, info);
         addAlarmButton.transform.SetAsLastSibling();
         ShowAddButton();
+
         return alarmItem;
     }
 
@@ -55,6 +63,8 @@ public class AlarmController : MonoBehaviour
         item.gameObject.SetActive(false);
         alarmCreator.gameObject.SetActive(false);
         ShowAddButton();
+        PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson( new AlarmInfoList { alarmList = alarmInfoList }));
+        PlayerPrefs.Save();
     }
 
     public void EditAlarm(AlarmItem item, AlarmInfo newInfo)
@@ -64,6 +74,8 @@ public class AlarmController : MonoBehaviour
         alarmInfoList[index] = newInfo;
         ClearList();
         LoadList();
+        PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
+        PlayerPrefs.Save();
     }
 
     private void ClearList()
@@ -107,6 +119,9 @@ public class AlarmController : MonoBehaviour
     {
         alarmInfoList.Add(info);
         ShowAddButton();
+        PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
+        Debug.LogWarning("save alarm :  " + JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
+        PlayerPrefs.Save();
     }
 
     private void ShowAlarmCreator()
@@ -194,6 +209,21 @@ public class AlarmController : MonoBehaviour
     private void ShowAddButton()
     {
         addAlarmButton.gameObject.SetActive(alarmInfoList.Count <= 3);
+    }
+
+    public void LoadAlarmList()
+    {
+        Debug.LogWarning("LoadAlarmList");
+        if (PlayerPrefs.HasKey(Consts.ALARM))
+        {
+            string json = PlayerPrefs.GetString(Consts.ALARM);
+            Debug.LogWarning("alarm json : " + json);
+            AlarmInfoList list = JsonUtility.FromJson<AlarmInfoList>(json);
+            if (list != null)
+            {
+                LoadList();
+            }
+        }
     }
 
     private void FixedUpdate()

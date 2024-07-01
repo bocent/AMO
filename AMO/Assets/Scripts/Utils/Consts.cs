@@ -37,4 +37,6 @@ public class Consts
     public const string HAS_ACCOUNT = "has_account";
     public const string HAS_ENTER = "has_enter";
     public const string HAS_VERIFIED = "has_verified";
+
+    public const string ALARM = "alarm";
 }

@@ -235,6 +235,11 @@ public class AlarmCreator : MonoBehaviour
         controller.HideAlarmCreator();
     }
 
+    private void Load()
+    {
+        
+    }
+
     private void OnHourSelected(int to, int from)
     {
         hourIndex = to;
