@@ -145,6 +145,12 @@ public class CharacterSelection : MonoBehaviour, IPointerDownHandler, IPointerUp
 
     public void Init()
     {
+        foreach (CharacterSelectionAnimation character in characterList)
+        {
+            Destroy(character.gameObject);
+        }
+        characterList = new List<CharacterSelectionAnimation>();
+
         Debug.LogWarning("Init : " + Character.Instance.SelectedAvatarId);
         int unlockedCharacterCount = 0;
         List<AvatarInfo> infoList = Character.Instance.GetAvatarInfoList().Where(x => x.isUnlocked == true).ToList();

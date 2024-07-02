@@ -16,6 +16,7 @@ public class ItemProduct : MonoBehaviour
 
     protected ShopItem item;
     protected ItemCoin coin;
+    protected AvatarInfo avatarInfo;
 
     protected virtual void Start()
     {
@@ -51,6 +52,11 @@ public class ItemProduct : MonoBehaviour
     }
 
     public virtual void Init(ShopItem item)
+    {
+        
+    }
+
+    public virtual void Init(AvatarInfo item)
     {
         
     }

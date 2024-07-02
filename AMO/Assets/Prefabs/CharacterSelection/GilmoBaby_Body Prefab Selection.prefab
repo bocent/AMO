@@ -1511,20 +1511,20 @@ MonoBehaviour:
   warnOnNullRefs: 1
   flipState: 0
   animCancel: []
-  headEnabled: 1
+  headEnabled: 0
   headTemplate: 0
   head2DProcessing: 0
   headTargetOffset: {x: 0, y: 0, z: 0}
   headClamp: {x: 70, y: 140, z: 45}
   headFacingCamera: 0
-  headRandom: 1
+  headRandom: 0
   headRandomFov: {x: 5, y: 45, z: 22.5}
   headRandFovHalf: {x: 0, y: 0, z: 0}
   headRandTimerRange: {x: 5, y: 10}
   headRandTimer: 0
   headUseDistExtents: 0
   headRandDistRange: {x: 1, y: 1}
-  updateHeadFwdCenterRefs: 1
+  updateHeadFwdCenterRefs: 0
   headTargetRadius: 0.01
   headBones: []
   headRefsFwd: []
@@ -1535,8 +1535,8 @@ MonoBehaviour:
   headTarget2D: {x: 0, y: 0, z: 0}
   heads: []
   headTarget2DDot: 0
-  eyeEnabled: 1
-  eyeTemplate: 1
+  eyeEnabled: 0
+  eyeTemplate: 0
   sectorCount: 3
   prevSectorCount: 0
   eyeControlType: 1
@@ -1905,15 +1905,16 @@ MonoBehaviour:
     stageType: 0
     energy: 0
     exp: 0
-    helmetId: 
-    outfitId: 
+    helmetId: 0
+    outfitId: 0
     skinId: 
     evolutionList: []
-    characterPrefab: {fileID: 0}
-    characterSelectionPrefab: {fileID: 0}
     color: {r: 1, g: 1, b: 1, a: 1}
+    textColor: {r: 1, g: 1, b: 1, a: 1}
     isUnlocked: 0
     nextEvolutionId: 0
+    price: 
+    currentMood: 0
   equippedAccessories:
   - {fileID: 3777637625589249526}
   index: 0

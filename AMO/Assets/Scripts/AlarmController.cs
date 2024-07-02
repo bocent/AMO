@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 [Serializable]
 public class AlarmInfo
@@ -41,7 +42,8 @@ public class AlarmController : MonoBehaviour
     {
         addAlarmButton.onClick.AddListener(ShowAlarmCreator);
         cancelCreateButton.onClick.AddListener(HideAlarmCreator);
-        LoadAlarmList();
+        StartCoroutine(RequestGetAlarm("", null, null));
+        //LoadAlarmList();
         //Debug.LogError("timespan now : " + DateTime.Now.TimeOfDay.ToString(@"hh\:mm"));
     }
 
@@ -63,8 +65,9 @@ public class AlarmController : MonoBehaviour
         item.gameObject.SetActive(false);
         alarmCreator.gameObject.SetActive(false);
         ShowAddButton();
-        PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson( new AlarmInfoList { alarmList = alarmInfoList }));
-        PlayerPrefs.Save();
+        //PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson( new AlarmInfoList { alarmList = alarmInfoList }));
+        //PlayerPrefs.Save();
+        
     }
 
     public void EditAlarm(AlarmItem item, AlarmInfo newInfo)
@@ -74,8 +77,9 @@ public class AlarmController : MonoBehaviour
         alarmInfoList[index] = newInfo;
         ClearList();
         LoadList();
-        PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
-        PlayerPrefs.Save();
+        //PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
+        //PlayerPrefs.Save();
+        //StartCoroutine(RequestSetAlarm(newInfo.alarmId, null, null));
     }
 
     private void ClearList()
@@ -119,9 +123,10 @@ public class AlarmController : MonoBehaviour
     {
         alarmInfoList.Add(info);
         ShowAddButton();
-        PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
-        Debug.LogWarning("save alarm :  " + JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
-        PlayerPrefs.Save();
+        //PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
+        //Debug.LogWarning("save alarm :  " + JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
+        //PlayerPrefs.Save();
+        //StartCoroutine(RequestSetAlarm(info.alarmId, null, null));
     }
 
     private void ShowAlarmCreator()
@@ -211,17 +216,119 @@ public class AlarmController : MonoBehaviour
         addAlarmButton.gameObject.SetActive(alarmInfoList.Count <= 3);
     }
 
-    public void LoadAlarmList()
+    //public void LoadAlarmList()
+    //{
+    //    Debug.LogWarning("LoadAlarmList");
+    //    if (PlayerPrefs.HasKey(Consts.ALARM))
+    //    {
+    //        string json = PlayerPrefs.GetString(Consts.ALARM);
+    //        Debug.LogWarning("alarm json : " + json);
+    //        AlarmInfoList list = JsonUtility.FromJson<AlarmInfoList>(json);
+    //        if (list != null)
+    //        {
+    //            LoadList();
+    //        }
+    //    }
+    //}
+
+    public IEnumerator RequestGetAlarm(string alarmId, Action onComplete, Action<string> onFailed)
     {
-        Debug.LogWarning("LoadAlarmList");
-        if (PlayerPrefs.HasKey(Consts.ALARM))
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"alarm_id\" : \"" + alarmId + "\" }");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "get_alarm", form))
         {
-            string json = PlayerPrefs.GetString(Consts.ALARM);
-            Debug.LogWarning("alarm json : " + json);
-            AlarmInfoList list = JsonUtility.FromJson<AlarmInfoList>(json);
-            if (list != null)
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            yield return uwr.SendWebRequest();
+            try
             {
-                LoadList();
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    AlarmResponse response = JsonUtility.FromJson<AlarmResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        foreach (Alarm alarm in response.alarm)
+                        {
+                            List<DayOfWeek> dayOfWeeks = new List<DayOfWeek>();
+                            if (alarm.sun == 1) dayOfWeeks.Add(DayOfWeek.Sunday);
+                            if (alarm.mon == 1) dayOfWeeks.Add(DayOfWeek.Monday);
+                            if (alarm.tue == 1) dayOfWeeks.Add(DayOfWeek.Tuesday);
+                            if (alarm.wed == 1) dayOfWeeks.Add(DayOfWeek.Wednesday);
+                            if (alarm.thu == 1) dayOfWeeks.Add(DayOfWeek.Thursday);
+                            if (alarm.fri == 1) dayOfWeeks.Add(DayOfWeek.Friday);
+                            if (alarm.sat == 1) dayOfWeeks.Add(DayOfWeek.Saturday);
+                            alarmInfoList.Add(new AlarmInfo { alarmId = alarm.alarm_id.ToString(), alarmTitle = alarm.title, isOn = alarm.active == 1, time = alarm.hour + ":" + alarm.minute, dayList = dayOfWeeks });
+                        }
+                        onComplete?.Invoke();
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
+                Debug.LogError("err : " + e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                    new ButtonInfo
+                    {
+                        content = "Ulangi",
+                        onButtonClicked = () => StartCoroutine(RequestGetAlarm(alarmId, onComplete, onFailed))
+                    },
+                    new ButtonInfo
+                    {
+                        content = "Batal"
+                    });
+            }
+        }
+    }
+
+    public IEnumerator RequestSetAlarm(string alarmId, int hour, int minute, int sun, int mon, int tue, int wed, int thu, int fri, int sat, string title, int active, Action onComplete, Action<string> onFailed)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"alarm_id\" : \"" + alarmId + "\",  \"hour\" : \"" + hour + "\", \"minute\" : \"" + minute + "\", \"sun\" : \"" + sun + "\", \"mon\" : \"" + mon + "\", \"tue\" : \"" + tue + "\", \"wed\" : \"" + wed + "\", \"thu\" : \"" + thu + "\", \"fri\" : \"" + fri + "\", \"sat\" : \"" + sat + "\", \"title\" : \"" + title + "\", \"active\" : \"" + active + "\"}");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "set_alarm", form))
+        {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    BuyItemResponse response = JsonUtility.FromJson<BuyItemResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        onComplete?.Invoke();
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
+                Debug.LogError("err : " + e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                    new ButtonInfo
+                    {
+                        content = "Ulangi",
+                        onButtonClicked = () => StartCoroutine(RequestSetAlarm(alarmId, hour, minute, sun, mon, tue, wed, thu, fri, sat, title, active, onComplete, onFailed))
+                    },
+                    new ButtonInfo
+                    {
+                        content = "Batal"
+                    });
             }
         }
     }

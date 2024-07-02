@@ -110,6 +110,9 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
         coinToggle.isOn = true;
         StartCoroutine(RequestCoinList(() => {
             StartCoroutine(RequestItemList(() => {
+
+                LoadCharacterList(Character.Instance.GetAvatarInfoList());
+
                 container.SetActive(true);
                 UpdateCoin();
             }, null));
@@ -190,6 +193,32 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
             new ButtonInfo { content = "Batal" });
     }
 
+    public void BuyProduct(AvatarInfo item)
+    {
+        Debug.LogWarning("buy item : " + item.avatarName);
+        PopupManager.Instance.ShowPopupMessage("topup", "Konfirmasi", "Apakah kamu yakin untuk membeli <color=yellow>" + item.avatarName + "</color>?",
+            new ButtonInfo
+            {
+                content = "Ya",
+                onButtonClicked = () => StartCoroutine(RequestBuyCharacter(item.avatarId,
+                (coins) =>
+                {
+                    UserData.SetCoin(coins);
+                    StartCoroutine(Character.Instance.RequestUserData((coin) =>
+                    {
+                        Character.Instance.Reset();
+                        LoadingManager.Instance.HideSpinLoading();
+                    }, null));
+                   
+                },
+                (error) =>
+                {
+
+                }))
+            },
+            new ButtonInfo { content = "Batal" });
+    }
+
     private void InitializePurchasing()
     {
         //Debug.LogWarning("InitializePurchasing...");
@@ -264,9 +293,6 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
         coinText.text = UserData.Coins.ToString();
     }
 
-
-
-
     public IEnumerator RequestBuyCoin(int coinId, Action onComplete, Action<string> onFailed)
     {
         WWWForm form = new WWWForm();
@@ -330,7 +356,7 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
                         LoadHelmetList(response.item_sell.accessories.helmet);
                         LoadOutfitList(response.item_sell.accessories.outfit);
                         LoadChargeList(response.item_sell.charge);
-                        LoadCharacterList(response.item_sell.karakter);
+                        
                         
                         onComplete?.Invoke();
                     }
@@ -455,6 +481,53 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
         }
     }
 
+    private IEnumerator RequestBuyCharacter(int productId, Action<int> onComplete, Action<string> onFailed)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"karakter_id\" : \"" + productId + "\" }");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "buy_karakter", form))
+        {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    BuyItemResponse response = JsonUtility.FromJson<BuyItemResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        Debug.LogWarning("buy response : " + uwr.downloadHandler.text);
+                        Debug.LogWarning("coin remaining : " + response.sisa_coin);
+                        onComplete?.Invoke(response.sisa_coin);
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
+                Debug.LogError("err : " + e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                    new ButtonInfo
+                    {
+                        content = "Ulangi",
+                        onButtonClicked = () => StartCoroutine(RequestBuyCharacter(productId, onComplete, onFailed))
+                    },
+                    new ButtonInfo
+                    {
+                        content = "Batal"
+                    });
+            }
+        }
+    }
+
     private void LoadCoinList(ItemCoin[] list)
     {
         foreach (GameObject obj in coinList)
@@ -530,7 +603,7 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
         }
     }
 
-    private void LoadCharacterList(ShopItem[] list)
+    private void LoadCharacterList(List<AvatarInfo> list)
     {
         foreach (GameObject obj in characterList)
         {
@@ -539,7 +612,7 @@ public class IAP : MonoBehaviour, IDetailedStoreListener
         characterList.Clear();
         if (list != null)
         {
-            foreach (ShopItem item in list)
+            foreach (AvatarInfo item in list)
             {
                 GameObject obj = Instantiate(characterPrefab, characterParent, false);
                 obj.GetComponent<CharacterIAP>().Init(item);

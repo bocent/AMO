@@ -9,7 +9,7 @@ using UnityEngine.Networking;
 public class Character : MonoBehaviour
 {
     [SerializeField] private List<AvatarInfo> avatarInfoList;
-    [SerializeField] private List<AvatarInfo> liveAvatarInfoList;
+    //[SerializeField] private List<AvatarInfo> liveAvatarInfoList;
     [SerializeField] private Transform characterParent;
     [SerializeField] private List<AvatarAsset> avatarAssetList;
 
@@ -61,9 +61,12 @@ public class Character : MonoBehaviour
         {
             Debug.LogError("err : " + error);
         }));
+    }
 
-        
-
+    public void Reset()
+    {
+        //LoadAllCharacter();
+        HomeController.Instance.characterSelection.Init();
     }
 
     public void UpdateSelectedAvatar(int avatarId)
@@ -95,6 +98,12 @@ public class Character : MonoBehaviour
 
     private void LoadAllCharacter()
     {
+        foreach (SelectedCharacter character in characterList)
+        {
+            Destroy(character.gameObject);
+        }
+        characterList = new List<SelectedCharacter>();
+
         foreach (AvatarInfo info in avatarInfoList)
         {
             foreach(EvolutionResponse data in info.evolutionList)
@@ -181,7 +190,6 @@ public class Character : MonoBehaviour
                     Debug.LogError("response : " + uwr.downloadHandler.text);
                     if (response.status.ToLower() == "ok")
                     {
-                        liveAvatarInfoList = new List<AvatarInfo>();
                         for (int i = 0; i < response.karakter.Length; i++)
                         {
                             Debug.LogWarning("karakter : " + response.karakter.Length);
@@ -194,14 +202,18 @@ public class Character : MonoBehaviour
                             //    avatarSprite = asset.sprite
                             //});
                             int index = avatarInfoList.FindIndex(x => x.avatarId == response.karakter[i].karakter_id);
-                            foreach (EvolutionData evolutionData in response.karakter[i].evolution)
+                            if (index >= 0)
                             {
-                                int evoIndex = avatarInfoList[index].evolutionList.FindIndex(x => x.evolutionId == evolutionData.evolution_id);
-                                Debug.LogWarning("evo index : " + evoIndex);
-                                if (index >= 0)
+                                avatarInfoList[index].price = response.karakter[i].price;
+                                foreach (EvolutionData evolutionData in response.karakter[i].evolution)
                                 {
-                                    avatarInfoList[index].evolutionList[evoIndex].evolutionName = evolutionData.evolution_name;
-                                    avatarInfoList[index].evolutionList[evoIndex].experienceToEvolve = evolutionData.experience_to_evolution;
+                                    int evoIndex = avatarInfoList[index].evolutionList.FindIndex(x => x.evolutionId == evolutionData.evolution_id);
+                                    Debug.LogWarning("evo index : " + evoIndex);
+                                    if (index >= 0)
+                                    {
+                                        avatarInfoList[index].evolutionList[evoIndex].evolutionName = evolutionData.evolution_name;
+                                        avatarInfoList[index].evolutionList[evoIndex].experienceToEvolve = evolutionData.experience_to_evolution;
+                                    }
                                 }
                             }
                         }

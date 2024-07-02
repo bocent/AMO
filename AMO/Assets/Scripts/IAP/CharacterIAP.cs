@@ -4,15 +4,24 @@ using UnityEngine;
 
 public class CharacterIAP : ItemProduct
 {
-    // Start is called before the first frame update
-    void Start()
+    public GameObject ownedObj;
+
+    protected override void Start()
     {
-        
+        purchaseButton.onClick.AddListener(Purchase);
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Init(AvatarInfo info)
     {
-        
+        avatarInfo = info;
+        priceText.text = info.price + " COINS";
+        productImage.sprite = info.evolutionList[0].avatarSprite;
+        ownedObj.SetActive(info.isUnlocked);
+        purchaseButton.interactable = !info.isUnlocked;
+    }
+
+    private void Purchase()
+    {
+        IAP.Instance.BuyProduct(avatarInfo);
     }
 }

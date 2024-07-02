@@ -47,6 +47,7 @@ public class CharacterData
     public string nama_karakter;
     public string nama_spesies;
     public string desc;
+    public string price;
     public EvolutionData[] evolution;
 }
 
@@ -317,4 +318,29 @@ public class CardReward
     public string[] karakter;
     public string[] items;
     public string[] charge_item;
+}
+
+[Serializable]
+public class AlarmResponse
+{
+    public string status;
+    public string msg;
+    public Alarm[] alarm;
+}
+
+[Serializable]
+public class Alarm
+{
+    public int alarm_id;
+    public string hour;
+    public string minute;
+    public int sun;
+    public int mon;
+    public int tue;
+    public int wed;
+    public int thu;
+    public int fri;
+    public int sat;
+    public string title;
+    public int active;
 }

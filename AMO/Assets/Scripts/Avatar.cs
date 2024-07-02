@@ -37,6 +37,8 @@ public class AvatarInfo
     public Color textColor = Color.white;
     public bool isUnlocked;
     public int nextEvolutionId;
+    [HideInInspector]
+    public string price;
 
     [HideInInspector]
     public int currentMood;
