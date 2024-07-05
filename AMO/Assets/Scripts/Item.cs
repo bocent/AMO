@@ -42,11 +42,13 @@ public class Item : MonoBehaviour
 
     public void SelectItem(bool isOn)
     {
-        if (isOn && !toggle.isOn)
+        Debug.LogWarning("equip item : " + isOn);
+        if (isOn)
         {
             Debug.LogWarning("accId : " + Info.accessoryId);
             StartCoroutine(library.RequestEquipItem(Info.accessoryId, (itemId) => { 
                 HomeController.Instance.selectedCharacter.AddAccessory(itemId);
+                StartCoroutine(Character.Instance.RequestUserData((id) => LoadingManager.Instance.HideSpinLoading(), null));
             }, null));
         }
     }

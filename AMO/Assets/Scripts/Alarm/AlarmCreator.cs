@@ -38,7 +38,7 @@ public class AlarmCreator : MonoBehaviour
     private int index;
     private AlarmItem selectedAlarmItem;
 
-    private void Start()
+    private IEnumerator Start()
     {
         editRepeatButton.onClick.AddListener(OpenRepeatDayPanel);
         titleInputField.onSubmit.AddListener(OnTitleSubmitted);
@@ -47,6 +47,8 @@ public class AlarmCreator : MonoBehaviour
         hourScrollSnap.OnPanelCentered.AddListener(OnHourSelected);
         minuteScrollSnap.OnPanelCentered.AddListener(OnMinuteSelected);
         deleteButton.onClick.AddListener(DeleteAlarm);
+        yield return null;
+        gameObject.SetActive(false);
     }
 
     public void Init(AlarmController controller)
@@ -83,6 +85,7 @@ public class AlarmCreator : MonoBehaviour
                 string[] times = time.Split(":");
                 string hour = times[0];
                 string minute = times[1];
+                Debug.LogWarning("hourScrollSnap : " + hourScrollSnap);
                 for (int i = 0; i < hourScrollSnap.Panels.Length; i++)
                 {
                     if (hourScrollSnap.Panels[i].GetComponent<TMP_Text>().text == hour)

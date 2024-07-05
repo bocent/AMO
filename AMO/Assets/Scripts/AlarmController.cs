@@ -37,12 +37,19 @@ public class AlarmController : MonoBehaviour
     public List<AlarmItem> alarmList = new List<AlarmItem>();
     private bool isAlarmOn = false;
 
+    public static AlarmController Instance { get; private set; }
+
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
         addAlarmButton.onClick.AddListener(ShowAlarmCreator);
         cancelCreateButton.onClick.AddListener(HideAlarmCreator);
-        StartCoroutine(RequestGetAlarm("", null, null));
+        //StartCoroutine(RequestGetAlarm("", LoadList, null));
         //LoadAlarmList();
         //Debug.LogError("timespan now : " + DateTime.Now.TimeOfDay.ToString(@"hh\:mm"));
     }
@@ -61,25 +68,31 @@ public class AlarmController : MonoBehaviour
 
     public void RemoveAlarm(AlarmInfo info, AlarmItem item)
     {
-        alarmInfoList.Remove(info);
-        item.gameObject.SetActive(false);
-        alarmCreator.gameObject.SetActive(false);
-        ShowAddButton();
+     
         //PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson( new AlarmInfoList { alarmList = alarmInfoList }));
         //PlayerPrefs.Save();
-        
+
+        StartCoroutine(RequestDeleteAlarm(info.alarmId, () =>
+        {
+            alarmInfoList.Remove(info);
+            item.gameObject.SetActive(false);
+            alarmCreator.gameObject.SetActive(false);
+            ShowAddButton();
+        }, null));
     }
 
     public void EditAlarm(AlarmItem item, AlarmInfo newInfo)
     {
-        int index = alarmInfoList.FindIndex(x => x.alarmId == newInfo.alarmId);
-        Debug.LogWarning("edit alarm : " + index);
-        alarmInfoList[index] = newInfo;
-        ClearList();
-        LoadList();
+        
         //PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
         //PlayerPrefs.Save();
-        //StartCoroutine(RequestSetAlarm(newInfo.alarmId, null, null));
+        StartCoroutine(RequestSetAlarm(newInfo.alarmId, newInfo, (response) => {
+            int index = alarmInfoList.FindIndex(x => x.alarmId == response.alarm_id.ToString());
+            Debug.LogWarning("edit alarm : " + index);
+            alarmInfoList[index] = newInfo;
+            ClearList();
+            LoadList();
+        }, null));
     }
 
     private void ClearList()
@@ -121,24 +134,26 @@ public class AlarmController : MonoBehaviour
 
     public void AddAlarmInfo(AlarmInfo info)
     {
-        alarmInfoList.Add(info);
-        ShowAddButton();
         //PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
         //Debug.LogWarning("save alarm :  " + JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
         //PlayerPrefs.Save();
-        //StartCoroutine(RequestSetAlarm(info.alarmId, null, null));
+        StartCoroutine(RequestSetAlarm("", info, (response) =>
+        {
+            alarmInfoList.Add(info);
+            ShowAddButton();
+        }, null));
     }
 
     private void ShowAlarmCreator()
     {
-        alarmCreator.Init(this);
         alarmCreator.gameObject.SetActive(true);
+        alarmCreator.Init(this);
     }
 
     public void ShowAlarmCreator(AlarmItem alarmItem, AlarmInfo info)
     {
-        alarmCreator.Init(this, info, alarmItem);
         alarmCreator.gameObject.SetActive(true);
+        alarmCreator.Init(this, info, alarmItem);
     }
 
     public void HideAlarmCreator()
@@ -233,6 +248,7 @@ public class AlarmController : MonoBehaviour
 
     public IEnumerator RequestGetAlarm(string alarmId, Action onComplete, Action<string> onFailed)
     {
+        Debug.Log("RequestGetAlarm");
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"alarm_id\" : \"" + alarmId + "\" }");
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "get_alarm", form))
@@ -243,6 +259,7 @@ public class AlarmController : MonoBehaviour
             {
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
+                    Debug.Log("response : " + uwr.downloadHandler.text);
                     AlarmResponse response = JsonUtility.FromJson<AlarmResponse>(uwr.downloadHandler.text);
                     if (response.status.ToLower() == "ok")
                     {
@@ -258,6 +275,7 @@ public class AlarmController : MonoBehaviour
                             if (alarm.sat == 1) dayOfWeeks.Add(DayOfWeek.Saturday);
                             alarmInfoList.Add(new AlarmInfo { alarmId = alarm.alarm_id.ToString(), alarmTitle = alarm.title, isOn = alarm.active == 1, time = alarm.hour + ":" + alarm.minute, dayList = dayOfWeeks });
                         }
+                        LoadList();
                         onComplete?.Invoke();
                     }
                     else
@@ -288,10 +306,11 @@ public class AlarmController : MonoBehaviour
         }
     }
 
-    public IEnumerator RequestSetAlarm(string alarmId, int hour, int minute, int sun, int mon, int tue, int wed, int thu, int fri, int sat, string title, int active, Action onComplete, Action<string> onFailed)
+    public IEnumerator RequestSetAlarm(string alarmId, AlarmInfo info, Action<SetAlarmResponse> onComplete, Action<string> onFailed)
     {
+        string[] times = info.time.Split(":");
         WWWForm form = new WWWForm();
-        form.AddField("data", "{\"alarm_id\" : \"" + alarmId + "\",  \"hour\" : \"" + hour + "\", \"minute\" : \"" + minute + "\", \"sun\" : \"" + sun + "\", \"mon\" : \"" + mon + "\", \"tue\" : \"" + tue + "\", \"wed\" : \"" + wed + "\", \"thu\" : \"" + thu + "\", \"fri\" : \"" + fri + "\", \"sat\" : \"" + sat + "\", \"title\" : \"" + title + "\", \"active\" : \"" + active + "\"}");
+        form.AddField("data", "{\"alarm_id\" : \"" + alarmId + "\",  \"hour\" : \"" + times[0] + "\", \"min\" : \"" + times[1] + "\", \"sun\" : \"" + (info.dayList.Contains(DayOfWeek.Sunday) ? 1 : 0) + "\", \"mon\" : \"" + (info.dayList.Contains(DayOfWeek.Monday) ? 1 : 0) + "\", \"tue\" : \"" + (info.dayList.Contains(DayOfWeek.Tuesday) ? 1 : 0) + "\", \"wed\" : \"" + (info.dayList.Contains(DayOfWeek.Wednesday) ? 1 : 0) + "\", \"thu\" : \"" + (info.dayList.Contains(DayOfWeek.Thursday) ? 1 : 0) + "\", \"fri\" : \"" + (info.dayList.Contains(DayOfWeek.Friday) ? 1 : 0) + "\", \"sat\" : \"" + (info.dayList.Contains(DayOfWeek.Saturday) ? 1 : 0) + "\", \"title\" : \"" + info.alarmTitle + "\", \"active\" : \"" + (info.isOn ? 1 : 0) + "\"}");
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "set_alarm", form))
         {
             uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
@@ -300,7 +319,52 @@ public class AlarmController : MonoBehaviour
             {
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
-                    BuyItemResponse response = JsonUtility.FromJson<BuyItemResponse>(uwr.downloadHandler.text);
+                    SetAlarmResponse response = JsonUtility.FromJson<SetAlarmResponse>(uwr.downloadHandler.text);
+                    if (response.status.ToLower() == "ok")
+                    {
+                        onComplete?.Invoke(response);
+                    }
+                    else
+                    {
+                        throw new Exception(response.msg);
+                    }
+                }
+                else
+                {
+                    throw new Exception(uwr.error);
+                }
+            }
+            catch (Exception e)
+            {
+                onFailed?.Invoke(e.Message);
+                Debug.LogError("err : " + e.Message);
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
+                    new ButtonInfo
+                    {
+                        content = "Ulangi",
+                        onButtonClicked = () => StartCoroutine(RequestSetAlarm(alarmId, info, onComplete, onFailed))
+                    },
+                    new ButtonInfo
+                    {
+                        content = "Batal"
+                    });
+            }
+        }
+    }
+
+    public IEnumerator RequestDeleteAlarm(string alarmId, Action onComplete, Action<string> onFailed)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("data", "{\"alarm_id\" : \"" + alarmId + "\"}");
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "delete_alarm", form))
+        {
+            uwr.SetRequestHeader("Authorization", "Bearer " + UserData.token);
+            yield return uwr.SendWebRequest();
+            try
+            {
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    Response response = JsonUtility.FromJson<Response>(uwr.downloadHandler.text);
                     if (response.status.ToLower() == "ok")
                     {
                         onComplete?.Invoke();
@@ -323,7 +387,7 @@ public class AlarmController : MonoBehaviour
                     new ButtonInfo
                     {
                         content = "Ulangi",
-                        onButtonClicked = () => StartCoroutine(RequestSetAlarm(alarmId, hour, minute, sun, mon, tue, wed, thu, fri, sat, title, active, onComplete, onFailed))
+                        onButtonClicked = () => StartCoroutine(RequestDeleteAlarm(alarmId, onComplete, onFailed))
                     },
                     new ButtonInfo
                     {

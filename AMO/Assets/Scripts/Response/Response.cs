@@ -344,3 +344,22 @@ public class Alarm
     public string title;
     public int active;
 }
+
+[Serializable]
+public class SetAlarmResponse
+{
+    public string status;
+    public string msg;
+    public int alarm_id;
+    public string hour;
+    public string minute;
+    public int sun;
+    public int mon;
+    public int tue;
+    public int wed;
+    public int thu;
+    public int fri;
+    public int sat;
+    public string title;
+    public int active;
+}

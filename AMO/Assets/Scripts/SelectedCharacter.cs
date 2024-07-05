@@ -317,7 +317,7 @@ public class SelectedCharacter : MonoBehaviour
                 characterAnimations.Add(head.GetComponent<CharacterAnimation>());
 
                 //SaveAccessory(AccessoryType.Helmet, info.accessoryId);
-                PlayIdleAnimation();
+                StartCoroutine(PlayIdleAnimation());
                 return head;
             }
             else
@@ -362,7 +362,7 @@ public class SelectedCharacter : MonoBehaviour
                 equippedAccessories.Add(body);
                 characterAnimations.AddRange(body.GetComponentsInChildren<CharacterAnimation>());
                 //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
-                PlayIdleAnimation();
+                StartCoroutine(PlayIdleAnimation());
                 return body;
             }
             else if (info.materials != null)
@@ -373,7 +373,7 @@ public class SelectedCharacter : MonoBehaviour
                     Info.outfitId = info.accessoryId;
                     bodyMeshRenderer.material = material;
                     //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
-                    PlayIdleAnimation();
+                    StartCoroutine(PlayIdleAnimation());
                 }
                 else
                 {
@@ -395,7 +395,7 @@ public class SelectedCharacter : MonoBehaviour
                 Info.outfitId = info.accessoryId;
                 bodyMeshRenderer.material = material;
                 //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
-                PlayIdleAnimation();
+                StartCoroutine(PlayIdleAnimation());
             }
             else
             {

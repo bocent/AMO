@@ -50,8 +50,7 @@ public class Character : MonoBehaviour
                     {
                         StartCoroutine(RequestSetCharacterStatus("energy", "+0", () =>
                         {
-                            Debug.LogWarning("finished set fed");
-                            LoadingManager.Instance.HideSpinLoading();
+                            StartCoroutine(AlarmController.Instance.RequestGetAlarm("", LoadingManager.Instance.HideSpinLoading, null));
                         }, null));
                     }, null));
                 }, null));
