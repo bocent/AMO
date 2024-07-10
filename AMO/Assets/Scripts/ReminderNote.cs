@@ -9,6 +9,8 @@ public class ReminderNote : MonoBehaviour
     private Button button;
     private Image image;
     [SerializeField] private TMP_Text text;
+    [SerializeField] private TMP_InputField inputField;
+    [SerializeField] private GameObject lineObj;
 
     private ToDoController controller;
     private EditNote editNote;
@@ -18,6 +20,7 @@ public class ReminderNote : MonoBehaviour
         image = GetComponent<Image>();
         button = GetComponent<Button>();
         button.onClick.AddListener(ShowNote);
+        inputField.onValueChanged.AddListener(SetText);
     }
 
     public void Init(ToDoController controller, EditNote editNote, string content)
@@ -36,6 +39,7 @@ public class ReminderNote : MonoBehaviour
     public void SetText(string value)
     {
         text.text = value;
+        lineObj.SetActive(value.Length > 0 && !string.IsNullOrWhiteSpace(value));
     }
 
     private void ShowNote()

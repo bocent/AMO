@@ -366,7 +366,7 @@ public class AskMe : MonoBehaviour
 
         //using (UnityWebRequest uwr = UnityWebRequest.Post(OPEN_AI_CHAT_URL, json, "application/json"))
         //using (UnityWebRequest uwr = UnityWebRequest.Post("89.116.134.18:5050/chat", "{ \"message:\" : \"" + text + "\" }", "application/json"))
-        using (UnityWebRequest uwr = UnityWebRequest.Post("http://89.116.134.18:5050/chat", json, "application/json"))
+        using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.CHAT_URL, json, "application/json"))
         {
             //uwr.SetRequestHeader("Authorization", "Bearer sk-proj-rcHexPB9URkrbLCulKFGT3BlbkFJTdHjzoDFChwn6NTl73rZ");
             uwr.downloadHandler = new DownloadHandlerBuffer();

@@ -9,14 +9,15 @@ using UnityEngine.UI;
 public class DayItem : MonoBehaviour
 {
     public DayPair dayPair;
-    public TMP_Text dayText;
+    public TMP_Text activeDayText;
+    public TMP_Text inactiveDayText;
     public Toggle onToggle;
 
     private void Start()
     {
         CultureInfo culture = new CultureInfo("id-ID");
         string day = culture.DateTimeFormat.GetDayName((DayOfWeek)dayPair.day);
-        dayText.text = day;
+        activeDayText.text = inactiveDayText.text = day;
         onToggle.onValueChanged.AddListener(OnToggleValueChanged);
         onToggle.onValueChanged.Invoke(onToggle.isOn);
     }

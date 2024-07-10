@@ -194,18 +194,25 @@ public class SelectedCharacter : MonoBehaviour
     public void PlayDressUpAnimation()
     {
         string conditionName = "FinishDressUp";
-        if (characterAnimation)
+        Debug.LogWarning("play dressup animation : " + characterAnimations.Count);
+        characterAnimation.SetAnimationCondition(conditionName);
+        if (characterAnimations.Count > 0)
         {
-            characterAnimation.SetAnimationCondition(conditionName);
-            foreach (GameObject equippedAccessory in equippedAccessories)
+            //characterAnimation.SetAnimationCondition(conditionName);
+            //foreach (GameObject equippedAccessory in equippedAccessories)
+            //{
+            //    CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
+            //    if (characterAnim) characterAnim.SetAnimationCondition(conditionName);
+            //    CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
+            //    foreach (CharacterAnimation animation in animations)
+            //    {
+            //        animation.SetAnimationCondition(conditionName);
+            //    }
+            //}
+            
+            foreach (CharacterAnimation anim in characterAnimations)
             {
-                CharacterAnimation characterAnim = equippedAccessory.GetComponent<CharacterAnimation>();
-                if (characterAnim) characterAnim.SetAnimationCondition(conditionName);
-                CharacterAnimation[] animations = equippedAccessory.GetComponentsInChildren<CharacterAnimation>();
-                foreach (CharacterAnimation animation in animations)
-                {
-                    animation.SetAnimationCondition(conditionName);
-                }
+                anim.SetAnimationCondition(conditionName);
             }
         }
     }
@@ -250,7 +257,8 @@ public class SelectedCharacter : MonoBehaviour
 
     public GameObject AddAccessory(int accessoryId, bool useAnimation = true)
     {
-        Debug.LogWarning("acc id : " + accessoryId);
+        Debug.LogWarning("acc id : " + accessoryId + " use animation : " + useAnimation);
+        GameObject obj = null;
         if (accessoryId > 0)
         {
             AccessoryInfo info = AccessoryController.Instance.GetAccessoryInfo(accessoryId);
@@ -260,14 +268,16 @@ public class SelectedCharacter : MonoBehaviour
                 switch (info.accessoryType)
                 {
                     case AccessoryType.Helmet:
-                        return AddHelmetAccessory(info);
+                        obj = AddHelmetAccessory(info, false);
+                        break;
                     case AccessoryType.Outfit:
-                        return AddOutfitAccessory(info);
+                        obj = AddOutfitAccessory(info, false);
+                        break;
                 }
-                if (useAnimation) PlayDressUpAnimation();
             }
         }
-        return null;
+        if (useAnimation) PlayDressUpAnimation();
+        return obj;
     }
 
     public void RemoveAccessory(AccessoryType bodyPart)
@@ -293,7 +303,7 @@ public class SelectedCharacter : MonoBehaviour
         }
     }
 
-    private GameObject AddHelmetAccessory(AccessoryInfo info)
+    private GameObject AddHelmetAccessory(AccessoryInfo info, bool useAnimation = false)
     {
         Debug.LogError("helmet acc : " + helmetAccessory);
         if (helmetAccessory != null)
@@ -317,7 +327,7 @@ public class SelectedCharacter : MonoBehaviour
                 characterAnimations.Add(head.GetComponent<CharacterAnimation>());
 
                 //SaveAccessory(AccessoryType.Helmet, info.accessoryId);
-                StartCoroutine(PlayIdleAnimation());
+                if(useAnimation) StartCoroutine(PlayIdleAnimation());
                 return head;
             }
             else
@@ -334,7 +344,7 @@ public class SelectedCharacter : MonoBehaviour
         return null;
     }
 
-    private GameObject AddOutfitAccessory(AccessoryInfo info)
+    private GameObject AddOutfitAccessory(AccessoryInfo info, bool useAnimation = false)
     {
         Debug.LogWarning("outfit id : " + Info.outfitId);
         
@@ -362,7 +372,7 @@ public class SelectedCharacter : MonoBehaviour
                 equippedAccessories.Add(body);
                 characterAnimations.AddRange(body.GetComponentsInChildren<CharacterAnimation>());
                 //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
-                StartCoroutine(PlayIdleAnimation());
+                if(useAnimation) StartCoroutine(PlayIdleAnimation());
                 return body;
             }
             else if (info.materials != null)
@@ -373,7 +383,7 @@ public class SelectedCharacter : MonoBehaviour
                     Info.outfitId = info.accessoryId;
                     bodyMeshRenderer.material = material;
                     //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
-                    StartCoroutine(PlayIdleAnimation());
+                    if(useAnimation) StartCoroutine(PlayIdleAnimation());
                 }
                 else
                 {
@@ -395,7 +405,7 @@ public class SelectedCharacter : MonoBehaviour
                 Info.outfitId = info.accessoryId;
                 bodyMeshRenderer.material = material;
                 //SaveAccessory(AccessoryType.Outfit, info.accessoryId);
-                StartCoroutine(PlayIdleAnimation());
+                if(useAnimation) StartCoroutine(PlayIdleAnimation());
             }
             else
             {

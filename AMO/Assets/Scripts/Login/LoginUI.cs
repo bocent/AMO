@@ -35,7 +35,7 @@ public class LoginUI : MonoBehaviour
         {
             StartCoroutine(login.CheckLogin(emailInputField.text, passwordInputField.text, true, false, () =>
             {
-                CustomSceneManager.Instance.LoadScene("Home", null);
+                CustomSceneManager.Instance.LoadScene(Consts.HOME_SCENE, null);
             },
             (error) =>
             {

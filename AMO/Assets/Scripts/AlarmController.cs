@@ -34,7 +34,7 @@ public class AlarmController : MonoBehaviour
     public AlarmPopup alarmPopup;
     public GameObject container;
 
-    public List<AlarmItem> alarmList = new List<AlarmItem>();
+    public List<AlarmItem> alarmList;
     private bool isAlarmOn = false;
 
     public static AlarmController Instance { get; private set; }
@@ -60,7 +60,7 @@ public class AlarmController : MonoBehaviour
         AlarmItem alarmItem = item.GetComponent<AlarmItem>();
         alarmList.Add(alarmItem);
         alarmItem.Init(this, info);
-        addAlarmButton.transform.SetAsLastSibling();
+        //addAlarmButton.transform.SetAsLastSibling();
         ShowAddButton();
 
         return alarmItem;
@@ -116,29 +116,31 @@ public class AlarmController : MonoBehaviour
 
     public AlarmItem GetAlarm(AlarmInfo info)
     {
-        foreach (AlarmItem alarmItem in alarmList)
+        for (int i = 0; i < alarmList.Count; i++)
         {
-            if (!alarmItem.gameObject.activeSelf)
+            if (!alarmList[i].gameObject.activeSelf)
             {
-                alarmItem.Init(this, info);
-                
+                alarmList[i].Init(this, info);
+
                 //alarmItem.transform.SetAsLastSibling();
                 //ShowAddButton();
-                alarmItem.gameObject.SetActive(true);
-                return alarmItem;
+                alarmList[i].gameObject.SetActive(true);
+                return alarmList[i];
             }
         }
 
-        return AddAlarm(info);
+        return null;
+        //return AddAlarm(info);
     }
 
-    public void AddAlarmInfo(AlarmInfo info)
+    public void AddAlarmInfo(AlarmInfo info, Action onComplete)
     {
         //PlayerPrefs.SetString(Consts.ALARM, JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
         //Debug.LogWarning("save alarm :  " + JsonUtility.ToJson(new AlarmInfoList { alarmList = alarmInfoList }));
         //PlayerPrefs.Save();
         StartCoroutine(RequestSetAlarm("", info, (response) =>
         {
+            onComplete?.Invoke();
             alarmInfoList.Add(info);
             ShowAddButton();
         }, null));
@@ -248,6 +250,7 @@ public class AlarmController : MonoBehaviour
 
     public IEnumerator RequestGetAlarm(string alarmId, Action onComplete, Action<string> onFailed)
     {
+        LoadingManager.Instance.ShowSpinLoading();
         Debug.Log("RequestGetAlarm");
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"alarm_id\" : \"" + alarmId + "\" }");
@@ -277,6 +280,7 @@ public class AlarmController : MonoBehaviour
                         }
                         LoadList();
                         onComplete?.Invoke();
+                        LoadingManager.Instance.HideSpinLoading();
                     }
                     else
                     {
@@ -290,6 +294,7 @@ public class AlarmController : MonoBehaviour
             }
             catch (Exception e)
             {
+                LoadingManager.Instance.HideSpinLoading();
                 onFailed?.Invoke(e.Message);
                 Debug.LogError("err : " + e.Message);
                 PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
@@ -308,6 +313,7 @@ public class AlarmController : MonoBehaviour
 
     public IEnumerator RequestSetAlarm(string alarmId, AlarmInfo info, Action<SetAlarmResponse> onComplete, Action<string> onFailed)
     {
+        LoadingManager.Instance.ShowSpinLoading();
         string[] times = info.time.Split(":");
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"alarm_id\" : \"" + alarmId + "\",  \"hour\" : \"" + times[0] + "\", \"min\" : \"" + times[1] + "\", \"sun\" : \"" + (info.dayList.Contains(DayOfWeek.Sunday) ? 1 : 0) + "\", \"mon\" : \"" + (info.dayList.Contains(DayOfWeek.Monday) ? 1 : 0) + "\", \"tue\" : \"" + (info.dayList.Contains(DayOfWeek.Tuesday) ? 1 : 0) + "\", \"wed\" : \"" + (info.dayList.Contains(DayOfWeek.Wednesday) ? 1 : 0) + "\", \"thu\" : \"" + (info.dayList.Contains(DayOfWeek.Thursday) ? 1 : 0) + "\", \"fri\" : \"" + (info.dayList.Contains(DayOfWeek.Friday) ? 1 : 0) + "\", \"sat\" : \"" + (info.dayList.Contains(DayOfWeek.Saturday) ? 1 : 0) + "\", \"title\" : \"" + info.alarmTitle + "\", \"active\" : \"" + (info.isOn ? 1 : 0) + "\"}");
@@ -323,6 +329,7 @@ public class AlarmController : MonoBehaviour
                     if (response.status.ToLower() == "ok")
                     {
                         onComplete?.Invoke(response);
+                        LoadingManager.Instance.HideSpinLoading();
                     }
                     else
                     {
@@ -336,14 +343,10 @@ public class AlarmController : MonoBehaviour
             }
             catch (Exception e)
             {
+                LoadingManager.Instance.HideSpinLoading();
                 onFailed?.Invoke(e.Message);
                 Debug.LogError("err : " + e.Message);
-                PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,
-                    new ButtonInfo
-                    {
-                        content = "Ulangi",
-                        onButtonClicked = () => StartCoroutine(RequestSetAlarm(alarmId, info, onComplete, onFailed))
-                    },
+                PopupManager.Instance.ShowPopupMessage("err", "Gagal Membuat Alarm", e.Message,
                     new ButtonInfo
                     {
                         content = "Batal"
@@ -354,6 +357,7 @@ public class AlarmController : MonoBehaviour
 
     public IEnumerator RequestDeleteAlarm(string alarmId, Action onComplete, Action<string> onFailed)
     {
+        LoadingManager.Instance.ShowSpinLoading();
         WWWForm form = new WWWForm();
         form.AddField("data", "{\"alarm_id\" : \"" + alarmId + "\"}");
         using (UnityWebRequest uwr = UnityWebRequest.Post(Consts.BASE_URL + "delete_alarm", form))
@@ -368,6 +372,7 @@ public class AlarmController : MonoBehaviour
                     if (response.status.ToLower() == "ok")
                     {
                         onComplete?.Invoke();
+                        LoadingManager.Instance.HideSpinLoading();
                     }
                     else
                     {
@@ -381,6 +386,7 @@ public class AlarmController : MonoBehaviour
             }
             catch (Exception e)
             {
+                LoadingManager.Instance.HideSpinLoading();
                 onFailed?.Invoke(e.Message);
                 Debug.LogError("err : " + e.Message);
                 PopupManager.Instance.ShowPopupMessage("err", "Gagal Mendapatkan Data", e.Message,

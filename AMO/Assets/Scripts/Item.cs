@@ -47,7 +47,7 @@ public class Item : MonoBehaviour
         {
             Debug.LogWarning("accId : " + Info.accessoryId);
             StartCoroutine(library.RequestEquipItem(Info.accessoryId, (itemId) => { 
-                HomeController.Instance.selectedCharacter.AddAccessory(itemId);
+                HomeController.Instance.selectedCharacter.AddAccessory(itemId, true);
                 StartCoroutine(Character.Instance.RequestUserData((id) => LoadingManager.Instance.HideSpinLoading(), null));
             }, null));
         }
@@ -55,7 +55,8 @@ public class Item : MonoBehaviour
 
     public void SelectItem()
     {
-        HomeController.Instance.selectedCharacter.AddAccessory(Info.accessoryId, false);
-        Character.Instance.currentCharacter.PlayIdleAnimation();
+        Debug.LogWarning("select item");
+        //HomeController.Instance.selectedCharacter.AddAccessory(Info.accessoryId, false);
+        //Character.Instance.currentCharacter.PlayIdleAnimation();
     }
 }

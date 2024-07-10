@@ -9,8 +9,8 @@ using UnityEngine.UI;
 public class Settings : MonoBehaviour
 {
     public GameObject container;
-    public Toggle sfxOn;
-    public Toggle bgmOn;
+    //public Toggle sfxOn;
+    //public Toggle bgmOn;
     public Slider sfxSlider;
     public Slider bgmSlider;
     public Slider voiceSlider;
@@ -28,8 +28,8 @@ public class Settings : MonoBehaviour
 
     private void Start()
     {
-        sfxOn.onValueChanged.AddListener(ChangeSfxToggle);
-        bgmOn.onValueChanged.AddListener(ChangeBgmToggle);
+        //sfxOn.onValueChanged.AddListener(ChangeSfxToggle);
+        //bgmOn.onValueChanged.AddListener(ChangeBgmToggle);
         sfxSlider.onValueChanged.AddListener(ChangeSfxVolume);
         bgmSlider.onValueChanged.AddListener(ChangeBgmVolume);
         voiceSlider.onValueChanged.AddListener(ChangeVoiceVolume);
@@ -48,8 +48,8 @@ public class Settings : MonoBehaviour
         logoutButton.onClick.AddListener(Logout);
         //nameInputField.onSubmit.AddListener(SubmitName);
 
-        sfxOn.isOn = SoundManager.instance.GetSFXOn();
-        bgmOn.isOn = SoundManager.instance.GetBGMOn();
+        //sfxOn.isOn = SoundManager.instance.GetSFXOn();
+        //bgmOn.isOn = SoundManager.instance.GetBGMOn();
 
         sfxSlider.value = SoundManager.instance.GetSfxVolume();
         bgmSlider.value = SoundManager.instance.GetBgmVolume();
@@ -60,6 +60,7 @@ public class Settings : MonoBehaviour
 
     public void Show()
     {
+        Debug.LogWarning("Show setting");
         container.SetActive(true);
         nameText.text = string.IsNullOrEmpty(UserData.username) ? "Guest" : UserData.username;
     }
@@ -123,7 +124,7 @@ public class Settings : MonoBehaviour
                     PlayerPrefs.DeleteKey("password");
                     PlayerPrefs.DeleteKey("guest_email");
                     PlayerPrefs.DeleteKey("guest_password");
-                    CustomSceneManager.Instance.LoadScene("Login", null);
+                    CustomSceneManager.Instance.LoadScene(Consts.LOGIN_SCENE, null);
                 }
             }, new ButtonInfo { content = "Batal" });
         }
@@ -131,7 +132,7 @@ public class Settings : MonoBehaviour
         {
             PlayerPrefs.DeleteKey("email");
             PlayerPrefs.DeleteKey("password");
-            CustomSceneManager.Instance.LoadScene("Login", null);
+            CustomSceneManager.Instance.LoadScene(Consts.LOGIN_SCENE, null);
         }
     }
 

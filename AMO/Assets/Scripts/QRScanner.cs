@@ -174,11 +174,11 @@ public class QRScanner : ARBehaviour
 
     private void ScanSuccess(string content)
     {
-        CustomSceneManager.Instance.LoadScene("Home", () => Main.Instance.UnlockItemByScan(content));
+        CustomSceneManager.Instance.LoadScene(Consts.HOME_SCENE, () => Main.Instance.UnlockItemByScan(content));
     }
 
     private void BackToHome()
     {
-        CustomSceneManager.Instance.LoadScene("Home", null);
+        CustomSceneManager.Instance.LoadScene(Consts.HOME_SCENE, null);
     }
 }

@@ -15,18 +15,27 @@ public class AlarmItem : MonoBehaviour
     public TMP_Text repeatText;
     public Toggle alarmOnToggle;
 
+    public GameObject toggleOnObj;
+    public GameObject toggleOffObj;
+
     private Button button;
     private AlarmController controller;
 
-    private void Start()
-    {
-        alarmOnToggle.onValueChanged.AddListener(OnToggleValueChanged);
-        button = GetComponent<Button>();
-        button.onClick.AddListener(EditAlarm);
-    }
+    //private void Start()
+    //{
+    //    alarmOnToggle.onValueChanged.AddListener(OnToggleValueChanged);
+    //    button = GetComponent<Button>();
+    //    button.onClick.AddListener(EditAlarm);
+    //}
 
     public void Init(AlarmController controller, AlarmInfo info)
     {
+        alarmOnToggle.onValueChanged.RemoveAllListeners();
+        alarmOnToggle.onValueChanged.AddListener(OnToggleValueChanged);
+        button = GetComponent<Button>();
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(EditAlarm);
+
         this.controller = controller;
         Info = info;
         Debug.LogWarning("info : " + info);
@@ -35,26 +44,33 @@ public class AlarmItem : MonoBehaviour
         titleText.text = info.alarmTitle;
         timeText.text = info.time;
         Debug.LogWarning("time : " + info.time);
-        alarmOnToggle.isOn = info.isOn;
+        alarmOnToggle.SetIsOnWithoutNotify(info.isOn);
+
+        toggleOnObj.SetActive(info.isOn);
+        toggleOffObj.SetActive(!info.isOn);
+
+        Debug.LogWarning("alarm on : " + alarmOnToggle.isOn);
+
+
 
         if (info.dayList == null)
         {
-            repeatText.text = "Never";
+            repeatText.text = "Hanya Sekali";
             return;
         }
         else if (info.dayList.Count == 0)
         {
-            repeatText.text = "Never";
+            repeatText.text = "Hanya Sekali";
             return;
         }
         if (info.dayList.Count == 2)
         {
             if (info.dayList.Contains(DayOfWeek.Saturday) && info.dayList.Contains(DayOfWeek.Sunday))
             {
-                repeatDay = "Weekends";
+                repeatDay = "Sabtu dan Minggu";
+                repeatText.text = repeatDay;
+                return;
             }
-            repeatText.text = repeatDay;
-            return;
         }
         else if (info.dayList.Count == 5)
         {
@@ -67,7 +83,7 @@ public class AlarmItem : MonoBehaviour
                     break;
                 }
             }
-            if (isWeekday) repeatDay = "Weekdays";
+            if (isWeekday) repeatDay = "Senin sampai Jumat";
             repeatText.text = repeatDay;
             return;
         }
@@ -87,7 +103,13 @@ public class AlarmItem : MonoBehaviour
 
     private void OnToggleValueChanged(bool isOn)
     {
-        alarmOnToggle.isOn = isOn;
+        Debug.LogWarning("alarm toggle is on  : " + isOn);
+        //alarmOnToggle.isOn = isOn;
+        toggleOnObj.SetActive(isOn);
+        toggleOffObj.SetActive(!isOn);
+        Info.isOn = isOn;
+
+        controller.EditAlarm(this, Info);
     }
 
     public void EditAlarm()

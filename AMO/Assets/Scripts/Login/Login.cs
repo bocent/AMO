@@ -45,13 +45,13 @@ public class Login : MonoBehaviour
         //    }));
         //}
 
-        if (SceneManager.GetActiveScene().name != "Home")
+        if (SceneManager.GetActiveScene().name != Consts.HOME_SCENE)
         {
             if (PlayerPrefs.HasKey("email") && PlayerPrefs.HasKey(Consts.HAS_VERIFIED))
             {
                 StartCoroutine(CheckLogin(PlayerPrefs.GetString("email"), PlayerPrefs.GetString("password"), false, true, () =>
                 {
-                    CustomSceneManager.Instance.LoadScene("Home", null);
+                    CustomSceneManager.Instance.LoadScene(Consts.HOME_SCENE, null);
                 }, (error) =>
                 {
                     ShowLoginPage();
@@ -69,7 +69,7 @@ public class Login : MonoBehaviour
                 {
                     StartCoroutine(CheckLogin(PlayerPrefs.GetString("guest_email"), PlayerPrefs.GetString("guest_password"), false, false, () =>
                     {
-                        CustomSceneManager.Instance.LoadScene("Home", null);
+                        CustomSceneManager.Instance.LoadScene(Consts.HOME_SCENE, null);
                     }, (error) =>
                     {
                         ShowLoginPage();
@@ -92,7 +92,7 @@ public class Login : MonoBehaviour
         {
             StartCoroutine(CheckLogin(email, "12345678", true, true, () =>
             {
-                CustomSceneManager.Instance.LoadScene("Home", null);
+                CustomSceneManager.Instance.LoadScene(Consts.HOME_SCENE, null);
             }, null));
         }, (error) =>
         {
@@ -238,7 +238,7 @@ public class Login : MonoBehaviour
                                 }
                                 PlayerPrefs.Save();
                             }
-                            if (SceneManager.GetActiveScene().name != "Home")
+                            if (SceneManager.GetActiveScene().name != Consts.HOME_SCENE)
                             {
                                 PlayerPrefs.SetInt(Consts.HAS_VERIFIED, 1);
                                 PlayerPrefs.Save();

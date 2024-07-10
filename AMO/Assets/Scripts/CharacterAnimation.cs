@@ -37,7 +37,6 @@ public class CharacterAnimation : MonoBehaviour
         {
             if (!animator) animator = GetComponent<Animator>();
             animator.SetTrigger(conditionName);
-            Debug.LogWarning("set idle animation " + DateTime.Now.Ticks);
             return animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
         }
         return 0f;

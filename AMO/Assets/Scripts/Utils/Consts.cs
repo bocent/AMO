@@ -32,6 +32,9 @@ public class Consts
 
     public const string BASE_URL = "https://dev.amoevo.my.id/";
     public const string PROD_BASE_URL = "https://dev.amoevo.my.id/";
+
+    public const string CHAT_URL = "http://43.218.81.2:5050/chat";
+
     public const string MENU_URL = "menu/";
 
     public const string HAS_ACCOUNT = "has_account";
@@ -39,4 +42,7 @@ public class Consts
     public const string HAS_VERIFIED = "has_verified";
 
     public const string ALARM = "alarm";
+
+    public const string HOME_SCENE = "Home 1";
+    public const string LOGIN_SCENE = "Login";
 }

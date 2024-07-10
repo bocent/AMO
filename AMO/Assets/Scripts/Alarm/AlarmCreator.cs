@@ -18,6 +18,7 @@ public class DayPair
 
 public class AlarmCreator : MonoBehaviour
 {
+    public TMP_Text titleText;
     public TMP_Text repeatText;
     public TMP_InputField titleInputField;
     public Button editRepeatButton;
@@ -55,20 +56,24 @@ public class AlarmCreator : MonoBehaviour
     {
         index = -1;
         isCreateNew = true;
+        titleText.text = "Alarm Baru".ToUpper();
         alarmInfo = new AlarmInfo { alarmId = Guid.NewGuid().ToString() };
         this.controller = controller;
         Load(null);
         deleteButton.gameObject.SetActive(false);
+        OpenRepeatDayPanel();
     }
 
     public void Init(AlarmController controller, AlarmInfo alarmInfo, AlarmItem selectedAlarmItem)
     {
         isCreateNew = false;
+        titleText.text = "Ubah Alarm".ToUpper();
         this.selectedAlarmItem = selectedAlarmItem;
         this.alarmInfo = alarmInfo;
         this.controller = controller;
         Load(alarmInfo);
         deleteButton.gameObject.SetActive(true);
+        OpenRepeatDayPanel();
     }
 
     public void Load(AlarmInfo info)
@@ -106,13 +111,13 @@ public class AlarmCreator : MonoBehaviour
             }
             if (info.dayList == null)
             {
-                repeatDay = "Never";
+                repeatDay = "Sekali";
                 repeatText.text = repeatDay;
                 return;
             }
             else if (info.dayList.Count == 0)
             {
-                repeatDay = "Never";
+                repeatDay = "Sekali";
                 repeatText.text = repeatDay;
                 return;
             }
@@ -120,7 +125,7 @@ public class AlarmCreator : MonoBehaviour
             {
                 if (info.dayList.Contains(DayOfWeek.Saturday) && info.dayList.Contains(DayOfWeek.Sunday))
                 {
-                    repeatDay = "Weekends";
+                    repeatDay = "Sabtu dan Minggu";
                     repeatText.text = repeatDay;
                     return;
                 }
@@ -138,14 +143,14 @@ public class AlarmCreator : MonoBehaviour
                 }
                 if (isWeekday)
                 {
-                    repeatDay = "Weekdays";
+                    repeatDay = "Senin Sampai Jumat";
                     repeatText.text = repeatDay;
                     return;
                 }
             }
             else if (info.dayList.Count == 7)
             {
-                repeatDay = "Everyday";
+                repeatDay = "Setiap Hari";
                 repeatText.text = repeatDay;
                 return;
             }
@@ -179,7 +184,7 @@ public class AlarmCreator : MonoBehaviour
 
     private void OpenRepeatDayPanel()
     {
-        alarmDayPanel.SetActive(true);
+        //alarmDayPanel.SetActive(true);
         if (alarmInfo != null)
         {
             if (alarmInfo.dayList != null)
@@ -209,7 +214,7 @@ public class AlarmCreator : MonoBehaviour
     public void HideRepeatDayPanel()
     {
         alarmInfo.dayList = new List<DayOfWeek>();
-        alarmDayPanel.SetActive(false);
+        //alarmDayPanel.SetActive(false);
         foreach (DayItem dayItem in dayItemList)
         {
             if (dayItem.dayPair.isActive)
@@ -230,12 +235,15 @@ public class AlarmCreator : MonoBehaviour
         alarmInfo.isOn = true;
         if (isCreateNew)
         {
-            controller.GetAlarm(alarmInfo);
-            controller.AddAlarmInfo(alarmInfo);
+            controller.AddAlarmInfo(alarmInfo, () =>
+            {
+                controller.GetAlarm(alarmInfo);
+            });
         }
         else
             controller.EditAlarm(selectedAlarmItem, alarmInfo);
         controller.HideAlarmCreator();
+        HideRepeatDayPanel();
     }
 
     private void Load()
