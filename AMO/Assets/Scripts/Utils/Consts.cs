@@ -42,7 +42,7 @@ public class Consts
     public const string HAS_VERIFIED = "has_verified";
 
     public const string ALARM = "alarm";
-
+        
     public const string HOME_SCENE = "Home 1";
     public const string LOGIN_SCENE = "Login";
 }

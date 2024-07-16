@@ -8,42 +8,48 @@ public class ReminderNote : MonoBehaviour
 {
     private Button button;
     private Image image;
-    [SerializeField] private TMP_Text text;
-    [SerializeField] private TMP_InputField inputField;
+    [SerializeField] private TMP_InputField titleInputField;
+    [SerializeField] private TMP_InputField contentInputField;
     [SerializeField] private GameObject lineObj;
 
     private ToDoController controller;
-    private EditNote editNote;
 
     private void Start()
     {
         image = GetComponent<Image>();
         button = GetComponent<Button>();
-        button.onClick.AddListener(ShowNote);
-        inputField.onValueChanged.AddListener(SetText);
+        button.onClick.AddListener(ShowTimer);
+        titleInputField.onValueChanged.AddListener(SetTitleText);
+        contentInputField.onValueChanged.AddListener(SetContentText);
     }
 
-    public void Init(ToDoController controller, EditNote editNote, string content)
+    public void Init(ToDoController controller, string title, string content)
     {
         Debug.LogError("init");
         this.controller = controller;
-        this.editNote = editNote;
-        text.text = content;
+        titleInputField.text = title;
+        contentInputField.text = content;
+
     }
 
-    public string GetText()
+    public string GetTitleText()
     {
-        return text.text;
+        return titleInputField.text;
     }
 
-    public void SetText(string value)
+
+    public void SetTitleText(string value)
     {
-        text.text = value;
-        lineObj.SetActive(value.Length > 0 && !string.IsNullOrWhiteSpace(value));
+        titleInputField.text = value;
     }
 
-    private void ShowNote()
+    public void SetContentText(string value)
     {
-        editNote.Show(controller, this, image.sprite);
+        contentInputField.text = value;
+    }
+
+    public void ShowTimer()
+    {
+        
     }
 }

@@ -24,7 +24,7 @@ public class AlarmCreator : MonoBehaviour
     public Button editRepeatButton;
     public Button saveButton;
     public Button deleteButton;
-    public Button closeDayPanelButton;
+    public Button cancelButton;
     public int hourIndex;
     public int minuteIndex;
     public SimpleScrollSnap hourScrollSnap;
@@ -36,7 +36,6 @@ public class AlarmCreator : MonoBehaviour
     private AlarmInfo alarmInfo;
     private AlarmController controller;
     private bool isCreateNew;
-    private int index;
     private AlarmItem selectedAlarmItem;
 
     private IEnumerator Start()
@@ -44,7 +43,7 @@ public class AlarmCreator : MonoBehaviour
         editRepeatButton.onClick.AddListener(OpenRepeatDayPanel);
         titleInputField.onSubmit.AddListener(OnTitleSubmitted);
         saveButton.onClick.AddListener(Save);
-        closeDayPanelButton.onClick.AddListener(HideRepeatDayPanel);
+        cancelButton.onClick.AddListener(Hide);
         hourScrollSnap.OnPanelCentered.AddListener(OnHourSelected);
         minuteScrollSnap.OnPanelCentered.AddListener(OnMinuteSelected);
         deleteButton.onClick.AddListener(DeleteAlarm);
@@ -54,7 +53,6 @@ public class AlarmCreator : MonoBehaviour
 
     public void Init(AlarmController controller)
     {
-        index = -1;
         isCreateNew = true;
         titleText.text = "Alarm Baru".ToUpper();
         alarmInfo = new AlarmInfo { alarmId = Guid.NewGuid().ToString() };
@@ -74,6 +72,11 @@ public class AlarmCreator : MonoBehaviour
         Load(alarmInfo);
         deleteButton.gameObject.SetActive(true);
         OpenRepeatDayPanel();
+    }
+
+    private void Hide()
+    {
+        controller.HideAlarmCreator();
     }
 
     public void Load(AlarmInfo info)
@@ -172,7 +175,7 @@ public class AlarmCreator : MonoBehaviour
         {
             hourScrollSnap.GoToPanel(0);
             minuteScrollSnap.GoToPanel(0);
-            repeatText.text = "Never";
+            repeatText.text = "Sekali";
             titleInputField.text = "";
         }
     }

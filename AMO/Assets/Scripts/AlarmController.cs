@@ -30,7 +30,6 @@ public class AlarmController : MonoBehaviour
     public GameObject alarmPrefab;
     public Transform alarmItemParent;
     public Button addAlarmButton;
-    public Button cancelCreateButton;
     public AlarmPopup alarmPopup;
     public GameObject container;
 
@@ -48,7 +47,6 @@ public class AlarmController : MonoBehaviour
     private void Start()
     {
         addAlarmButton.onClick.AddListener(ShowAlarmCreator);
-        cancelCreateButton.onClick.AddListener(HideAlarmCreator);
         //StartCoroutine(RequestGetAlarm("", LoadList, null));
         //LoadAlarmList();
         //Debug.LogError("timespan now : " + DateTime.Now.TimeOfDay.ToString(@"hh\:mm"));

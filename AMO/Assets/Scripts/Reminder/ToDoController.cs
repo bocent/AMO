@@ -8,7 +8,11 @@ using UnityEngine.UI;
 [Serializable]
 public class NoteInfo
 {
+    public string title;
     public string content;
+    public string hour;
+    public string minute;
+    public List<DayOfWeek> dayList = new List<DayOfWeek>();
 }
 
 [Serializable]
@@ -22,7 +26,6 @@ public class ToDoController : MonoBehaviour
     private Button button;
     public Button backButton;
     public GameObject container;
-    public EditNote editNote;
     public List<ReminderNote> reminderNoteList;
 
     private void Start()
@@ -91,7 +94,7 @@ public class ToDoController : MonoBehaviour
 
         for(int i = 0; i < reminderNoteList.Count; i++)
         {
-            reminderNoteList[i].Init(this, editNote, noteList.noteList[i].content);
+            reminderNoteList[i].Init(this, noteList.noteList[i].title, noteList.noteList[i].content);
         }
     }
 
@@ -100,7 +103,7 @@ public class ToDoController : MonoBehaviour
         NoteList noteList = new NoteList { noteList = new List<NoteInfo>() };
         for (int i = 0; i < reminderNoteList.Count; i++)
         {
-            noteList.noteList.Add(new NoteInfo { content = reminderNoteList[i].GetText() });
+            noteList.noteList.Add(new NoteInfo { content = reminderNoteList[i].GetTitleText() });
         }
         string notesJson = JsonUtility.ToJson(noteList);
         PlayerPrefs.SetString("notes", notesJson);
